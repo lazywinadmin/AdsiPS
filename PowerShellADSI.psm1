@@ -132,16 +132,53 @@ function Check-ADSIDomainUserIsGroupMember
 
 function Add-ADSIDomainGroupMember
 {
+<#
+.SYNOPSIS
+    This function will Add Domain user from a Domain Group
+.EXAMPLE
+    Add-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+
+    This will add the domain user fxcat to the group TestGroup
+#>
+    [CmdletBinding()]
     PARAM($GroupSamAccountName,$UserSamAccountName)
     $UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
     $GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
 
     IF (-not(Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName))
     {
+        Write-Verbose "Adding $UserSamAccountName from $GroupSamAccountName"
         $GroupInfo.Add($UserInfo.ADsPath)
     }
     ELSE {
     
-        Write-Output "$UserSamAccountName is already member of $GroupSamAccountName"
+        Write-Verbose "$UserSamAccountName is already member of $GroupSamAccountName"
+    }
+}
+
+
+function Remove-ADSIDomainGroupMember
+{
+<#
+.SYNOPSIS
+    This function will remove Domain user from a Domain Group
+.EXAMPLE
+    Remove-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+
+    This will remove the domain user fxcat from the group TestGroup
+#>
+    [CmdletBinding()]
+    PARAM($GroupSamAccountName,$UserSamAccountName)
+    $UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
+    $GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
+
+    IF (Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
+    {
+        Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
+        $GroupInfo.Remove($UserInfo.ADsPath)
+    }
+    ELSE {
+    
+        Write-Verbose "$UserSamAccountName is not member of $GroupSamAccountName"
     }
 }
