@@ -38,8 +38,48 @@ function Get-ADSIDomainUser {
     }
 }
 
+function Get-ADSIDomainGroup {
+    [CmdletBinding()]
+    PARAM(
+    [Parameter(ParameterSetName="DisplayName")]
+    [String]$DisplayName,
+    [Parameter(ParameterSetName="SamAccountName")]
+    [String]$SamAccountName,
+    [Parameter(ParameterSetName="DistinguishedName")]
+    [String]$DistinguishedName
+    )
 
-function Get-ADSIMyManagedGroup
+    If ($DisplayName)
+    {
+        $Search = [adsisearcher]"(&(objectCategory=group)(displayname=$DisplayName))"
+    }
+    IF ($SamAccountName)
+    {
+        $Search = [adsisearcher]"(&(objectCategory=group)(samaccountname=$SamAccountName))"
+    }
+    IF ($DistinguishedName)
+    {
+        $Search = [adsisearcher]"(&(objectCategory=group)(distinguishedname=$distinguishedname))"
+    }
+    foreach ($group in $($Search.FindAll())){
+        
+        # Define the properties
+        #  The properties need to be lowercase!!!!!!!!
+        $Properties = @{
+            "DisplayName" = $group.properties.displayname -as [string]
+            "SamAccountName"    = $group.properties.samaccountname -as [string]
+            "Description" = $group.properties.description -as [string]
+            "DistinguishedName" = $group.properties.distinguishedname -as [string]
+            "ADsPath" = $group.properties.adspath -as [string]
+        }
+        
+        # Output the info
+        New-Object -TypeName PSObject -Property $Properties
+    }
+}
+
+
+function Get-ADSIDomainGroupIManage
 {
 PARAM($SamAccountName)
 
@@ -57,7 +97,7 @@ PARAM($SamAccountName)
 }
 
 
-function Get-ADSIGroupMember
+function Get-ADSIDomainGroupMember
 {
     PARAM($SamAccountName)
 
@@ -69,9 +109,39 @@ foreach ($member in $search.FindOne().properties.member)
 }
 }
 
-function Add-ADSIGroupMember
+function Check-ADSIDomainUserIsGroupMember
 {
-    PARAM($GroupName,$SamAccountName)
+<#
+.SYNOPSIS
+    This function will check if a domain user is member of a domain group
+
+.EXAMPLE
+    Check-ADSIDomainUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+
+    This will return $true or $false depending if the user Fxcat is member of TestGroup
+#>
+    PARAM($GroupSamAccountName,$UserSamAccountName)
+    $UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
+    $GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
+
+    #([ADSI]$GroupInfo.ADsPath).IsMember([ADSI]($UserInfo.AdsPath))
+    $GroupInfo.IsMember($UserInfo.ADsPath)
+
+}
 
 
+function Add-ADSIDomainGroupMember
+{
+    PARAM($GroupSamAccountName,$UserSamAccountName)
+    $UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
+    $GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
+
+    IF (-not(Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName))
+    {
+        $GroupInfo.Add($UserInfo.ADsPath)
+    }
+    ELSE {
+    
+        Write-Output "$UserSamAccountName is already member of $GroupSamAccountName"
+    }
 }
