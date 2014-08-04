@@ -305,3 +305,40 @@ function Remove-ADSIDomainGroupMember
 }
 
 	
+function Get-ADSIDomainObject
+{
+	[CmdletBinding()]
+	PARAM (
+		[Parameter(ParameterSetName = "SamAccountName")]
+		[String]$SamAccountName
+	)
+	BEGIN { }
+	PROCESS
+	{
+		TRY
+		{
+			$Search = [adsisearcher]"(samaccountname=$SamAccountName)"
+			# Define the properties
+			#  The properties need to be lowercase!!!!!!!!
+			$Properties = @{
+				"DisplayName" = $group.properties.displayname -as [string]
+				"SamAccountName" = $group.properties.samaccountname -as [string]
+				"Description" = $group.properties.description -as [string]
+				"DistinguishedName" = $group.properties.distinguishedname -as [string]
+				"ADsPath" = $group.properties.adspath -as [string]
+			}
+			
+			# Output the info
+			New-Object -TypeName PSObject -Property $Properties
+		}
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+	END
+	{
+		Write-Verbose -Message "[END] Function Get-ADSIDomainObject End."
+	}
+}
