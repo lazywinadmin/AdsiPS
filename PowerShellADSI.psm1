@@ -288,32 +288,113 @@ function Add-ADSIDomainGroupMember
 {
 <#
 .SYNOPSIS
-    This function will Add Domain user from a Domain Group
+	This function will add a AD object inside a AD Group.
+.PARAMETER GroupSamAccountName
+	Specify the Group SamAccountName of the group
+.PARAMETER GroupName
+	Specify the Name of the group
+.PARAMETER GroupDistinguishedName
+	Specify the DistinguishedName path of the group
+.PARAMETER UserSamAccountName
+    Specify the User SamAccountName
+.PARAMETER Credential
+    Specify the Credential to use
+.PARAMETER DomainDN
+    Specify the DistinguishedName of the Domain to query
+.PARAMETER SizeLimit
+    Specify the number of item(s) to output
 .EXAMPLE
-    Add-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
-
-    This will add the domain user fxcat to the group TestGroup
+    Add-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName francois-xavier.cat -Credential (Get-Credential -Credential SuperAdmin)
 #>
 	[CmdletBinding()]
 	PARAM (
-		[Parameter(Mandatory = $true)]
-		$GroupSamAccountName,
-		[Parameter(Mandatory = $true)]
-		$UserSamAccountName
+		[Parameter(ParameterSetName = "Name")]
+		[String]$GroupName,
+
+		[Parameter(ParameterSetName = "SamAccountName")]
+		[String]$GroupSamAccountName,
+
+		[Parameter(ParameterSetName = "DistinguishedName")]
+		[String]$GroupDistinguishedName,
+
+        [string]$UserSamAccountName,
+
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
+		[Alias("Domain")]
+        [String]$DomainDN=$(([adsisearcher]"").Searchroot.path),
+
+        [Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
+		[Alias("ResultLimit","Limit")]
+		[int]$SizeLimit='100'
 	)
-	
-	$UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
-	$GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
-	
-	IF (-not (Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName))
+	BEGIN { }
+	PROCESS
 	{
-		Write-Verbose "Adding $UserSamAccountName from $GroupSamAccountName"
-		$GroupInfo.Add($UserInfo.ADsPath)
-	}
-	ELSE
+		TRY
+		{
+            # Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+            $Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDN
+
+
+			If ($Name)
+			{
+				$Search.filter = "(&(objectCategory=group)(name=$Name))"
+			}
+			IF ($SamAccountName)
+			{
+				$Search.filter = "(&(objectCategory=group)(samaccountname=$SamAccountName))"
+			}
+			IF ($DistinguishedName)
+			{
+				$Search.filter = "(&(objectCategory=group)(distinguishedname=$distinguishedname))"
+			}
+            IF ($DomainDN)
+            {
+                IF ($DomainDN -notlike "LDAP://*") {$DomainDN = "LDAP://$DomainDN"}#IF
+                Write-Verbose -Message "Different Domain specified: $DomainDN"
+				$Search.SearchRoot = $DomainDN
+            }
+            
+            IF ($PSBoundParameters['Credential'])
+            {
+                $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
+                $Search.SearchRoot = $DomainDN
+            }
+
+            Write-Verbose -Message "[PROCESS] Resolve the User: $UserSamAccountName"
+            $User = Get-ADSIDomainUser -SamAccountName $UserSamAccountName -ErrorAction stop -ErrorVariable ProcessErrorGetADSIDomainUser
+
+
+            Foreach ($group in $Search.FindAll())
+            {
+                $GroupObj=Get-ADSIDomainGroup -SamAccountName ($group.properties.samaccountname -as [String])
+                IF (-not (Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupObj.samaccountname -UserSamAccountName $UserSamAccountName))
+                {
+                    Write-verbose -Message "[PROCESS] Group: $($Group.properties.name -as [string])"
+                    # Add the user to the group
+				    ([ADSI]"$($Group.properties.adspath)").add($User.adspath)
+                }
+                ELSE
+                {
+                    Write-Warning -message "$UserSamAccountName is already member of $($GroupObj.samaccountname)"
+                }
+            }
+		}#TRY
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+            if($ProcessErrorGetADSIDomainUser){Write-Warning -Message "[PROCESS] Issue while getting information on the user using Get-ADSIDomainUser"}
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}#PROCESS
+	END
 	{
-		
-		Write-Verbose "$UserSamAccountName is already member of $GroupSamAccountName"
+		Write-Verbose -Message "[END] Function Add-ADSIDomainGroupMember End."
 	}
 }
 
