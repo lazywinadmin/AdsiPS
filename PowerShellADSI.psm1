@@ -76,50 +76,90 @@ function Get-ADSIDomainGroup
 	This function will query Active Directory for group information. You can either specify the DisplayName, SamAccountName or DistinguishedName of the group
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the group
-.PARAMETER DisplayName
-	Specify the DisplayName of the group
+.PARAMETER Name
+	Specify the Name of the group
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the group
+.PARAMETER Credential
+    Specify the Credential to use
+.PARAMETER DomainDN
+    Specify the DistinguishedName of the Domain to query
+.PARAMETER SizeLimit
+    Specify the number of item(s) to output
 .EXAMPLE
 	Get-ADSIDomainGroup -SamAccountName TestGroup
 .EXAMPLE
-	Get-ADSIDomainGroup -DisplayName TestGroup
+	Get-ADSIDomainGroup -Name TestGroup
 .EXAMPLE
 	Get-ADSIDomainGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
+.EXAMPLE
+    Get-ADSIDomainGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser')
 #>
 	[CmdletBinding()]
 	PARAM (
-		[Parameter(ParameterSetName = "DisplayName")]
-		[String]$DisplayName,
+		[Parameter(ParameterSetName = "Name")]
+		[String]$Name,
+
 		[Parameter(ParameterSetName = "SamAccountName")]
 		[String]$SamAccountName,
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
-		[String]$DistinguishedName
+		[String]$DistinguishedName,
+
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
+		[Alias("Domain")]
+        	[String]$DomainDN=$(([adsisearcher]"").Searchroot.path),
+
+        	[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
+		[Alias("ResultLimit","Limit")]
+		[int]$SizeLimit='100'
 	)
 	BEGIN { }
 	PROCESS
 	{
 		TRY
 		{
-			If ($DisplayName)
+            # Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+            $Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDN
+
+
+			If ($Name)
 			{
-				$Search = [adsisearcher]"(&(objectCategory=group)(displayname=$DisplayName))"
+				$Search.filter = "(&(objectCategory=group)(name=$Name))"
 			}
 			IF ($SamAccountName)
 			{
-				$Search = [adsisearcher]"(&(objectCategory=group)(samaccountname=$SamAccountName))"
+				$Search.filter = "(&(objectCategory=group)(samaccountname=$SamAccountName))"
 			}
 			IF ($DistinguishedName)
 			{
-				$Search = [adsisearcher]"(&(objectCategory=group)(distinguishedname=$distinguishedname))"
+				$Search.filter = "(&(objectCategory=group)(distinguishedname=$distinguishedname))"
 			}
+            IF ($DomainDN)
+            {
+                IF ($DomainDN -notlike "LDAP://*") {$DomainDN = "LDAP://$DomainDN"}#IF
+                Write-Verbose -Message "Different Domain specified: $DomainDN"
+				$Search.SearchRoot = $DomainDN
+            }
+            
+            IF ($PSBoundParameters['Credential'])
+            {
+                $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
+                $Search.SearchRoot = $DomainDN
+            }
+
 			foreach ($group in $($Search.FindAll()))
 			{
 				
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
-					"DisplayName" = $group.properties.displayname -as [string]
+					"Name" = $group.properties.name -as [string]
 					"SamAccountName" = $group.properties.samaccountname -as [string]
 					"Description" = $group.properties.description -as [string]
 					"DistinguishedName" = $group.properties.distinguishedname -as [string]
