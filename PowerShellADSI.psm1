@@ -53,6 +53,7 @@ function Get-ADSIDomainUser
 					"Description" = $user.properties.description -as [string]
 					"DistinguishedName" = $user.properties.distinguishedname -as [string]
 					"ADsPath" = $user.properties.adspath -as [string]
+                    "MemberOf" = $user.properties.memberof
 				}
 				
 				# Output the info
