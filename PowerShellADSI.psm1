@@ -203,7 +203,7 @@ function Get-ADSIDomainGroup
 	Specify the DistinguishedName path of the group
 .PARAMETER Credential
     Specify the Credential to use
-.PARAMETER DomainDN
+.PARAMETER $DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
@@ -228,10 +228,10 @@ function Get-ADSIDomainGroup
 		[String]$DistinguishedName,
 
 		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[Alias("Domain")]
-        	[String]$DomainDN=$(([adsisearcher]"").Searchroot.path),
-
-        	[Alias("RunAs")]
+		[Alias("Domain","DomainDN")]
+	        [String]$DomainDistinguishedName=$(([adsisearcher]"").Searchroot.path),
+	
+	        [Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
@@ -243,10 +243,10 @@ function Get-ADSIDomainGroup
 	{
 		TRY
 		{
-            # Building the basic search object with some parameters
+		            # Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-            $Search.SizeLimit = $SizeLimit
-			$Search.SearchRoot = $DomainDN
+            		$Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDistinguishedName
 
 
 			If ($Name)
@@ -261,18 +261,18 @@ function Get-ADSIDomainGroup
 			{
 				$Search.filter = "(&(objectCategory=group)(distinguishedname=$distinguishedname))"
 			}
-            IF ($DomainDN)
-            {
-                IF ($DomainDN -notlike "LDAP://*") {$DomainDN = "LDAP://$DomainDN"}#IF
-                Write-Verbose -Message "Different Domain specified: $DomainDN"
-				$Search.SearchRoot = $DomainDN
-            }
+			IF ($DomainDistinguishedName)
+			{
+			IF ($DomainDistinguishedName -notlike "LDAP://*") {$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"}#IF
+				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
             
-            IF ($PSBoundParameters['Credential'])
-            {
-                $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
-                $Search.SearchRoot = $DomainDN
-            }
+			IF ($PSBoundParameters['Credential'])
+			{
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
+			}
 
 			foreach ($group in $($Search.FindAll()))
 			{
@@ -285,6 +285,35 @@ function Get-ADSIDomainGroup
 					"Description" = $group.properties.description -as [string]
 					"DistinguishedName" = $group.properties.distinguishedname -as [string]
 					"ADsPath" = $group.properties.adspath -as [string]
+					"ManagedBy" = $group.properties.managedby -as [string]
+					"GroupType" = $group.properties.grouptype -as [string]
+					"Member" = $group.properties.grouptype -as [string]
+					"objectcategory" = $group.properties.grouptype -as [string]
+					"objectclass" = $group.properties.grouptype -as [string]
+					"objectguid" = $group.properties.grouptype -as [string]
+					"objectsid" = $group.properties.grouptype -as [string]
+<#
+adspath
+cn
+distinguishedname
+dscorepropagationdata
+grouptype
+instancetype
+managedby
+member
+name
+objectcategory
+objectclass
+objectguid
+objectsid
+samaccountname
+samaccounttype
+usnchanged
+usncreated
+whenchanged
+whencreated
+#>
+
 				}
 				
 				# Output the info
