@@ -287,11 +287,11 @@ function Get-ADSIDomainGroup
 					"ADsPath" = $group.properties.adspath -as [string]
 					"ManagedBy" = $group.properties.managedby -as [string]
 					"GroupType" = $group.properties.grouptype -as [string]
-					"Member" = $group.properties.grouptype -as [string]
-					"objectcategory" = $group.properties.grouptype -as [string]
-					"objectclass" = $group.properties.grouptype -as [string]
-					"objectguid" = $group.properties.grouptype -as [string]
-					"objectsid" = $group.properties.grouptype -as [string]
+					"Member" = $group.properties.member
+					"ObjectCategory" = $group.properties.objectcategory
+					"ObjectClass" = $group.properties.objectclass
+					"ObjectGuid" = $group.properties.objectguid
+					"ObjectSid" = $group.properties.objectsid
 <#
 adspath
 cn
@@ -347,7 +347,7 @@ function Get-ADSIDomainGroupIManage
 	This will list all the group(s) where fxcat is designated as Manager.
 #>
 	[CmdletBinding()]
-	PARAM ($SamAccountName)
+	PARAM ($SamAccountName = $env:USERNAME)
 	BEGIN { }
 	PROCESS
 	{
