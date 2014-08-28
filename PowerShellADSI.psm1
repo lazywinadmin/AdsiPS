@@ -810,3 +810,6 @@ Function Get-ADSIDomainComputer {
     }#PROCESS
     END{Write-Verbose -Message "Script Completed"}
 }#function Get-ADSIDomainComputer
+
+
+Export-ModuleMember -Function *
