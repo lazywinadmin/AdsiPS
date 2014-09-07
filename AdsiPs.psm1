@@ -1,4 +1,4 @@
-function Get-ADSIDomainUser
+function Get-ADSIUser
 {
 <#
 .SYNOPSIS
@@ -16,13 +16,13 @@ function Get-ADSIDomainUser
 .PARAMETER DomainDistinguishedName
     Specify the Domain or Domain DN path to use
 .EXAMPLE
-	Get-ADSIDomainUser -SamAccountName fxcat
+	Get-ADSIUser -SamAccountName fxcat
 .EXAMPLE
-	Get-ADSIDomainUser -DisplayName "Cat, Francois-Xavier"
+	Get-ADSIUser -DisplayName "Cat, Francois-Xavier"
 .EXAMPLE
-	Get-ADSIDomainUser -DistinguishedName "CN=Cat\, Francois-Xavier,OU=Admins,DC=FX,DC=local"
+	Get-ADSIUser -DistinguishedName "CN=Cat\, Francois-Xavier,OU=Admins,DC=FX,DC=local"
 .EXAMPLE
-    Get-ADSIDomainUser -SamAccountName testuser -Credential (Get-Credential -Credential Msmith)
+    Get-ADSIUser -SamAccountName testuser -Credential (Get-Credential -Credential Msmith)
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -187,10 +187,10 @@ function Get-ADSIDomainUser
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#PROCESS
-	END { Write-Verbose -Message "[END] Function Get-ADSIDomainUser End." }
+	END { Write-Verbose -Message "[END] Function Get-ADSIUser End." }
 }
 
-function Get-ADSIDomainGroup
+function Get-ADSIGroup
 {
 <#
 .SYNOPSIS
@@ -208,13 +208,13 @@ function Get-ADSIDomainGroup
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
 .EXAMPLE
-	Get-ADSIDomainGroup -SamAccountName TestGroup
+	Get-ADSIGroup -SamAccountName TestGroup
 .EXAMPLE
-	Get-ADSIDomainGroup -Name TestGroup
+	Get-ADSIGroup -Name TestGroup
 .EXAMPLE
-	Get-ADSIDomainGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
+	Get-ADSIGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
 .EXAMPLE
-    Get-ADSIDomainGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser')
+    Get-ADSIGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser')
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -328,12 +328,12 @@ whencreated
 	}#PROCESS
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIDomainGroup End."
+		Write-Verbose -Message "[END] Function Get-ADSIGroup End."
 	}
 }
 
 
-function Get-ADSIDomainGroupIManage
+function Get-ADSIGroupIManage
 {
 <#
 .SYNOPSIS
@@ -342,7 +342,7 @@ function Get-ADSIDomainGroupIManage
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Manager of the group
 .EXAMPLE
-	Get-ADSIDomainGroupIManage -SamAccountName fxcat
+	Get-ADSIGroupIManage -SamAccountName fxcat
 
 	This will list all the group(s) where fxcat is designated as Manager.
 #>
@@ -353,7 +353,7 @@ function Get-ADSIDomainGroupIManage
 	{
 		TRY
 		{
-			$search = [adsisearcher]"(&(objectCategory=group)(ManagedBy=$((Get-ADSIDomainUser -SamAccountName $SamAccountName).distinguishedname)))"
+			$search = [adsisearcher]"(&(objectCategory=group)(ManagedBy=$((Get-ADSIUser -SamAccountName $SamAccountName).distinguishedname)))"
 			Foreach ($group in $search.FindAll())
 			{
 				$Properties = @{
@@ -371,11 +371,11 @@ function Get-ADSIDomainGroupIManage
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#Process
-	END { Write-Verbose -Message "[END] Function Get-ADSIDomainGroupIManage End."}
+	END { Write-Verbose -Message "[END] Function Get-ADSIGroupIManage End."}
 }
 
 
-function Get-ADSIDomainGroupMember
+function Get-ADSIGroupMember
 {
 <#
 .SYNOPSIS
@@ -383,7 +383,7 @@ function Get-ADSIDomainGroupMember
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Group
 .EXAMPLE
-	Get-ADSIDomainGroupMember -SamAccountName TestGroup
+	Get-ADSIGroupMember -SamAccountName TestGroup
 #>
 	[CmdletBinding()]
 	PARAM ($SamAccountName)
@@ -398,7 +398,7 @@ function Get-ADSIDomainGroupMember
 			foreach ($member in $search.FindOne().properties.member)
 			{
 				#User
-				Get-ADSIDomainUser -DistinguishedName $member
+				Get-ADSIUser -DistinguishedName $member
 				
 				#Group
 				# need to be done here
@@ -410,23 +410,23 @@ function Get-ADSIDomainGroupMember
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#process
-	END { Write-Verbose -Message "[END] Function Get-ADSIDomainGroupMember End." }
+	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMember End." }
 }
 
-function Check-ADSIDomainUserIsGroupMember
+function Check-ADSIUserIsGroupMember
 {
 <#
 .SYNOPSIS
     This function will check if a domain user is member of a domain group
 
 .EXAMPLE
-    Check-ADSIDomainUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+    Check-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will return $true or $false depending if the user Fxcat is member of TestGroup
 #>
 	PARAM ($GroupSamAccountName, $UserSamAccountName)
-	$UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
-	$GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
+	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
+	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
 	
 	#([ADSI]$GroupInfo.ADsPath).IsMember([ADSI]($UserInfo.AdsPath))
 	$GroupInfo.IsMember($UserInfo.ADsPath)
@@ -434,7 +434,7 @@ function Check-ADSIDomainUserIsGroupMember
 }
 
 
-function Add-ADSIDomainGroupMember
+function Add-ADSIGroupMember
 {
 <#
 .SYNOPSIS
@@ -454,7 +454,7 @@ function Add-ADSIDomainGroupMember
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
 .EXAMPLE
-    Add-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName francois-xavier.cat -Credential (Get-Credential -Credential SuperAdmin)
+    Add-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName francois-xavier.cat -Credential (Get-Credential -Credential SuperAdmin)
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -517,13 +517,13 @@ function Add-ADSIDomainGroupMember
             }
 
             Write-Verbose -Message "[PROCESS] Resolve the User: $UserSamAccountName"
-            $User = Get-ADSIDomainUser -SamAccountName $UserSamAccountName -ErrorAction stop -ErrorVariable ProcessErrorGetADSIDomainUser
+            $User = Get-ADSIUser -SamAccountName $UserSamAccountName -ErrorAction stop -ErrorVariable ProcessErrorGetADSIUser
 
 
             Foreach ($group in $Search.FindAll())
             {
-                $GroupObj=Get-ADSIDomainGroup -SamAccountName ($group.properties.samaccountname -as [String])
-                IF (-not (Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupObj.samaccountname -UserSamAccountName $UserSamAccountName))
+                $GroupObj=Get-ADSIGroup -SamAccountName ($group.properties.samaccountname -as [String])
+                IF (-not (Check-ADSIUserIsGroupMember -GroupSamAccountName $GroupObj.samaccountname -UserSamAccountName $UserSamAccountName))
                 {
                     Write-verbose -Message "[PROCESS] Group: $($Group.properties.name -as [string])"
                     # Add the user to the group
@@ -538,33 +538,33 @@ function Add-ADSIDomainGroupMember
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
-            if($ProcessErrorGetADSIDomainUser){Write-Warning -Message "[PROCESS] Issue while getting information on the user using Get-ADSIDomainUser"}
+            if($ProcessErrorGetADSIUser){Write-Warning -Message "[PROCESS] Issue while getting information on the user using Get-ADSIUser"}
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#PROCESS
 	END
 	{
-		Write-Verbose -Message "[END] Function Add-ADSIDomainGroupMember End."
+		Write-Verbose -Message "[END] Function Add-ADSIGroupMember End."
 	}
 }
 
 
-function Remove-ADSIDomainGroupMember
+function Remove-ADSIGroupMember
 {
 <#
 .SYNOPSIS
     This function will remove Domain user from a Domain Group
 .EXAMPLE
-    Remove-ADSIDomainGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+    Remove-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will remove the domain user fxcat from the group TestGroup
 #>
 	[CmdletBinding()]
 	PARAM ($GroupSamAccountName, $UserSamAccountName)
-	$UserInfo = [ADSI]"$((Get-ADSIDomainUser -SamAccountName $UserSamAccountName).AdsPath)"
-	$GroupInfo = [ADSI]"$((Get-ADSIDomainGroup -SamAccountName $GroupSamAccountName).AdsPath)"
+	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
+	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
 	
-	IF (Check-ADSIDomainUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
+	IF (Check-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
 	{
 		Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
 		$GroupInfo.Remove($UserInfo.ADsPath)
@@ -577,7 +577,7 @@ function Remove-ADSIDomainGroupMember
 }
 
 	
-function Get-ADSIDomainObject
+function Get-ADSIObject
 {
 	[CmdletBinding()]
 	PARAM (
@@ -611,12 +611,12 @@ function Get-ADSIDomainObject
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIDomainObject End."
+		Write-Verbose -Message "[END] Function Get-ADSIObject End."
 	}
 }
 
 
-Function Get-ADSIDomainComputer {
+Function Get-ADSIComputer {
 <#
 	.SYNOPSIS
 		The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
@@ -809,7 +809,7 @@ Function Get-ADSIDomainComputer {
 		}#ELSE
     }#PROCESS
     END{Write-Verbose -Message "Script Completed"}
-}#function Get-ADSIDomainComputer
+}#function Get-ADSIComputer
 
 
 Export-ModuleMember -Function *
