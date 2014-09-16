@@ -350,7 +350,7 @@ function Get-ADSIGroup
 	}
 }
 
-function Get-ADSIGroupIManage
+function Get-ADSIGroupManagedBy
 {
 <#
 .SYNOPSIS
@@ -359,26 +359,134 @@ function Get-ADSIGroupIManage
 	
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Manager of the group
+    You can also use the alias: ManagerSamAccountName.
+
+.PARAMETER AllManagedGroups
+	Specify to search for groups with a Manager (managedby property)
+
+.PARAMETER NoManager
+	Specify to search for groups without Manager (managedby property)
+
+.PARAMETER Credential
+    Specify the Credential to use for the query
 	
+.PARAMETER SizeLimit
+    Specify the number of item maximum to retrieve
+	
+.PARAMETER DomainDistinguishedName
+    Specify the Domain or Domain DN path to use
+
 .EXAMPLE
-	Get-ADSIGroupIManage -SamAccountName fxcat
+	Get-ADSIGroupManagedBy -SamAccountName fxcat
 
 	This will list all the group(s) where fxcat is designated as Manager.
+
+.EXAMPLE
+	Get-ADSIGroupManagedBy
+
+	This will list all the group(s) where the current user is designated as Manager.
+
+.EXAMPLE
+	Get-ADSIGroupManagedBy -NoManager
+
+	This will list all the group(s) without Manager
+
+.EXAMPLE
+	Get-ADSIGroupManagedBy -AllManagedGroup
+
+	This will list all the group(s) without Manager
 	
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	[CmdletBinding()]
-	PARAM ($SamAccountName = $env:USERNAME)
+	[CmdletBinding(DefaultParameterSetName = "One")]
+	PARAM (
+		[Parameter(ParameterSetName = "One")]
+		[Alias("ManagerSamAccountName")]
+		[String]$SamAccountName = $env:USERNAME,
+		
+		[Parameter(ParameterSetName = "All")]
+		[Switch]$AllManagedGroups,
+		
+		[Parameter(ParameterSetName = "No")]
+		[Switch]$NoManager,
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		[Alias("DomainDN", "Domain", "SearchBase", "SearchRoot")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
+	)
+	
 	BEGIN { }
 	PROCESS
 	{
 		TRY
 		{
-			$search = [adsisearcher]"(&(objectCategory=group)(ManagedBy=$((Get-ADSIUser -SamAccountName $SamAccountName).distinguishedname)))"
-			Foreach ($group in $search.FindAll())
+			# Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+			$Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDN
+			
+			IF ($PSBoundParameters['DomainDistinguishedName'])
+			{
+				# Fixing the path if needed
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				
+				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
+			
+			IF ($PSBoundParameters['Credential'])
+			{
+				Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
+			}
+			
+			IF ($PSBoundParameters['SamAccountName'])
+			{
+				Write-Verbose -Message "SamAccountName"
+				#Look for User DN
+				$UserSearch = $search
+				$UserSearch.Filter = "(&(SamAccountName=$SamAccountName))"
+				$UserDN = $UserSearch.FindOne().Properties.distinguishedname -as [string]
+				
+				# Define the query to find the Groups managed by this user
+				$Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN)))"
+			}
+			
+			IF ($PSBoundParameters['AllManagedGroups'])
+			{
+				Write-Verbose -Message "All Managed Groups Param"
+				$Search.Filter = "(&(objectCategory=group)(managedBy=*))"
+			}
+			
+			IF ($PSBoundParameters['NoManager'])
+			{
+				Write-Verbose -Message "No Manager param"
+				$Search.Filter = "(&(objectCategory=group)(!(!managedBy=*)))"
+			}
+			
+			IF (-not ($PSBoundParameters['SamAccountName']) -and -not ($PSBoundParameters['AllManagedGroups']) -and -not ($PSBoundParameters['NoManager']))
+			{
+				Write-Verbose -Message "No parameters used"
+				#Look for User DN
+				$UserSearch = $search
+				$UserSearch.Filter = "(&(SamAccountName=$SamAccountName))"
+				$UserDN = $UserSearch.FindOne().Properties.distinguishedname -as [string]
+				
+				# Define the query to find the Groups managed by this user
+				$Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN))"
+			}
+			
+			Foreach ($group in $Search.FindAll())
 			{
 				$Properties = @{
 					"SamAccountName" = $group.properties.samaccountname -as [string]
@@ -395,10 +503,10 @@ function Get-ADSIGroupIManage
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#Process
-	END { Write-Verbose -Message "[END] Function Get-ADSIGroupIManage End."}
+	END { Write-Verbose -Message "[END] Function Get-ADSIGroupManagedBy End." }
 }
 
-function Get-ADSIGroupMember
+function Get-ADSIGroupMembership
 {
 <#
 .SYNOPSIS
@@ -408,7 +516,7 @@ function Get-ADSIGroupMember
 	Specify the SamAccountName of the Group
 	
 .EXAMPLE
-	Get-ADSIGroupMember -SamAccountName TestGroup
+	Get-ADSIGroupMembership -SamAccountName TestGroup
 	
 .NOTES
 	Francois-Xavier Cat
@@ -440,7 +548,7 @@ function Get-ADSIGroupMember
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}#process
-	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMember End." }
+	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMembership End." }
 }
 
 function Check-ADSIUserIsGroupMember
@@ -473,22 +581,35 @@ function Add-ADSIGroupMember
 <#
 .SYNOPSIS
 	This function will add a AD object inside a AD Group.
+	
 .PARAMETER GroupSamAccountName
 	Specify the Group SamAccountName of the group
+	
 .PARAMETER GroupName
 	Specify the Name of the group
+	
 .PARAMETER GroupDistinguishedName
 	Specify the DistinguishedName path of the group
+	
 .PARAMETER UserSamAccountName
     Specify the User SamAccountName
+	
 .PARAMETER Credential
     Specify the Credential to use
+	
 .PARAMETER DomainDN
     Specify the DistinguishedName of the Domain to query
+	
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
+	
 .EXAMPLE
     Add-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName francois-xavier.cat -Credential (Get-Credential -Credential SuperAdmin)
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -591,6 +712,11 @@ function Remove-ADSIGroupMember
     Remove-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will remove the domain user fxcat from the group TestGroup
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM ($GroupSamAccountName, $UserSamAccountName)
@@ -640,6 +766,11 @@ function Get-ADSIObject
 
 .EXAMPLE
 	Get-ADSIObject -Name DC*
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 
 	[CmdletBinding()]
@@ -728,72 +859,65 @@ function Get-ADSIObject
 
 Function Get-ADSIComputer {
 <#
-	.SYNOPSIS
-		The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
+.SYNOPSIS
+	The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
 
-	.DESCRIPTION
-		The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
-		You can specify: how many result you want to see, which credentials to use and/or which domain to query.
+.DESCRIPTION
+	The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
+	You can specify: how many result you want to see, which credentials to use and/or which domain to query.
 
-	.PARAMETER ComputerName
-		Specifies the name(s) of the Computer(s) to query
-	
-	.PARAMETER SizeLimit
-		Specifies the number of objects to output. Default is 100.
-	
-	.PARAMETER DomainDN
-		Specifies the path of the Domain to query.
-		Examples: 	"FX.LAB"
-					"DC=FX,DC=LAB"
-					"Ldap://FX.LAB"
-					"Ldap://DC=FX,DC=LAB"
-	
-	.PARAMETER Credential
-		Specifies the alternate credentials to use.
-	
-	.EXAMPLE
-		Get-DomainComputer
-	
-		This will show all the computers in the current domain
+.PARAMETER ComputerName
+	Specifies the name(s) of the Computer(s) to query
 
-	.EXAMPLE
-		Get-DomainComputer -ComputerName "Workstation001"
-	
-		This will query information for the computer Workstation001.
-	
-	.EXAMPLE
-		Get-DomainComputer -ComputerName "Workstation001","Workstation002"
-	
-		This will query information for the computers Workstation001 and Workstation002.
+.PARAMETER SizeLimit
+	Specifies the number of objects to output. Default is 100.
 
-	.EXAMPLE
-		Get-Content -Path c:\WorkstationsList.txt | Get-DomainComputer
-	
-		This will query information for all the workstations listed inside the WorkstationsList.txt file.
+.PARAMETER DomainDN
+	Specifies the path of the Domain to query.
+	Examples: 	"FX.LAB"
+				"DC=FX,DC=LAB"
+				"Ldap://FX.LAB"
+				"Ldap://DC=FX,DC=LAB"
 
-	.EXAMPLE
-		Get-DomainComputer -ComputerName "Workstation0*" -SizeLimit 10 -Verbose
-	
-		This will query information for computers starting with 'Workstation0', but only show 10 results max.
-		The Verbose parameter allow you to track the progression of the script.
-	
-	.EXAMPLE
-		Get-DomainComputer -ComputerName "Workstation0*" -SizeLimit 10 -Verbose -DomainDN "DC=FX,DC=LAB" -Credential (Get-Credential -Credential FX\Administrator)
-	
-		This will query information for computers starting with 'Workstation0' from the domain FX.LAB with the account FX\Administrator.
-		Only show 10 results max and the Verbose parameter allows you to track the progression of the script.
-	
-	.NOTES
-		NAME:	FUNCT-AD-COMPUTER-Get-DomainComputer.ps1
-		AUTHOR:	Francois-Xavier CAT 
-		DATE:	2013/10/26
-		EMAIL:	info@lazywinadmin.com
-		WWW:	www.lazywinadmin.com
-		TWITTER:@lazywinadm
+.PARAMETER Credential
+	Specifies the alternate credentials to use.
 
-		VERSION HISTORY:
-		1.0 2013.10.26
-			Initial Version
+.EXAMPLE
+	Get-DomainComputer
+
+	This will show all the computers in the current domain
+
+.EXAMPLE
+	Get-DomainComputer -ComputerName "Workstation001"
+
+	This will query information for the computer Workstation001.
+
+.EXAMPLE
+	Get-DomainComputer -ComputerName "Workstation001","Workstation002"
+
+	This will query information for the computers Workstation001 and Workstation002.
+
+.EXAMPLE
+	Get-Content -Path c:\WorkstationsList.txt | Get-DomainComputer
+
+	This will query information for all the workstations listed inside the WorkstationsList.txt file.
+
+.EXAMPLE
+	Get-DomainComputer -ComputerName "Workstation0*" -SizeLimit 10 -Verbose
+
+	This will query information for computers starting with 'Workstation0', but only show 10 results max.
+	The Verbose parameter allow you to track the progression of the script.
+
+.EXAMPLE
+	Get-DomainComputer -ComputerName "Workstation0*" -SizeLimit 10 -Verbose -DomainDN "DC=FX,DC=LAB" -Credential (Get-Credential -Credential FX\Administrator)
+
+	This will query information for computers starting with 'Workstation0' from the domain FX.LAB with the account FX\Administrator.
+	Only show 10 results max and the Verbose parameter allows you to track the progression of the script.
+
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 
     [CmdletBinding()]
