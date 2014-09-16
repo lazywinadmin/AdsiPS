@@ -3,26 +3,41 @@ function Get-ADSIUser
 <#
 .SYNOPSIS
 	This function will query Active Directory for User information. You can either specify the DisplayName, SamAccountName or DistinguishedName of the user
+
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the user
+	
 .PARAMETER DisplayName
 	Specify the DisplayName of the user
+	
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the user
+	
 .PARAMETER Credential
     Specify the Credential to use for the query
+	
 .PARAMETER SizeLimit
     Specify the number of item maximum to retrieve
+	
 .PARAMETER DomainDistinguishedName
     Specify the Domain or Domain DN path to use
+	
 .EXAMPLE
 	Get-ADSIUser -SamAccountName fxcat
+	
 .EXAMPLE
 	Get-ADSIUser -DisplayName "Cat, Francois-Xavier"
+	
 .EXAMPLE
 	Get-ADSIUser -DistinguishedName "CN=Cat\, Francois-Xavier,OU=Admins,DC=FX,DC=local"
+	
 .EXAMPLE
     Get-ADSIUser -SamAccountName testuser -Credential (Get-Credential -Credential Msmith)
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -195,26 +210,41 @@ function Get-ADSIGroup
 <#
 .SYNOPSIS
 	This function will query Active Directory for group information. You can either specify the DisplayName, SamAccountName or DistinguishedName of the group
+	
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the group
+	
 .PARAMETER Name
 	Specify the Name of the group
+	
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the group
+	
 .PARAMETER Credential
     Specify the Credential to use
+	
 .PARAMETER $DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
+	
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
+	
 .EXAMPLE
 	Get-ADSIGroup -SamAccountName TestGroup
+	
 .EXAMPLE
 	Get-ADSIGroup -Name TestGroup
+	
 .EXAMPLE
 	Get-ADSIGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
+	
 .EXAMPLE
     Get-ADSIGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser')
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM (
@@ -292,28 +322,16 @@ function Get-ADSIGroup
 					"ObjectClass" = $group.properties.objectclass
 					"ObjectGuid" = $group.properties.objectguid
 					"ObjectSid" = $group.properties.objectsid
-<#
-adspath
-cn
-distinguishedname
-dscorepropagationdata
-grouptype
-instancetype
-managedby
-member
-name
-objectcategory
-objectclass
-objectguid
-objectsid
-samaccountname
-samaccounttype
-usnchanged
-usncreated
-whenchanged
-whencreated
-#>
-
+					"WhenCreated" = $group.properties.whencreated
+					"WhenChanged" = $group.properties.whenChanged
+					<#
+					cn
+					dscorepropagationdata
+					instancetype
+					samaccounttype
+					usnchanged
+					usncreated
+					#>
 				}
 				
 				# Output the info
@@ -332,19 +350,25 @@ whencreated
 	}
 }
 
-
 function Get-ADSIGroupIManage
 {
 <#
 .SYNOPSIS
 	This function retrieve the group that the current user manage in the ActiveDirectory.
 	Typically the function will search for group(s) and look at the 'ManagedBy' property where it matches the current user.
+	
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Manager of the group
+	
 .EXAMPLE
 	Get-ADSIGroupIManage -SamAccountName fxcat
 
 	This will list all the group(s) where fxcat is designated as Manager.
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM ($SamAccountName = $env:USERNAME)
@@ -374,16 +398,22 @@ function Get-ADSIGroupIManage
 	END { Write-Verbose -Message "[END] Function Get-ADSIGroupIManage End."}
 }
 
-
 function Get-ADSIGroupMember
 {
 <#
 .SYNOPSIS
 	This function will list all the member of the specified group
+	
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Group
+	
 .EXAMPLE
 	Get-ADSIGroupMember -SamAccountName TestGroup
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	[CmdletBinding()]
 	PARAM ($SamAccountName)
@@ -423,6 +453,11 @@ function Check-ADSIUserIsGroupMember
     Check-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will return $true or $false depending if the user Fxcat is member of TestGroup
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
 #>
 	PARAM ($GroupSamAccountName, $UserSamAccountName)
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
@@ -432,7 +467,6 @@ function Check-ADSIUserIsGroupMember
 	$GroupInfo.IsMember($UserInfo.ADsPath)
 	
 }
-
 
 function Add-ADSIGroupMember
 {
@@ -548,7 +582,6 @@ function Add-ADSIGroupMember
 	}
 }
 
-
 function Remove-ADSIGroupMember
 {
 <#
@@ -576,32 +609,110 @@ function Remove-ADSIGroupMember
 	}
 }
 
-	
 function Get-ADSIObject
 {
+<#
+.SYNOPSIS
+	This function will query any kind of object in Active Directory
+
+.DESCRIPTION
+	This function will query any kind of object in Active Directory
+
+.PARAMETER  SamAccountName
+	Specify the SamAccountName of the object.
+	This parameter also search in Name and DisplayName properties
+	Name and Displayname are alias.
+
+.PARAMETER  DistinguishedName
+	Specify the DistinguishedName of the object your are looking for
+	
+.PARAMETER Credential
+    Specify the Credential to use
+	
+.PARAMETER $DomainDistinguishedName
+    Specify the DistinguishedName of the Domain to query
+	
+.PARAMETER SizeLimit
+    Specify the number of item(s) to output
+	
+.EXAMPLE
+	Get-ADSIObject -SamAccountName Fxcat
+
+.EXAMPLE
+	Get-ADSIObject -Name DC*
+#>
+
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ParameterSetName = "SamAccountName")]
-		[String]$SamAccountName
+		[Alias("Name", "DisplayName")]
+		[String]$SamAccountName,
+		
+		[Parameter(ParameterSetName = "DistinguishedName")]
+		[String]$DistinguishedName,
+		
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
 	)
 	BEGIN { }
 	PROCESS
 	{
 		TRY
 		{
-			$Search = [adsisearcher]"(samaccountname=$SamAccountName)"
-			# Define the properties
-			#  The properties need to be lowercase!!!!!!!!
-			$Properties = @{
-				"DisplayName" = $group.properties.displayname -as [string]
-				"SamAccountName" = $group.properties.samaccountname -as [string]
-				"Description" = $group.properties.description -as [string]
-				"DistinguishedName" = $group.properties.distinguishedname -as [string]
-				"ADsPath" = $group.properties.adspath -as [string]
+			# Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+			$Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDistinguishedName
+			
+			IF ($PSBoundParameters['SamAccountName'])
+			{
+				$Search.filter = "(|(name=$SamAccountName)(samaccountname=$SamAccountName)(displayname=$samaccountname))"
+			}
+			IF ($PSBoundParameters['DistinguishedName'])
+			{
+				$Search.filter = "(&(distinguishedname=$DistinguishedName))"
+			}
+			IF ($PSBoundParameters['DomainDistinguishedName'])
+			{
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
+			IF ($PSBoundParameters['Credential'])
+			{
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
 			}
 			
-			# Output the info
-			New-Object -TypeName PSObject -Property $Properties
+			foreach ($Object in $($Search.FindAll()))
+			{
+				# Define the properties
+				#  The properties need to be lowercase!!!!!!!!
+				$Properties = @{
+					"DisplayName" = $Object.properties.displayname -as [string]
+					"Name" = $Object.properties.name -as [string]
+					"ObjectCategory" = $Object.properties.objectcategory -as [string]
+					"ObjectClass" = $Object.properties.objectclass -as [string]
+					"SamAccountName" = $Object.properties.samaccountname -as [string]
+					"Description" = $Object.properties.description -as [string]
+					"DistinguishedName" = $Object.properties.distinguishedname -as [string]
+					"ADsPath" = $Object.properties.adspath -as [string]
+					"LastLogon" = $Object.properties.lastlogon -as [string]
+					"WhenCreated" = $Object.properties.whencreated -as [string]
+					"WhenChanged" = $Object.properties.whenchanged -as [string]
+				}
+				
+				# Output the info
+				New-Object -TypeName PSObject -Property $Properties
+			}
 		}
 		CATCH
 		{
@@ -614,7 +725,6 @@ function Get-ADSIObject
 		Write-Verbose -Message "[END] Function Get-ADSIObject End."
 	}
 }
-
 
 Function Get-ADSIComputer {
 <#
@@ -809,7 +919,6 @@ Function Get-ADSIComputer {
 		}#ELSE
     }#PROCESS
     END{Write-Verbose -Message "Script Completed"}
-}#function Get-ADSIComputer
-
+}
 
 Export-ModuleMember -Function *
