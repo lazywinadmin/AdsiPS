@@ -229,6 +229,9 @@ function Get-ADSIGroup
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
 	
+.PARAMETER SearchScope
+	Specify the scope of the search (One, OneLevel, Subtree). Default is Subtree.
+	
 .EXAMPLE
 	Get-ADSIGroup -SamAccountName TestGroup
 	
@@ -246,27 +249,33 @@ function Get-ADSIGroup
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	[CmdletBinding()]
+	[CmdletBinding(DefaultParameterSetName = "Name")]
 	PARAM (
-		[Parameter(ParameterSetName = "Name")]
+		[Parameter(Mandatory = $true, ParameterSetName = "Name")]
 		[String]$Name,
-
-		[Parameter(ParameterSetName = "SamAccountName")]
+		
+		[Parameter(Mandatory = $true, ParameterSetName = "SamAccountName")]
 		[String]$SamAccountName,
-
-		[Parameter(ParameterSetName = "DistinguishedName")]
+		
+		[Parameter(Mandatory = $true, ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-
-		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[Alias("Domain","DomainDN")]
-	        [String]$DomainDistinguishedName=$(([adsisearcher]"").Searchroot.path),
-	
-	        [Alias("RunAs")]
+		
+		[Parameter(Mandatory = $true, ParameterSetName = "Empty")]
+		[Switch]$Empty,
+		
+		[ValidateSet("One", "OneLevel", "Subtree")]
+		$SearchScope = "SubTree",
+		
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[Alias("Domain", "DomainDN")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-
-		[Alias("ResultLimit","Limit")]
-		[int]$SizeLimit='100'
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
 	)
 	BEGIN { }
 	PROCESS
@@ -277,32 +286,43 @@ function Get-ADSIGroup
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-
-			If ($Name)
+			$Search.SearchScope = $SearchScope
+			
+			IF ($PSboundParameters['DomainDistinguishedName'])
 			{
-				$Search.filter = "(&(objectCategory=group)(name=$Name))"
-			}
-			IF ($SamAccountName)
-			{
-				$Search.filter = "(&(objectCategory=group)(samaccountname=$SamAccountName))"
-			}
-			IF ($DistinguishedName)
-			{
-				$Search.filter = "(&(objectCategory=group)(distinguishedname=$distinguishedname))"
-			}
-			IF ($DomainDistinguishedName)
-			{
-			IF ($DomainDistinguishedName -notlike "LDAP://*") {$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"}#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-            
+			
 			IF ($PSBoundParameters['Credential'])
 			{
-				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-
+			If ($PSboundParameters['Empty'])
+			{
+				$Search.filter = "(&(objectCategory=group)(!(groupType:1.2.840.113556.1.4.803:=1)))"
+			}
+			
+			If ($PSboundParameters['Name'])
+			{
+				$Search.filter = "(&(objectCategory=group)(name=$Name))"
+			}
+			IF ($PSboundParameters['SamAccountName'])
+			{
+				$Search.filter = "(&(objectCategory=group)(samaccountname=$SamAccountName))"
+			}
+			IF ($PSboundParameters['DistinguishedName'])
+			{
+				$Search.filter = "(&(objectCategory=group)(distinguishedname=$distinguishedname))"
+			}
+			IF (-not $PSboundParameters['SizeLimit'])
+			{
+				Write-Warning -Message "Note: Default Ouput is 100 results. Use the SizeLimit Paremeter to change it. Value 0 will remove the limit"
+			}
+			
+			
 			foreach ($group in $($Search.FindAll()))
 			{
 				
