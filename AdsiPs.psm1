@@ -235,14 +235,22 @@ function Get-ADSIGroup
 .EXAMPLE
 	Get-ADSIGroup -SamAccountName TestGroup
 	
+	This will return the information about the TestGroup
+	
 .EXAMPLE
 	Get-ADSIGroup -Name TestGroup
+
+	This will return the information about the TestGroup
+.EXAMPLE
+	Get-ADSIGroup -Empty
 	
+	This will find all the empty groups
+
 .EXAMPLE
 	Get-ADSIGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
 	
 .EXAMPLE
-    Get-ADSIGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser')
+    Get-ADSIGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser') -SearchScope Subtree
 	
 .NOTES
 	Francois-Xavier Cat
@@ -322,10 +330,8 @@ function Get-ADSIGroup
 				Write-Warning -Message "Note: Default Ouput is 100 results. Use the SizeLimit Paremeter to change it. Value 0 will remove the limit"
 			}
 			
-			
 			foreach ($group in $($Search.FindAll()))
 			{
-				
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
@@ -342,15 +348,13 @@ function Get-ADSIGroup
 					"ObjectGuid" = $group.properties.objectguid
 					"ObjectSid" = $group.properties.objectsid
 					"WhenCreated" = $group.properties.whencreated
-					"WhenChanged" = $group.properties.whenChanged
-					<#
-					cn
-					dscorepropagationdata
-					instancetype
-					samaccounttype
-					usnchanged
-					usncreated
-					#>
+					"WhenChanged" = $group.properties.whenchanged
+					"cn" = $group.properties.cn
+					"dscorepropagationdata" = $group.properties.dscorepropagationdata
+					"instancetype" = $group.properties.instancetype
+					"samaccounttype" = $group.properties.samaccounttype
+					"usnchanged" = $group.properties.usnchanged
+					"usncreated" = $group.properties.usncreated
 				}
 				
 				# Output the info
