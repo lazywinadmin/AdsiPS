@@ -273,11 +273,10 @@ function Get-ADSIGroup
 	{
 		TRY
 		{
-		            # Building the basic search object with some parameters
+			# Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-            		$Search.SizeLimit = $SizeLimit
+			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-
 
 			If ($Name)
 			{
