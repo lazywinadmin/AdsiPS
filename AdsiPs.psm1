@@ -219,11 +219,17 @@ function Get-ADSIGroup
 	
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the group
+
+.PARAMETER Empty
+	This parameter returns all the empty groups
+	
+.PARAMETER SystemGroups
+	This parameter returns all the System Groups
 	
 .PARAMETER Credential
     Specify the Credential to use
 	
-.PARAMETER $DomainDistinguishedName
+.PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
@@ -271,6 +277,9 @@ function Get-ADSIGroup
 		[Parameter(Mandatory = $true, ParameterSetName = "Empty")]
 		[Switch]$Empty,
 		
+		[Parameter(Mandatory = $true, ParameterSetName = "SystemGroups")]
+		[Switch]$SystemGroups,
+		
 		[ValidateSet("One", "OneLevel", "Subtree")]
 		$SearchScope = "SubTree",
 		
@@ -310,9 +319,13 @@ function Get-ADSIGroup
 			}
 			If ($PSboundParameters['Empty'])
 			{
-				$Search.filter = "(&(objectCategory=group)(!(groupType:1.2.840.113556.1.4.803:=1)))"
+				$Search.filter = "(&(objectClass=group)(!member=*))"
 			}
-			
+			If ($PSboundParameters['SystemGroups'])
+			{
+				$Search.filter = "(&(objectCategory=group)(groupType:1.2.840.113556.1.4.803:=1))"
+				$Search.SearchScope = 'subtree'
+			}
 			If ($PSboundParameters['Name'])
 			{
 				$Search.filter = "(&(objectCategory=group)(name=$Name))"
@@ -1404,5 +1417,238 @@ function Get-ADSIContact
 		Write-Verbose -Message "[END] Function Get-ADSIContact End."
 	}
 }
+
+function Get-ADSIDomainController
+{
+<#
+.SYNOPSIS
+	This function will query Active Directory for all Domain Controllers.
+	
+.PARAMETER Credential
+    Specify the Credential to use
+	
+.PARAMETER DomainDistinguishedName
+    Specify the DistinguishedName of the Domain to query
+	
+.PARAMETER SizeLimit
+    Specify the number of item(s) to output.
+    Default is 100.
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+#>
+	[CmdletBinding()]
+	PARAM (
+		[Parameter()]
+		[Alias("Domain", "DomainDN")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
+	)
+	BEGIN { }
+	PROCESS
+	{
+		TRY
+		{
+			# Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+			$Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDistinguishedName
+			$Search.Filter = "(&(objectClass=computer)(userAccountControl:1.2.840.113556.1.4.803:=8192))"
+			
+			IF ($DomainDistinguishedName)
+			{
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
+			IF ($PSBoundParameters['Credential'])
+			{
+				Write-Verbose -Message "[PROCESS] Different Credential specified: $($credential.username)"
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
+			}
+			If (-not $PSBoundParameters["SizeLimit"])
+			{
+				Write-Warning -Message "Default SizeLimit: 100 Results"
+			}
+			
+			
+			
+			foreach ($DC in $($Search.FindAll()))
+			{
+				# Define the properties
+				#  The properties need to be lowercase!!!!!!!!
+				$DC.properties
+				
+                <#
+                accountexpires
+adspath
+cn
+codepage
+countrycode
+distinguishedname
+dnshostname
+dscorepropagationdata
+instancetype
+iscriticalsystemobject
+lastlogontimestamp
+localpolicyflags
+msdfsr-computerreferencebl
+msds-supportedencryptiontypes
+name
+objectcategory
+objectclass
+objectguid
+objectsid
+operatingsystem
+operatingsystemversion
+primarygroupid
+pwdlastset
+ridsetreferences
+samaccountname
+samaccounttype
+serverreferencebl
+serviceprincipalname
+useraccountcontrol
+usnchanged
+usncreated
+whenchanged
+whencreated
+                
+                #>
+				
+				
+				
+				# Output the info
+				#New-Object -TypeName PSObject -Property $Properties
+			}
+		}#TRY
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}#PROCESS
+	END
+	{
+		Write-Verbose -Message "[END] Function Get-ADSIContact End."
+	}
+}
+
+function Get-ADSISite
+{
+<#
+.SYNOPSIS
+	This function will query Active Directory for all Sites.
+	
+.PARAMETER Credential
+    Specify the Credential to use
+	
+.PARAMETER DomainDistinguishedName
+    Specify the DistinguishedName of the Domain to query
+	
+.PARAMETER SizeLimit
+    Specify the number of item(s) to output.
+    Default is 100.
+	
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+#>
+	[CmdletBinding()]
+	PARAM (
+		[Parameter()]
+		[Alias("Domain", "DomainDN")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
+	)
+	BEGIN { }
+	PROCESS
+	{
+		TRY
+		{
+			# Building the basic search object with some parameters
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+			$Search.SizeLimit = $SizeLimit
+			$Search.Filter = "(objectclass=site)"
+			
+			IF ($PSBoundParameters['DomainDistinguishedName'])
+			{
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
+			IF ($PSBoundParameters['Credential'])
+			{
+				Write-Verbose -Message "[PROCESS] Different Credential specified: $($credential.username)"
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
+			}
+			If (-not $PSBoundParameters["SizeLimit"])
+			{
+				Write-Warning -Message "Default SizeLimit: 100 Results"
+			}
+			
+			$Search.SearchRoot = $DomainDistinguishedName -replace "LDAP://", "LDAP://CN=Sites,CN=Configuration,"
+			
+			foreach ($Site in $($Search.FindAll()))
+			{
+				# Define the properties
+				#  The properties need to be lowercase!!!!!!!!
+				$Site.properties
+				
+                <#
+     adspath
+cn
+distinguishedname
+dscorepropagationdata
+instancetype
+name
+objectcategory
+objectclass
+objectguid
+showinadvancedviewonly
+siteobjectbl
+systemflags
+usnchanged
+usncreated
+whenchanged
+whencreated
+                #>
+				
+				
+				
+				# Output the info
+				#New-Object -TypeName PSObject -Property $Properties
+			}
+		}#TRY
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}#PROCESS
+	END
+	{
+		Write-Verbose -Message "[END] Function Get-ADSISite End."
+	}
+}
+
+
 
 Export-ModuleMember -Function *
