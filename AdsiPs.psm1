@@ -1120,6 +1120,12 @@ function Get-ADSIOrganizationalUnit
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the OU
 	
+.PARAMETER All
+	Will show all the OU in the domain
+	
+.PARAMETER GroupPolicyInheritanceBlocked
+	Will show only the OU that have Group Policy Inheritance Blocked enabled.
+	
 .PARAMETER Credential
     Specify the Credential to use
 	
@@ -1160,6 +1166,8 @@ function Get-ADSIOrganizationalUnit
 		[Parameter(ParameterSetName = "All")]
 		[String]$All,
 		
+		[Switch]$GroupPolicyInheritanceBlocked,
+		
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
@@ -1185,14 +1193,26 @@ function Get-ADSIOrganizationalUnit
 			If ($Name)
 			{
 				$Search.filter = "(&(objectCategory=organizationalunit)(name=$Name))"
+				IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+				{
+					$Search.filter = "(&(objectCategory=organizationalunit)(name=$Name)(gpoptions=1))"
+				}
 			}
 			IF ($DistinguishedName)
 			{
 				$Search.filter = "(&(objectCategory=organizationalunit)(distinguishedname=$distinguishedname))"
+				IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+				{
+					$Search.filter = "(&(objectCategory=organizationalunit)(distinguishedname=$distinguishedname)(gpoptions=1))"
+				}
 			}
 			IF ($all)
 			{
 				$Search.filter = "(&(objectCategory=organizationalunit))"
+				IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+				{
+					$Search.filter = "(&(objectCategory=organizationalunit)(gpoptions=1))"
+				}
 			}
 			IF ($DomainDistinguishedName)
 			{
