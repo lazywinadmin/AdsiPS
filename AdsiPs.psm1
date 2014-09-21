@@ -1,4 +1,4 @@
-function Get-ADSIUser
+﻿function Get-ADSIUser
 {
 <#
 .SYNOPSIS
@@ -43,35 +43,35 @@ function Get-ADSIUser
 	PARAM (
 		[Parameter(ParameterSetName = "DisplayName")]
 		[String]$DisplayName,
-
+		
 		[Parameter(ParameterSetName = "SamAccountName")]
 		[String]$SamAccountName,
-
+		
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-
-        [Alias("RunAs")]
+		
+		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-
+		
 		[Parameter()]
-		[Alias("DomainDN","Domain")]
-        [String]$DomainDistinguishedName=$(([adsisearcher]"").Searchroot.path),
-
-        [Alias("ResultLimit","Limit")]
-		[int]$SizeLimit='100'
-        
+		[Alias("DomainDN", "Domain")]
+		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100'
+		
 	)
 	BEGIN { }
 	PROCESS
 	{
 		TRY
 		{
-            		# Building the basic search object with some parameters
+			# Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-            		$Search.SizeLimit = $SizeLimit
+			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDN
-
+			
 			If ($DisplayName)
 			{
 				$Search.filter = "(&(objectCategory=person)(objectClass=User)(displayname=$DisplayName))"
@@ -84,20 +84,20 @@ function Get-ADSIUser
 			{
 				$Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$distinguishedname))"
 			}
-            
+			
 			IF ($DomainDistinguishedName)
 			{
-			IF ($DomainDistinguishedName -notlike "LDAP://*") {$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"}#IF
-			Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-					$Search.SearchRoot = $DomainDistinguishedName
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			
 			IF ($PSBoundParameters['Credential'])
 			{
-			$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName,$($Credential.UserName),$($Credential.GetNetworkCredential().password)
-			$Search.SearchRoot = $Cred
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
 			}
-
+			
 			foreach ($user in $($Search.FindAll()))
 			{
 				
@@ -115,7 +115,7 @@ function Get-ADSIUser
 					"PostalCode" = $user.Properties.postalcode -as [string]
 					"Mail" = $user.properties.mail -as [string]
 					"TelephoneNumber" = $user.properties.telephonenumber -as [string]
-					"LastLogonTimeStamp" = $user.properties.lastlogontimestamp  -as [string]
+					"LastLogonTimeStamp" = $user.properties.lastlogontimestamp -as [string]
 					"ObjectCategory" = $user.properties.objectcategory -as [string]
 					"Manager" = $user.properties.manager -as [string]
 					"HomeDrive" = $user.properties.homedrive -as [string]
@@ -834,7 +834,7 @@ function Get-ADSIObject
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-
+	
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ParameterSetName = "SamAccountName")]
@@ -919,7 +919,8 @@ function Get-ADSIObject
 	}
 }
 
-Function Get-ADSIComputer {
+Function Get-ADSIComputer
+{
 <#
 .SYNOPSIS
 	The Get-DomainComputer function allows you to get information from an Active Directory Computer object using ADSI.
@@ -981,130 +982,152 @@ Function Get-ADSIComputer {
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-
-    [CmdletBinding()]
-    PARAM(
-        [Parameter(ValueFromPipelineByPropertyName=$true,
-					ValueFromPipeline=$true)]
-		[Alias("Computer")]
-        [String[]]$ComputerName,
-        
-		[Alias("ResultLimit","Limit")]
-		[int]$SizeLimit='100',
-		
-		[Parameter(ValueFromPipelineByPropertyName=$true)]
-		[Alias("Domain")]
-        [String]$DomainDN=$(([adsisearcher]"").Searchroot.path),
 	
+	[CmdletBinding()]
+	PARAM (
+		[Parameter(ValueFromPipelineByPropertyName = $true,
+				   ValueFromPipeline = $true)]
+		[Alias("Computer")]
+		[String[]]$ComputerName,
+		
+		[Alias("ResultLimit", "Limit")]
+		[int]$SizeLimit = '100',
+		
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[Alias("Domain")]
+		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
+		
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
-
+		
 	)#PARAM
-
-    PROCESS{
-		IF ($ComputerName){
+	
+	PROCESS
+	{
+		IF ($ComputerName)
+		{
 			Write-Verbose -Message "One or more ComputerName specified"
-            FOREACH ($item in $ComputerName){
-				TRY{
+			FOREACH ($item in $ComputerName)
+			{
+				TRY
+				{
 					# Building the basic search object with some parameters
-                    Write-Verbose -Message "COMPUTERNAME: $item"
+					Write-Verbose -Message "COMPUTERNAME: $item"
 					$Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectSearcher
 					$Searcher.Filter = "(&(objectCategory=Computer)(name=$item))"
-                    $Searcher.SizeLimit = $SizeLimit
+					$Searcher.SizeLimit = $SizeLimit
 					$Searcher.SearchRoot = $DomainDN
-				
-				    # Specify a different domain to query
-                    IF ($PSBoundParameters['DomainDN']){
-                        IF ($DomainDN -notlike "LDAP://*") {$DomainDN = "LDAP://$DomainDN"}#IF
-                        Write-Verbose -Message "Different Domain specified: $DomainDN"
-					    $Searcher.SearchRoot = $DomainDN}#IF ($PSBoundParameters['DomainDN'])
-				
-				    # Alternate Credentials
-				    IF ($PSBoundParameters['Credential']) {
-					    Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
-					    $Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN,$($Credential.UserName),$($Credential.GetNetworkCredential().password) -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCred
-					    $Searcher.SearchRoot = $Domain}#IF ($PSBoundParameters['Credential'])
-
+					
+					# Specify a different domain to query
+					IF ($PSBoundParameters['DomainDN'])
+					{
+						IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
+						Write-Verbose -Message "Different Domain specified: $DomainDN"
+						$Searcher.SearchRoot = $DomainDN
+					}#IF ($PSBoundParameters['DomainDN'])
+					
+					# Alternate Credentials
+					IF ($PSBoundParameters['Credential'])
+					{
+						Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
+						$Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password) -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCred
+						$Searcher.SearchRoot = $Domain
+					}#IF ($PSBoundParameters['Credential'])
+					
 					# Querying the Active Directory
 					Write-Verbose -Message "Starting the ADSI Search..."
-	                FOREACH ($Computer in $($Searcher.FindAll())){
-                        Write-Verbose -Message "$($Computer.properties.name)"
-	                    New-Object -TypeName PSObject -ErrorAction 'Continue' -ErrorVariable ErrProcessNewObjectOutput -Property @{
-	                        "Name" = $($Computer.properties.name)
-	                        "DNShostName"    = $($Computer.properties.dnshostname)
-	                        "Description" = $($Computer.properties.description)
-                            "OperatingSystem"=$($Computer.Properties.operatingsystem)
-                            "WhenCreated" = $($Computer.properties.whencreated)
-                            "DistinguishedName" = $($Computer.properties.distinguishedname)}#New-Object
-	                }#FOREACH $Computer
-
+					FOREACH ($Computer in $($Searcher.FindAll()))
+					{
+						Write-Verbose -Message "$($Computer.properties.name)"
+						New-Object -TypeName PSObject -ErrorAction 'Continue' -ErrorVariable ErrProcessNewObjectOutput -Property @{
+							"Name" = $($Computer.properties.name)
+							"DNShostName" = $($Computer.properties.dnshostname)
+							"Description" = $($Computer.properties.description)
+							"OperatingSystem" = $($Computer.Properties.operatingsystem)
+							"WhenCreated" = $($Computer.properties.whencreated)
+							"DistinguishedName" = $($Computer.properties.distinguishedname)
+						}#New-Object
+					}#FOREACH $Computer
+					
 					Write-Verbose -Message "ADSI Search completed"
-	            }#TRY
-				CATCH{ 
+				}#TRY
+				CATCH
+				{
 					Write-Warning -Message ('{0}: {1}' -f $item, $_.Exception.Message)
-					IF ($ErrProcessNewObjectSearcher){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object"}
-					IF ($ErrProcessNewObjectCred){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object"}
-					IF ($ErrProcessNewObjectOutput){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object"}
+					IF ($ErrProcessNewObjectSearcher) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
+					IF ($ErrProcessNewObjectCred) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
+					IF ($ErrProcessNewObjectOutput) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 				}#CATCH
-            }#FOREACH $item
+			}#FOREACH $item
 			
-
+			
 		}#IF $ComputerName
 		
-		ELSE {
+		ELSE
+		{
 			Write-Verbose -Message "No ComputerName specified"
-            TRY{
+			TRY
+			{
 				# Building the basic search object with some parameters
-                Write-Verbose -Message "List All object"
+				Write-Verbose -Message "List All object"
 				$Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectSearcherALL
 				$Searcher.Filter = "(objectCategory=Computer)"
-                $Searcher.SizeLimit = $SizeLimit
+				$Searcher.SizeLimit = $SizeLimit
 				
 				# Specify a different domain to query
-                IF ($PSBoundParameters['DomainDN']){
-                    $DomainDN = "LDAP://$DomainDN"
-                    Write-Verbose -Message "Different Domain specified: $DomainDN"
-					$Searcher.SearchRoot = $DomainDN}#IF ($PSBoundParameters['DomainDN'])
+				IF ($PSBoundParameters['DomainDN'])
+				{
+					$DomainDN = "LDAP://$DomainDN"
+					Write-Verbose -Message "Different Domain specified: $DomainDN"
+					$Searcher.SearchRoot = $DomainDN
+				}#IF ($PSBoundParameters['DomainDN'])
 				
 				# Alternate Credentials
-				IF ($PSBoundParameters['Credential']) {
+				IF ($PSBoundParameters['Credential'])
+				{
 					Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
-					$DomainDN = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $Credential.UserName,$Credential.GetNetworkCredential().password -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCredALL
-					$Searcher.SearchRoot = $DomainDN}#IF ($PSBoundParameters['Credential'])
+					$DomainDN = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $Credential.UserName, $Credential.GetNetworkCredential().password -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCredALL
+					$Searcher.SearchRoot = $DomainDN
+				}#IF ($PSBoundParameters['Credential'])
 				
 				# Querying the Active Directory
-                Write-Verbose -Message "Starting the ADSI Search..."
-	            FOREACH ($Computer in $($Searcher.FindAll())){
-					TRY{
-	                    Write-Verbose -Message "$($Computer.properties.name)"
-	                    New-Object -TypeName PSObject -ErrorAction 'Continue' -ErrorVariable ErrProcessNewObjectOutputALL -Property @{
-	                        "Name" = $($Computer.properties.name)
-	                        "DNShostName"    = $($Computer.properties.dnshostname)
-	                        "Description" = $($Computer.properties.description)
-	                        "OperatingSystem"=$($Computer.Properties.operatingsystem)
-	                        "WhenCreated" = $($Computer.properties.whencreated)
-	                        "DistinguishedName" = $($Computer.properties.distinguishedname)}#New-Object
+				Write-Verbose -Message "Starting the ADSI Search..."
+				FOREACH ($Computer in $($Searcher.FindAll()))
+				{
+					TRY
+					{
+						Write-Verbose -Message "$($Computer.properties.name)"
+						New-Object -TypeName PSObject -ErrorAction 'Continue' -ErrorVariable ErrProcessNewObjectOutputALL -Property @{
+							"Name" = $($Computer.properties.name)
+							"DNShostName" = $($Computer.properties.dnshostname)
+							"Description" = $($Computer.properties.description)
+							"OperatingSystem" = $($Computer.Properties.operatingsystem)
+							"WhenCreated" = $($Computer.properties.whencreated)
+							"DistinguishedName" = $($Computer.properties.distinguishedname)
+						}#New-Object
 					}#TRY
-					CATCH{
+					CATCH
+					{
 						Write-Warning -Message ('{0}: {1}' -f $Computer, $_.Exception.Message)
-						IF ($ErrProcessNewObjectOutputALL){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object"}
+						IF ($ErrProcessNewObjectOutputALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 					}
-                }#FOREACH $Computer
-
+				}#FOREACH $Computer
+				
 				Write-Verbose -Message "ADSI Search completed"
 				
-            }#TRY
+			}#TRY
 			
-            CATCH{
+			CATCH
+			{
 				Write-Warning -Message "Something Wrong happened"
-				IF ($ErrProcessNewObjectSearcherALL){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object"}
-				IF ($ErrProcessNewObjectCredALL){Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object"}
+				IF ($ErrProcessNewObjectSearcherALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
+				IF ($ErrProcessNewObjectCredALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
 				
-            }#CATCH
+			}#CATCH
 		}#ELSE
-    }#PROCESS
-    END{Write-Verbose -Message "Script Completed"}
+	}#PROCESS
+	END { Write-Verbose -Message "Script Completed" }
 }
 
 
@@ -1870,3 +1893,6 @@ function Get-ADSIFsmo
 
 
 Export-ModuleMember -Function *
+
+
+
