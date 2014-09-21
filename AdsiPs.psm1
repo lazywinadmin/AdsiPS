@@ -587,14 +587,14 @@ function Get-ADSIGroupMembership
 	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMembership End." }
 }
 
-function Check-ADSIUserIsGroupMember
+function Test-ADSIUserIsGroupMember
 {
 <#
 .SYNOPSIS
     This function will check if a domain user is member of a domain group
 
 .EXAMPLE
-    Check-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
+    Test-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will return $true or $false depending if the user Fxcat is member of TestGroup
 	
@@ -785,7 +785,7 @@ function Remove-ADSIGroupMember
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
 	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
 	
-	IF (Check-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
+	IF (Test-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
 	{
 		Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
 		$GroupInfo.Remove($UserInfo.ADsPath)
