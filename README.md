@@ -2,13 +2,19 @@
 
 PowerShell module for ADSI
 
-### Goals
+#### Goals
  * No ActiveDirectory module/No Quest AD Snapin required
  * Being able to specify different credentials
  * Being able to specify different domain
 
 
-### ToDo
+#### Use Cases
+
+ * Sometime ActiveDirectory Module is not available/ or can't install it on a machine
+ * AD queries need to be performed by a tool (GUI for example) and don't want it to load AD module. Additionally you don't know who will use the tool and if they have/can/know how to install the module.
+ * Performance, ADSI is way faster...
+
+#### ToDo
 
 ##### Brainstorm
 - [ ] Find a smarter way to return all the properties (keys/values) after a findall()
