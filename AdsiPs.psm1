@@ -1698,6 +1698,9 @@ function Get-ADSISiteServer
 .SYNOPSIS
 	This function will query Active Directory for all Sites Servers
 	
+.PARAMETER Site
+	Specify the name of the Site
+	
 .PARAMETER Credential
     Specify the Credential to use
 	
@@ -1708,6 +1711,12 @@ function Get-ADSISiteServer
     Specify the number of item(s) to output.
     Default is 100.
 	
+.EXAMPLE
+	Get-ADSISiteServer -Site "Montreal"
+
+.EXAMPLE
+	Get-ADSISiteServer -Site "Montreal" -Domain "DC=Contoso,DC=com"
+	
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -1717,6 +1726,7 @@ function Get-ADSISiteServer
 	PARAM (
 		[Parameter(Mandatory = $true)]
 		$Site,
+	
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
@@ -1782,6 +1792,52 @@ function Get-ADSISiteServer
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSISite End."
+	}
+}
+
+function Get-ADSISiteConnection
+{
+	[CmdletBinding()]
+	param (
+		[parameter(mandatory = $true, position = 0, ValueFromPipeline = $true)]
+		$Domain,
+		[parameter(mandatory = $true)]
+		$Site
+	)
+	$DomainName = $Domain.Name
+	$ADEntry = [system.directoryservices.directoryentry]([ADSI]"LDAP://$DomainName")
+	$source = New-Object System.DirectoryServices.DirectorySearcher
+	$source.SearchRoot = "LDAP://CN=$Site,CN=Sites,CN=Configuration,$DomainName"
+	$source.SearchScope = 'Subtree'
+	$source.PageSize = 100000
+	$source.filter = "(objectclass=nTDSConnection)"
+	try
+	{
+		$SiteConnections = $source.findall()
+		if ($SiteConnections -ne $null)
+		{
+			foreach ($SiteConnection in $SiteConnections)
+			{
+				$Object = New-Object -TypeName 'PSObject'
+				$Object | Add-Member -MemberType 'NoteProperty' -Name 'Domain' -Value $Domain.FQDN
+				$Object | Add-Member -MemberType 'NoteProperty' -Name 'Site' -Value $Site
+				$Object | Add-Member -MemberType 'NoteProperty' -Name 'Name' -Value $($SiteConnection.Properties.Item("Name"))
+				$Object | Add-Member -MemberType 'NoteProperty' -Name 'FromServer' -Value $($SiteConnection.Properties.Item("fromserver") -split ',' -replace 'CN=', '')[3]
+				$Object
+			}
+		}
+		else
+		{
+			$Object = New-Object -TypeName 'PSObject'
+			$Object | Add-Member -MemberType 'NoteProperty' -Name 'Domain' -Value $Domain.FQDN
+			$Object | Add-Member -MemberType 'NoteProperty' -Name 'Site' -Value $Site
+			$Object | Add-Member -MemberType 'NoteProperty' -Name 'Name' -Value ''
+			$Object | Add-Member -MemberType 'NoteProperty' -Name 'FromServer' -Value ''
+			$Object
+		}
+	}
+	catch
+	{
 	}
 }
 
@@ -1892,7 +1948,7 @@ function Get-ADSIFsmo
 }
 
 
-Export-ModuleMember -Function *
 
+Export-ModuleMember -Function *
 
 
