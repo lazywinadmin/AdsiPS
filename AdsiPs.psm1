@@ -572,7 +572,8 @@ function Get-ADSIGroupMembership
 			foreach ($member in $search.FindOne().properties.member)
 			{
 				#User
-				Get-ADSIUser -DistinguishedName $member
+				#Get-ADSIUser -DistinguishedName $member
+				Get-ADSIObject -DistinguishedName $member
 				
 				#Group
 				# need to be done here
