@@ -1,6 +1,6 @@
 #ADSI
 
-PowerShell module for ADSI
+PowerShell module to interact with Active Directory using ADSI and DirectoryService
 
 #### Goals
  * No ActiveDirectory module/No Quest AD Snapin required
