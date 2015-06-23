@@ -2369,6 +2369,8 @@ Function New-ADSIDirectoryContextDomain
         Francois-Xavier.Cat
         LazyWinAdmin.com
         @lazywinadm
+	
+		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]
@@ -2436,6 +2438,8 @@ Function New-ADSIDirectoryContextForest
         Francois-Xavier.Cat
         LazyWinAdmin.com
         @lazywinadm
+	
+		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]
