@@ -11,9 +11,9 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 #### Use Cases
 
  * Sometime ActiveDirectory Module is not available/ or can't install it on a machine
- * AD queries need to be performed by a tool (GUI for example) and don't want it to load AD module. Additionally you don't know who will use the tool and if they have/can/know how to install the module.
+ * AD queries need to be performed by a tool (GUI for example) and you don't want it to load AD module. Additionally you don't know who will use the tool and if they have/can/know how to install the module.
  * Performance, ADSI is way faster...
- * I can't see how the AD Module and Quest AD Module are made, this is a good way to learn.
+ * I can't see the code behind AD Module and Quest AD Snapin, so this is a good way to learn how Active Directory is working
 
 #### ToDo
 
@@ -29,11 +29,14 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  - [ ] Param: OperatingSystem
  - [ ] Param: Disabled
 - [x] Get-ADSIContact
+- [x] Get-ADSICurrentComputerSite
 - [ ] Get-ADSIDomain
 - [x] Get-ADSIDomainController
-- [x] Get-ADSIFsmo
- -  [ ] [Switch]$Domain
- -  [ ] [Switch]$Forest
+- [x] Get-ADSIForest
+- [x] Get-ADSIForestMode
+- [x] Get-ADSIForestDomain
+- [x] Get-ADSIFsmo 
+- [x] Get-ADSIGlobalCatalogs
 - [x] Get-ADSIGroup
  -  [ ] Param: GroupScope (Domain Local, Global, Universal)
  -  [ ] Param: GroupType (Distribution/Security)
@@ -41,20 +44,26 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 - [x] Get-ADSIGroupManagedBy
 - [x] Get-ADSIGroupMembership
  - [ ] Indirect Members (Check in Chain)
+- [x] Get-ADSIGroupPolicyObject
 - [x] Get-ADSIObject
 - [x] Get-ADSIOrganizationalUnit
+- [x] Get-ADSIRootDomain
 - [ ] Get-ADSIRootDSE
+- [x] Get-ADSISchema
 - [ ] Get-ADSIServiceAccount
 - [x] Get-ADSISite
 - [x] Get-ADSISiteConnection
+- [x] Get-ADSISiteLink
 - [x] Get-ADSISiteServer
-- [ ] Get-ADSITrust
+- [x] Get-ADSITrustRelationship
 - [x] Get-ADSIUser
  - [ ] Modify queries to use Anr (Ambiguous Name Resolution)
  - [ ] Param: Disabled Account 
  - [ ] Param: Change Password next logon enabled
  - [ ] Param: LockedOut
  - [ ] Param: Disabled
+- [x] New-ADSIDirectoryContextDomain
+- [x] New-ADSIDirectoryContextForest
 - [ ] New-ADSISite
 - [ ] New-ADSIComputer
 - [ ] New-ADSIUser
