@@ -1,4 +1,4 @@
-#ADSI
+#AdsiPS
 
 PowerShell module to interact with Active Directory using ADSI and DirectoryServices
 
