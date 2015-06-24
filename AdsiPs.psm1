@@ -388,10 +388,70 @@ function Get-ADSICurrentComputerSite
 
 Function Get-ADSIDomain
 {
-	$Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectSearcher
-	$Searcher.Filter = "(objectCategory=domain)"
+<#
+	.SYNOPSIS
+		Function to retrieve the current or specified domain
 	
-	$Searcher.FindAll().Properties.name
+	.DESCRIPTION
+		Function to retrieve the current or specified domain
+	
+	.PARAMETER Credential
+		Specifies alternative credential to use
+	
+	.PARAMETER ForestName
+		Specifies the DomainName to query
+	
+	.EXAMPLE
+		Get-ADSIForest
+	.EXAMPLE
+		Get-ADSIForest -DomainName lazywinadmin.com
+	.EXAMPLE
+		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+	.EXAMPLE
+		Get-ADSIForest -DomainName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.NOTES
+		Francois-Xavier Cat
+		LazyWinAdmin.com
+		@lazywinadm
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.Domain
+#>
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+			{
+				Write-Verbose '[PROCESS] Credential or DomainName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+				
+				$DomainContext = New-ADSIDirectoryContextDomain @splatting
+				[System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DomainContext)
+			}
+			ELSE
+			{
+				[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
 }
 
 function Get-ADSIDomainController
@@ -519,19 +579,300 @@ whencreated
 	}
 }
 
+Function Get-ADSIDomainDomainControllers
+{
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+				
+				(Get-ADSIDomain @splatting).domaincontrollers
+				
+			}
+			ELSE
+			{
+				(Get-ADSIDomain).domaincontrollers
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+}
+
+Function Get-ADSIDomainMode
+{
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+			{
+				Write-Verbose '[PROCESS] Credential or DomainName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+				
+				(Get-ADSIDomain @splatting).DomainMode
+				
+			}
+			ELSE
+			{
+				(Get-ADSIDomain).DomainMode
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+}
+
+Function Get-ADSIDomainTrustRelationship
+{
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+				
+				(Get-ADSIDomain @splatting).GetAllTrustRelationships()
+				
+			}
+			ELSE
+			{
+				(Get-ADSIDomain).GetAllTrustRelationships()
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+}
+
 Function Get-ADSIForest
 {
-	[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+<#
+	.SYNOPSIS
+		Function to retrieve the current or specified forest
+	
+	.DESCRIPTION
+		Function to retrieve the current or specified forest
+	
+	.PARAMETER Credential
+		Specifies alternative credential to use
+	
+	.PARAMETER ForestName
+		Specifies the ForestName to query
+	
+	.EXAMPLE
+		Get-ADSIForest
+	.EXAMPLE
+		Get-ADSIForest -ForestName lazywinadmin.com
+	.EXAMPLE
+		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+	.EXAMPLE
+		Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.NOTES
+		Francois-Xavier Cat
+		LazyWinAdmin.com
+		@lazywinadm
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.Forest
+#>
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose "[PROCESS] Credential or FirstName specified"
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+				
+				$ForestContext = New-ADSIDirectoryContextForest @splatting
+				[System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
+			}
+			ELSE
+			{
+				[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
 }
 
 Function Get-ADSIForestMode
 {
-	[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+				
+				(Get-ADSIForest @splatting).ForestMode
+				
+			}
+			ELSE
+			{
+				(Get-ADSIForest).ForestMode
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
 }
 
 Function Get-ADSIForestDomain
 {
-	[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest().Domains
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+				
+				(Get-ADSIForest @splatting).Domains
+				
+			}
+			ELSE
+			{
+				(Get-ADSIForest).Domains
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+}
+
+Function Get-ADSIForestTrustRelationship
+{
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+				
+				(Get-ADSIForest @splatting).GetAllTrustRelationships()
+				
+			}
+			ELSE
+			{
+				(Get-ADSIForest).GetAllTrustRelationships()
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
 }
 
 function Get-ADSIFsmo
@@ -642,7 +983,40 @@ OR [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
 
 Function Get-ADSIGlobalCatalogs
 {
-	[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest().GlobalCatalogs
+	[cmdletbinding()]
+	PARAM (
+		[Alias('RunAs')]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+				
+				(Get-ADSIForest @splatting).GlobalCatalogs
+				
+			}
+			ELSE
+			{
+				(Get-ADSIForest).GlobalCatalogs
+			}
+			
+		}
+		CATCH
+		{
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
 }
 
 function Get-ADSIGroup
