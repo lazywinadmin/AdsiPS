@@ -23,6 +23,7 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 
 ##### Cmdlets
 - [x] Add-ADSIGroupMember
+- [ ] Add-ADSISiteSubnet
 - [ ] Disable-ADSIAccount
 - [ ] Enable-ADSIAccount
 - [x] Get-ADSIComputer
@@ -61,6 +62,7 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 - [x] Get-ADSIGroupPolicyObject
 - [x] Get-ADSIObject
 - [x] Get-ADSIOrganizationalUnit
+- [ ] Get-ADSIPrinterQueue
 - [x] Get-ADSIRootDomain
 - [ ] Get-ADSIRootDSE
 - [x] Get-ADSISchema
@@ -69,6 +71,7 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 - [x] Get-ADSISiteConnection
 - [x] Get-ADSISiteLink
 - [x] Get-ADSISiteServer
+- [ ] Get-ADSISiteSubnet
 - [x] Get-ADSITrustRelationship
 - [x] Get-ADSIUser
  - [ ] Modify queries to use Anr (Ambiguous Name Resolution)
@@ -76,18 +79,26 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  - [ ] Param: Change Password next logon enabled
  - [ ] Param: LockedOut
  - [ ] Param: Disabled
+- [ ] Get-ADSIUserResultantPasswordPolicy
+- [ ] Lock-ADSIAccount
 - [x] New-ADSIDirectoryContextDomain
 - [x] New-ADSIDirectoryContextForest
 - [ ] New-ADSISite
 - [ ] New-ADSIComputer
+- [ ] New-ADSIContact
+- [ ] New-ADSIDomainTrustRelationship
+- [ ] New-ADSIForestTrustRelationship
 - [ ] New-ADSIUser
 - [ ] New-ADSIGroup
 - [ ] New-ADSIOrganizationalUnit
+- [ ] Move-ADSIObject
 - [x] Remove-ADSIGroupMember
 - [ ] Remove-ADSIUser
 - [ ] Remove-ADSIComputer
 - [ ] Remove-ADSIContact
+- [ ] Remove-ADSIDomainTrustRelationship
 - [ ] Remove-ADSIOrganizationUnit
+- [ ] Remove-ADSIForestTrustRelationship
 - [ ] Set-ADSIUser
 - [ ] Set-ADSIComputer
 - [ ] Set-ADSIContact
