@@ -29,14 +29,28 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  - [ ] Param: OperatingSystem
  - [ ] Param: Disabled
 - [x] Get-ADSIContact
-- [x] Get-ADSICurrentComputerSite
-- [ ] Get-ADSIDomain
-- [x] Get-ADSIDomainController
+- [ ] Get-ADSICurrentComputerSite
+ - [ ] Comment Based Help
+ - [ ] Add Credential
+- [x] Get-ADSIDomain
+- [x] Get-ADSIDomainController (ADSI)
+ - Might get rid of this function
+- [x] Get-ADSIDomainDomainControllers (DirectoryServices)
+ - [ ] Comment Based Help
+- [x] Get-ADSIDomainMode
+ - [ ] Comment Based Help
+- [x] Get-ADSIDomainTrustRelationship
+ - [ ] Comment Based Help
 - [x] Get-ADSIForest
 - [x] Get-ADSIForestMode
+ - [ ] Comment Based Help
 - [x] Get-ADSIForestDomain
-- [x] Get-ADSIFsmo 
+ - [ ] Comment Based Help
+- [x] Get-ADSIForestTrustRelationship
+ - [ ] Comment Based Help
+- [x] Get-ADSIFsmo
 - [x] Get-ADSIGlobalCatalogs
+ - [ ] Comment Based Help
 - [x] Get-ADSIGroup
  -  [ ] Param: GroupScope (Domain Local, Global, Universal)
  -  [ ] Param: GroupType (Distribution/Security)
