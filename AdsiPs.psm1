@@ -1,3 +1,28 @@
+function Move-ADSIObject{
+	param(
+		[Parameter(mandatory=$true)][String]$ObjectName,
+		[Parameter(mandatory=$true)][String]$DestinationPath
+		
+		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		[Alias("Domain")]
+		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
+		$Object = get-ADSIobject $ObjectName
+		$ObjectLocation = [adsi]$object.Path
+	try{
+		$ObjectLocation.MoveTo($DestinationPath) -erroraction stop
+		Write-verbose "Object $ObjectName has been moved successfully"
+		}
+	catch
+		{
+		write-warning  "$_.exception.message" 
+		}
+}
+
 ﻿Function Get-ADSIComputer
 {
 <#
