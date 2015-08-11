@@ -3575,7 +3575,8 @@ function Get-ADSIReplicaInfo
 
 .DESCRIPTION  
 
-      Get-ADSISitesInfo returns information about the connected DC's Sites.
+      Get-ADSISitesInfo returns information about the Sites as seen by the connected DC.
+      It returns information such as subnets, sites, sitelinks, ISTG, BH servers etc.
 
       
 .PARAMETER ComputerName
