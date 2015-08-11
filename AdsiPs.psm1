@@ -3440,7 +3440,10 @@ function Get-ADSIReplicaInfo
             Write-Verbose -Message "Information about $($dc.Name)"
             $dc
         }
-        $domainDN = ConvertFrom-FQDN -fqdn $dc.Domain
+        $domainDN = ""
+	    $obj = $domain.Replace(',','\,').Split('/')
+	    $obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_}
+	    $domainDN = $domainDN.Substring(1)
 
         if ($Cursors.IsPresent)
         {
@@ -3565,15 +3568,7 @@ function Get-ADSIReplicaInfo
         }
     }
 }
-function ConvertFrom-FQDN 
-{
-	param([string]$fqdn)
-	$DN = "" 
-	$obj = $fqdn.Replace(',','\,').Split('/')
-	$obj[0].split(".") | ForEach-Object { $DN += ",DC=" + $_}
-	$DN = $DN.Substring(1)
-	$dn
-}
+
 <#  
 .SYNOPSIS  
     Get-ADSISitesInfo returns information about the connected DC's Sites.
