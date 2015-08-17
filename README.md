@@ -1,11 +1,12 @@
 #AdsiPS
 
-PowerShell module to interact with Active Directory using ADSI and DirectoryServices
+PowerShell module to interact with Active Directory using ADSI and DirectoryServices (.NET)
 
 #### Goals
  * No ActiveDirectory module/No Quest AD Snapin required
  * Being able to specify different credentials
  * Being able to specify different domain
+ * If possible avoid use of C# code
 
 
 #### Use Cases
