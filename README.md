@@ -107,4 +107,14 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
 - [ ] Set-ADSIDeletionProtection
 - [x] Test-ADSIUserIsGroupMember
 - [ ] Unlock-ADSIAccount
-
+- AdsiPS replication cmdlets
+- [x] Get-ADSIReplicaInfo
+- [x] Get-ADSIReplicaForestInfo
+- [x] Get-ADSIReplicaDomainInfo
+- [x] Get-ADSIReplicaCurrentTime
+- [x] Get-ADSIReplicaGCInfo
+- [x] Enable-ADSIReplicaGC
+- [x] Get-ADSISitesInfo
+- [x] Move-ADSIDomainControllerRoles
+- [x] Move-ADSIReplicaToSite
+- [x] Start-ADSIReplicationConsistencyCheck
