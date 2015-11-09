@@ -2653,6 +2653,8 @@ function Get-ADSIUser
 					"LogonCount" = $user.properties.logoncount -as [string]
 					"DirectReport" = $user.properties.l -as [string]
 					"useraccountcontrol" = $user.properties.useraccountcontrol -as [string]
+					 'LastName' = $user.properties.sn -as [string]
+					'FirstName' = $user.Properties["givenName"] -as [string]
 					
 					<#
 					lastlogoff
