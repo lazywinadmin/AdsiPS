@@ -539,6 +539,83 @@ Function New-ADSIDirectoryContextForest
 	} #PROCESS
 }
 
+function New-ADSIPrincipalContext
+{
+<#
+	.SYNOPSIS
+		Function to create a Principal Context
+	
+	.DESCRIPTION
+		Function to create a Principal Context
+	
+	.PARAMETER PrincipalContextType
+		Specifies the PrincipalContextType to use. Domain, Machine or ApplicationDirectory
+	
+	.PARAMETER Credential
+		Specifies alternative credential
+	
+	.EXAMPLE
+		New-ADSIPrincipalContext -PrincipalContextType "Domain"
+	
+	.EXAMPLE
+		New-ADSIPrincipalContext -PrincipalContextType "Domain" -Credential (Get-Credential SuperAdmin)
+	
+	.NOTES
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
+		@lazywinadm
+	
+		Additional information on MSDN
+	
+		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
+#>
+	[OutputType([System.DirectoryServices.AccountManagement.PrincipalContext])]
+	[CmdletBinding()]
+	PARAM (
+		[Parameter(Mandatory)]
+		[ValidateSet("Domain", "Machine", "ApplicationDirectory")]
+		$PrincipalContextType,
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
+	BEGIN
+	{
+		TRY
+		{
+			Write-Verbose -Message "[New-ADSIPrincipalContext][BEGIN] Loading Assembly 'System.DirectoryServices.AccountManagement'"
+			Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+		}
+		CATCH
+		{
+			Write-Warning -Message "[New-ADSIPrincipalContext][BEGIN] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'])
+			{
+				Write-Verbose -Message "[New-ADSIPrincipalContext][PROCESS] Creating a $PrincipalContextType Principal Context WITH Credential"
+				New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $PrincipalContextType, "", $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+			}
+			ELSE
+			{
+				Write-Verbose -Message "[New-ADSIPrincipalContext][PROCESS] Creating a $PrincipalContextType Principal Context WITHOUT Credential"
+				New-Object System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $PrincipalContextType
+			}
+		}
+		CATCH
+		{
+			Write-Warning -Message "[New-ADSIPrincipalContext][PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+}
+
 #endregion
 
 #region Domain
@@ -1895,49 +1972,109 @@ function Add-ADSIGroupMember
 function Get-ADSIGroupMembership
 {
 <#
-.SYNOPSIS
-	This function will list all the member of the specified group
+	.SYNOPSIS
+		This function will list all the member of the specified group
 	
-.PARAMETER SamAccountName
-	Specify the SamAccountName of the Group
+	.DESCRIPTION
+		This function will list all the member of the specified group
 	
-.EXAMPLE
-	Get-ADSIGroupMembership -SamAccountName TestGroup
+	.PARAMETER Identity
+		Specifies the Identity of the group
 	
-.NOTES
-	Francois-Xavier Cat
-	LazyWinAdmin.com
-	@lazywinadm
+	.PARAMETER Recurse
+		Specifies that you want the recursive members of that group.
+	
+	.PARAMETER Context
+		Specifies the Context
+	
+	.PARAMETER Credential
+		A description of the Credential parameter.
+	
+	.PARAMETER SamAccountName
+		Specify the SamAccountName of the Group
+	
+	.EXAMPLE
+		Get-ADSIGroupMembership -Identity "Domain Admins"
+
+	.EXAMPLE
+		Get-ADSIGroupMembership -Identity "CN=Domain Users,CN=Users,DC=FX,DC=LAB"
+	
+	.EXAMPLE
+		$TestContext = New-ADSIPrincipalContext -PrincipalContextType Domain -Credential $Cred
+		Get-ADSIGroupMembership -Identity "Domain Admins" -ContextObject $TestContext
+	
+	.OUTPUTS
+		System.Object
+	
+	.NOTES
+		Francois-Xavier Cat
+		LazyWinAdmin.com
+		@lazywinadm
 #>
+	[OutputType([System.Object])]
 	[CmdletBinding()]
-	PARAM ($SamAccountName)
+	PARAM (
+		[Parameter(Mandatory)]
+		[Alias("SamAccountName","DN","DistinguishedName")]
+		[String]$Identity,
+		
+		[Switch]$Recurse,
+		
+		[System.DirectoryServices.AccountManagement.PrincipalContext]$ContextObject,
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
+	)
 	BEGIN
 	{
-		$search = [adsisearcher]"(&(objectCategory=group)(SamAccountName=$SamAccountName))"
+		TRY
+		{
+			Write-Verbose -Message "[Get-ADSIGroupMembership][BEGIN] Loading Assembly 'System.DirectoryServices.AccountManagement'"
+			Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+		}
+		CATCH
+		{
+			Write-Warning -Message "[Get-ADSIGroupMembership][BEGIN] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
 	}
 	PROCESS
 	{
 		TRY
 		{
-			foreach ($member in $search.FindOne().properties.member)
+			IF (-not $PSBoundParameters['ContextType'])
 			{
-				#User
-				#Get-ADSIUser -DistinguishedName $member
-				Get-ADSIObject -DistinguishedName $member
-				
-				#Group
-				# need to be done here
+				IF ($PSBoundParameters['Credential'])
+				{
+					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Creating Context with Credential"
+					$Context = New-ADSIPrincipalContext -PrincipalContext "Domain" -Credential $Credential
+				}
+				ELSE
+				{
+					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Creating Context without Credential"
+					$Context = New-ADSIPrincipalContext -PrincipalContext "Domain"
+				}
 			}
-		} #try
+			
+			IF ($PSBoundParameters['Recurse'])
+			{
+				Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Query (Recursive) of the group $Identity"
+				[System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($ContextObject.contexttype, $Identity).GetMembers($Recurse)
+			}
+			ELSE
+			{
+				Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Query (Non-Recursive) of the group $Identity"
+				[System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($ContextObject.contexttype, $Identity).GetMembers()
+			}
+		}
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message "[Get-ADSIGroupMembership][PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	} #process
-	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMembership End." }
+	}
 }
-
 
 function Remove-ADSIGroupMember
 {
