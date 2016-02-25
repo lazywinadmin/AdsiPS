@@ -2015,7 +2015,7 @@ function Get-ADSIGroupMembership
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(Mandatory)]
-		[Alias("SamAccountName","DN","DistinguishedName")]
+		[Alias("SamAccountName", "DN", "DistinguishedName")]
 		[String]$Identity,
 		
 		[Switch]$Recurse,
@@ -2048,12 +2048,12 @@ function Get-ADSIGroupMembership
 				IF ($PSBoundParameters['Credential'])
 				{
 					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Creating Context with Credential"
-					$Context = New-ADSIPrincipalContext -PrincipalContext "Domain" -Credential $Credential
+					$ContextObject = New-ADSIPrincipalContext -PrincipalContext "Domain" -Credential $Credential
 				}
 				ELSE
 				{
 					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Creating Context without Credential"
-					$Context = New-ADSIPrincipalContext -PrincipalContext "Domain"
+					$ContextObject = New-ADSIPrincipalContext -PrincipalContext "Domain"
 				}
 			}
 			
