@@ -24,6 +24,54 @@ iex (new-object System.Net.WebClient).DownloadString('https://raw.githubusercont
 ```
 
 # Cmdlets
+* Add-ADSIGroupMember
+* Enable-ADSIReplicaGC
+* Get-ADSIComputer
+* Get-ADSIContact
+* Get-ADSICurrentComputerSite
+* Get-ADSIDomain
+* Get-ADSIDomainController
+* Get-ADSIDomainDomainControllers
+* Get-ADSIDomainMode
+* Get-ADSIDomainRoot
+* Get-ADSIDomainTrustRelationship
+* Get-ADSIForest
+* Get-ADSIForestDomain
+* Get-ADSIForestMode
+* Get-ADSIForestTrustRelationship
+* Get-ADSIFsmo
+* Get-ADSIGlobalCatalogs
+* Get-ADSIGroup
+* Get-ADSIGroupManagedBy
+* Get-ADSIGroupMembership
+* Get-ADSIGroupPolicyObject
+* Get-ADSIObject
+* Get-ADSIOrganizationalUnit
+* Get-ADSIReplicaCurrentTime
+* Get-ADSIReplicaDomainInfo
+* Get-ADSIReplicaForestInfo
+* Get-ADSIReplicaGCInfo
+* Get-ADSIReplicaInfo
+* Get-ADSISchema
+* Get-ADSISite
+* Get-ADSISiteConnection
+* Get-ADSISiteLink
+* Get-ADSISiteServer
+* Get-ADSISitesInfo
+* Get-ADSITokenGroup
+* Get-ADSITrustRelationShip
+* Get-ADSIUser
+* Move-ADSIDomainControllerRoles
+* Move-ADSIReplicaToSite
+* New-ADSIDirectoryContextDomain
+* New-ADSIDirectoryContextForest
+* New-ADSIPrincipalContext
+* Remove-ADSIGroupMember
+* Start-ADSIReplicationConsistencyCheck
+* Test-ADSICredential
+* Test-ADSIUserIsGroupMember
+
+
 
 # Change Log
 
