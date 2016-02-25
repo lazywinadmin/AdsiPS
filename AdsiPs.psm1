@@ -1,4 +1,4 @@
-﻿#region Computer
+#region Computer
 
 Function Get-ADSIComputer
 {
@@ -81,7 +81,7 @@ Function Get-ADSIComputer
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)#PARAM
+	) #PARAM
 	
 	PROCESS
 	{
@@ -102,10 +102,10 @@ Function Get-ADSIComputer
 					# Specify a different domain to query
 					IF ($PSBoundParameters['DomainDN'])
 					{
-						IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
+						IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" } #IF
 						Write-Verbose -Message "Different Domain specified: $DomainDN"
 						$Searcher.SearchRoot = $DomainDN
-					}#IF ($PSBoundParameters['DomainDN'])
+					} #IF ($PSBoundParameters['DomainDN'])
 					
 					# Alternate Credentials
 					IF ($PSBoundParameters['Credential'])
@@ -113,7 +113,7 @@ Function Get-ADSIComputer
 						Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
 						$Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password) -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCred
 						$Searcher.SearchRoot = $Domain
-					}#IF ($PSBoundParameters['Credential'])
+					} #IF ($PSBoundParameters['Credential'])
 					
 					# Querying the Active Directory
 					Write-Verbose -Message "Starting the ADSI Search..."
@@ -127,22 +127,22 @@ Function Get-ADSIComputer
 							"OperatingSystem" = $($Computer.Properties.operatingsystem)
 							"WhenCreated" = $($Computer.properties.whencreated)
 							"DistinguishedName" = $($Computer.properties.distinguishedname)
-						}#New-Object
-					}#FOREACH $Computer
+						} #New-Object
+					} #FOREACH $Computer
 					
 					Write-Verbose -Message "ADSI Search completed"
-				}#TRY
+				} #TRY
 				CATCH
 				{
 					Write-Warning -Message ('{0}: {1}' -f $item, $_.Exception.Message)
 					IF ($ErrProcessNewObjectSearcher) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
 					IF ($ErrProcessNewObjectCred) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
 					IF ($ErrProcessNewObjectOutput) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
-				}#CATCH
-			}#FOREACH $item
+				} #CATCH
+			} #FOREACH $item
 			
 			
-		}#IF $ComputerName
+		} #IF $ComputerName
 		
 		ELSE
 		{
@@ -161,7 +161,7 @@ Function Get-ADSIComputer
 					$DomainDN = "LDAP://$DomainDN"
 					Write-Verbose -Message "Different Domain specified: $DomainDN"
 					$Searcher.SearchRoot = $DomainDN
-				}#IF ($PSBoundParameters['DomainDN'])
+				} #IF ($PSBoundParameters['DomainDN'])
 				
 				# Alternate Credentials
 				IF ($PSBoundParameters['Credential'])
@@ -169,7 +169,7 @@ Function Get-ADSIComputer
 					Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
 					$DomainDN = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $Credential.UserName, $Credential.GetNetworkCredential().password -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCredALL
 					$Searcher.SearchRoot = $DomainDN
-				}#IF ($PSBoundParameters['Credential'])
+				} #IF ($PSBoundParameters['Credential'])
 				
 				# Querying the Active Directory
 				Write-Verbose -Message "Starting the ADSI Search..."
@@ -185,18 +185,18 @@ Function Get-ADSIComputer
 							"OperatingSystem" = $($Computer.Properties.operatingsystem)
 							"WhenCreated" = $($Computer.properties.whencreated)
 							"DistinguishedName" = $($Computer.properties.distinguishedname)
-						}#New-Object
-					}#TRY
+						} #New-Object
+					} #TRY
 					CATCH
 					{
 						Write-Warning -Message ('{0}: {1}' -f $Computer, $_.Exception.Message)
 						IF ($ErrProcessNewObjectOutputALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 					}
-				}#FOREACH $Computer
+				} #FOREACH $Computer
 				
 				Write-Verbose -Message "ADSI Search completed"
 				
-			}#TRY
+			} #TRY
 			
 			CATCH
 			{
@@ -204,9 +204,9 @@ Function Get-ADSIComputer
 				IF ($ErrProcessNewObjectSearcherALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
 				IF ($ErrProcessNewObjectCredALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
 				
-			}#CATCH
-		}#ELSE
-	}#PROCESS
+			} #CATCH
+		} #ELSE
+	} #PROCESS
 	END { Write-Verbose -Message "Script Completed" }
 }
 
@@ -324,7 +324,7 @@ function Get-ADSIContact
 			}
 			IF ($DomainDistinguishedName)
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -378,13 +378,13 @@ function Get-ADSIContact
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIContact End."
@@ -397,39 +397,42 @@ function Get-ADSIContact
 Function New-ADSIDirectoryContextDomain
 {
 <#
-    .DESCRIPTION
-		Function to create an Active Directory Domain DirectoryContext object
-
 	.SYNOPSIS
-        Function to create an Active Directory Domain DirectoryContext object
-
-	.PARAMETER DomainName
-		Specifies the domain to query.
-		Default is the current domain.
-
+		Function to create an Active Directory Domain DirectoryContext object
+	
+	.DESCRIPTION
+		Function to create an Active Directory Domain DirectoryContext object
+	
 	.PARAMETER Credential
 		Specifies the alternative credentials to use.
 		It will use the current credential if not specified.
-
+	
+	.PARAMETER DomainName
+		Specifies the domain to query.
+		Default is the current domain.
+	
 	.EXAMPLE
-        New-ADSIDirectoryContextDomain
+		New-ADSIDirectoryContextDomain
 	
-    .EXAMPLE
-        New-ADSIDirectoryContextDomain -DomainName "Contoso.com" -Cred (Get-Credential)
-        
-    .EXAMPLE
-        $Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($(New-ADSIDirectoryContextDomain -Credential LazyWinAdmin\francois-xavier.cat))
-        $Domain.DomainControllers
-        $Domain.InfrastructureRoleOwner
-
+	.EXAMPLE
+		New-ADSIDirectoryContextDomain -DomainName "Contoso.com" -Cred (Get-Credential)
+	
+	.EXAMPLE
+		$Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($(New-ADSIDirectoryContextDomain -Credential LazyWinAdmin\francois-xavier.cat))
+		$Domain.DomainControllers
+		$Domain.InfrastructureRoleOwner
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.DirectoryContext
+	
 	.NOTES
-        Francois-Xavier.Cat
-        LazyWinAdmin.com
-        @lazywinadm
-	
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
+		@lazywinadm
+		
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	
+	[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
@@ -456,49 +459,52 @@ Function New-ADSIDirectoryContextDomain
 				# Query the specified domain or current if not entered, with the current credentials
 				New-Object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList $ContextType, $DomainName
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			
 		}
-	}#PROCESS
+	} #PROCESS
 }
 
 Function New-ADSIDirectoryContextForest
 {
 <#
-    .DESCRIPTION
-		Function to create an Active Directory Forest DirectoryContext object
-
 	.SYNOPSIS
-        Function to create an Active Directory Forest DirectoryContext object
-
-	.PARAMETER ForestName
-		Specifies the forest to query.
-		Default is the current forest.
-
+		Function to create an Active Directory Forest DirectoryContext object
+	
+	.DESCRIPTION
+		Function to create an Active Directory Forest DirectoryContext object
+	
 	.PARAMETER Credential
 		Specifies the alternative credentials to use.
 		It will use the current credential if not specified.
-
+	
+	.PARAMETER ForestName
+		Specifies the forest to query.
+		Default is the current forest.
+	
 	.EXAMPLE
-        New-ADSIDirectoryContextForest
+		New-ADSIDirectoryContextForest
 	
-    .EXAMPLE
-        New-ADSIDirectoryContextForest -ForestName "Contoso.com" -Cred (Get-Credential)
-        
-    .EXAMPLE
-        $Forest = [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($(New-ADSIDirectoryContextForest -Credential LazyWinAdmin\francois-xavier.cat)))
-        $Forest.FindGlobalCatalog()
-
+	.EXAMPLE
+		New-ADSIDirectoryContextForest -ForestName "Contoso.com" -Cred (Get-Credential)
+	
+	.EXAMPLE
+		$Forest = [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($(New-ADSIDirectoryContextForest -Credential LazyWinAdmin\francois-xavier.cat)))
+		$Forest.FindGlobalCatalog()
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.DirectoryContext
+	
 	.NOTES
-        Francois-Xavier.Cat
-        LazyWinAdmin.com
-        @lazywinadm
-	
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
+		@lazywinadm
+		
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	
+	[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
@@ -525,12 +531,12 @@ Function New-ADSIDirectoryContextForest
 				# Query the specified domain or current if not entered, with the current credentials
 				New-Object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList $ContextType, $ForestName
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			
 		}
-	}#PROCESS
+	} #PROCESS
 }
 
 #endregion
@@ -553,21 +559,25 @@ Function Get-ADSIDomain
 	
 	.EXAMPLE
 		Get-ADSIForest
+	
 	.EXAMPLE
 		Get-ADSIForest -DomainName lazywinadmin.com
+	
 	.EXAMPLE
 		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+	
 	.EXAMPLE
 		Get-ADSIForest -DomainName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.Domain
 	
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-	
-	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.Domain
-#>
+#>	
+	[OutputType([System.DirectoryServices.ActiveDirectory.Domain])]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
@@ -745,7 +755,7 @@ function Get-ADSIDomainController
 			
 			IF ($DomainDistinguishedName)
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -810,13 +820,13 @@ whencreated
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIContact End."
@@ -918,8 +928,7 @@ function Move-ADSIDomainControllerRoles
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
 		
-		[Management.Automation.PSCredential]
-		$Credential = $null,
+		[Management.Automation.PSCredential]$Credential = $null,
 		
 		[Parameter(Mandatory = $true)]
 		[ValidateSet("PdcRole", "SchemaRole", "NamingRole", "RidRole", "InfrastructureRole")]
@@ -986,21 +995,25 @@ Function Get-ADSIForest
 	
 	.EXAMPLE
 		Get-ADSIForest
+	
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com
+	
 	.EXAMPLE
 		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+	
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.Forest
 	
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-	
-	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.Forest
-#>
+#>	
+	[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
@@ -1197,7 +1210,7 @@ function Get-ADSIFsmo
 			
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -1244,13 +1257,13 @@ OR [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
 				
 				
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIFsmo End."
@@ -1379,10 +1392,10 @@ function Get-ADSISchema
 				{
 					($schema.FindClass("$ClassName")).OptionalProperties
 				}
-			}#Switch
-		}#ELSE
+			} #Switch
+		} #ELSE
 		
-	}#PROCESS
+	} #PROCESS
 }
 
 #endregion
@@ -1491,7 +1504,7 @@ function Get-ADSIGroup
 			
 			IF ($PSboundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -1557,13 +1570,13 @@ function Get-ADSIGroup
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIGroup End."
@@ -1657,7 +1670,7 @@ function Get-ADSIGroupManagedBy
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				# Fixing the path if needed
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
@@ -1716,13 +1729,13 @@ function Get-ADSIGroupManagedBy
 				}
 				New-Object -TypeName psobject -Property $Properties
 			}
-		}#try
+		} #try
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#Process
+	} #Process
 	END { Write-Verbose -Message "[END] Function Get-ADSIGroupManagedBy End." }
 }
 
@@ -1797,7 +1810,7 @@ function Add-ADSIGroupMember
 			
 			IF ($PSBoundParameters['DomainDN'])
 			{
-				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
+				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDN"
 				$Search.SearchRoot = $DomainDN
 			}
@@ -1865,14 +1878,14 @@ function Add-ADSIGroupMember
 				IF ($Search.FindAll().Count -eq 0) { Write-Warning -Message "[PROCESS] No Group Found" }
 				IF ($objectResult.Count -eq 0) { Write-Warning -Message "[PROCESS] $MemberSamAccountName not Found" }
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			#if ($ProcessErrorGetADSIUser) { Write-Warning -Message "[PROCESS] Issue while getting information on the user using Get-ADSIUser" }
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Add-ADSIGroupMember End."
@@ -1915,13 +1928,13 @@ function Get-ADSIGroupMembership
 				#Group
 				# need to be done here
 			}
-		}#try
+		} #try
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#process
+	} #process
 	END { Write-Verbose -Message "[END] Function Get-ADSIGroupMembership End." }
 }
 
@@ -2009,7 +2022,7 @@ function Get-ADSIGroupPolicyObject
 			
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -2033,13 +2046,13 @@ function Get-ADSIGroupPolicyObject
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSISite End."
@@ -2120,7 +2133,7 @@ function Get-ADSITokenGroup
 			# Different Domain
 			IF ($DomainDistinguishedName)
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -2157,8 +2170,66 @@ function Get-ADSITokenGroup
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END { Write-Verbose -Message "[END] Function Get-ADSITokenGroup End." }
+}
+
+function Test-ADSICredential
+{
+<#
+	.SYNOPSIS
+		Function to test credential
+	
+	.DESCRIPTION
+		Function to test credential
+	
+	.PARAMETER AccountName
+		Specifies the AccountName to check
+	
+	.PARAMETER Password
+		Specifies the AccountName's password
+	
+	.EXAMPLE
+		Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
+	
+	.OUTPUTS
+		System.Boolean
+	
+	.NOTES
+		Francois-Xavier Cat
+		www.lazywinadmin.com
+		@lazywinadm
+#>
+	[OutputType([System.Boolean])]
+	[CmdletBinding()]
+	PARAM
+	(
+		[Parameter(Mandatory)]
+		[Alias("UserName")]
+		[string]$AccountName,
+		
+		[Parameter(Mandatory)]
+		[string]$Password
+	)
+	BEGIN
+	{
+		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+	}
+	PROCESS
+	{
+		TRY
+		{
+			$DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
+			
+			Write-Verbose -Message "[Test-ADCredential][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
+			$DomainPrincipalContext.ValidateCredentials($AccountName, $Password)
+		}
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Issue while running the function"
+			$Error[0].Exception.Message
+		}
+	}
 }
 
 #endregion
@@ -2242,7 +2313,7 @@ function Get-ADSIObject
 			}
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -2399,7 +2470,7 @@ function Get-ADSIOrganizationalUnit
 			}
 			IF ($DomainDistinguishedName)
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -2435,13 +2506,13 @@ function Get-ADSIOrganizationalUnit
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIOrganizationalUnit End."
@@ -2489,8 +2560,7 @@ function Enable-ADSIReplicaGC
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
 		
-		[Management.Automation.PSCredential]
-		$Credential = $null
+		[Management.Automation.PSCredential]$Credential = $null
 	)
 	
 	if ($ComputerName)
@@ -2574,39 +2644,42 @@ function Get-ADSIReplicaDomainInfo
 .LINK  
     https://balladelli.com
 #>	
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null,
-              [Switch] $Recurse
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        $dc.domain
-        if ($Recurse.IsPresent)
-        {
-            $dc.domain.children | ForEach-Object {$_}
-        }
-
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null,
+		
+		[Switch]$Recurse
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		$dc.domain
+		if ($Recurse.IsPresent)
+		{
+			$dc.domain.children | ForEach-Object { $_ }
+		}
+		
+	}
 }
 
 function Get-ADSIReplicaForestInfo
@@ -2656,34 +2729,36 @@ function Get-ADSIReplicaForestInfo
 .LINK  
     https://balladelli.com
 #>	
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        Write-Verbose -Message "Information about forest $($dc.forest.name)"
-        $dc.forest
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		Write-Verbose -Message "Information about forest $($dc.forest.name)"
+		$dc.forest
+	}
 }
 
 function Get-ADSIReplicaCurrentTime
@@ -2720,36 +2795,38 @@ function Get-ADSIReplicaCurrentTime
 .LINK  
     https://balladelli.com
 #>	
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        $now = Get-Date
-        $minDiff = (New-TimeSpan -start $dc.CurrentTime -end ([System.TimeZoneInfo]::ConvertTimeToUtc($now))).minutes
-        Write-Verbose -Message "Difference in minutes between $($dc.name) and current system is $minDiff"
-        $dc.CurrentTime    
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		$now = Get-Date
+		$minDiff = (New-TimeSpan -start $dc.CurrentTime -end ([System.TimeZoneInfo]::ConvertTimeToUtc($now))).minutes
+		Write-Verbose -Message "Difference in minutes between $($dc.name) and current system is $minDiff"
+		$dc.CurrentTime
+	}
 }
 
 function Get-ADSIReplicaGCInfo
@@ -2785,42 +2862,44 @@ function Get-ADSIReplicaGCInfo
 .LINK  
     https://balladelli.com
 #>
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        $IsGC = $dc.IsGlobalCatalog()
-        if ($IsGC)
-        {
-            Write-Verbose -Message "$($dc.name) is a Global Catalog"
-        }
-        else
-        {
-            Write-Verbose -Message "$($dc.name) is a normal Domain Controller"
-        }
-        $IsGC
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		$IsGC = $dc.IsGlobalCatalog()
+		if ($IsGC)
+		{
+			Write-Verbose -Message "$($dc.name) is a Global Catalog"
+		}
+		else
+		{
+			Write-Verbose -Message "$($dc.name) is a normal Domain Controller"
+		}
+		$IsGC
+	}
 }
 
 function Get-ADSIReplicaInfo
@@ -2899,227 +2978,237 @@ function Get-ADSIReplicaInfo
 .LINK  
     https://balladelli.com
 #>
-      [CmdletBinding()] 
-      param ( [string] $ComputerName = $null,
-              [string] $Domain = $null,
-              [Management.Automation.PSCredential]$Credential = $null,
-              [ValidateSet("Schema","Configuration","Domain","All")][String] $NamingContext = "Domain",
-              [Switch] $Neighbors,
-              [Switch] $Latency,
-              [Switch] $Cursors,
-              [Switch] $Errors,
-              [Switch] $DisplayDC,
-              [Switch] $FormatTable
-              )
-                  
-      
-    # Try to determine how to connect to the remote DC. 
-    # A few possibilities:
-    #      A computername was provided
-    #      A domain name was provided
-    #      None of the above was provided, so try with either USERDNSDOMAIN or LOGONSERVER
-    #      Use alternate credentials if provided
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-    elseif ($domain)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain",$domain,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain",$domain
-        }
-    }
-    elseif ($env:USERDNSDOMAIN)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain",$env:USERDNSDOMAIN,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain",$env:USERDNSDOMAIN
-        }
-    }
-    elseif ($env:LOGONSERVER -ne '\\MicrosoftAccount')
-    {
-        $logonserver = $env:LOGONSERVER.replace('\\','')
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$logonserver,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$logonserver
-        }
-    }
-    else
-    {
-        Write-Error -Message "Could not determine where to connect to"
-        return
-    }
-
-    # If none of switches are present, default to at least one, so we have something to show
-    if (!$Latency.IsPresent -and !$Neighbors.IsPresent -and !$Errors.IsPresent -and !$Cursors.IsPresent )
-    {
-        [switch]$Latency = $true
-    }
-
-    # Determine which DC to use depending on the context type. 
-    # If the context is Directory Server, simply get the provided domain controller,
-    # if the context is a domain, then find a DC.
-    switch ($context.ContextType)
-    {
-        "DirectoryServer"{ $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) }
-        "Domain" { $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::FindOne($context) }
-        default {return}
-    }
-
-    if ($dc)
-    {
-        if ($DisplayDC.IsPresent)
-        {
-            Write-Verbose -Message "Information about $($dc.Name)"
-            $dc
-        }
-        $domainDN = ""
-	    $obj = $domain.Replace(',','\,').Split('/')
-	    $obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_}
-	    $domainDN = $domainDN.Substring(1)
-
-        if ($Cursors.IsPresent)
-        {
-            foreach ($partition in $dc.Partitions)
-            {
-                if ($NamingContext -eq "All" -or 
-                    ($NamingContext -eq "Domain" -and $partition -eq $domainDN) -or
-                    ($NamingContext -eq "Schema" -and $partition.Contains("Schema")) -or
-                    ($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
-                    )
-                {
-                    Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
-
-                    $dc.GetReplicationCursors($partition) |ForEach-Object {$_}
-
-                }
-            }
-        }
-        if ($Latency.IsPresent)
-        {
-            foreach ($partition in $dc.Partitions)
-            {
-                if ($NamingContext -eq "All" -or 
-                    ($NamingContext -eq "Domain" -and $partition -eq $domainDN) -or
-                    ($NamingContext -eq "Schema" -and $partition.Contains("Schema")) -or
-                    ($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
-                    )
-                {
-                    Write-Verbose -Message "Replication latency for partition $partition on $($dc.Name)"
-
-                    $cursorsArray = $dc.GetReplicationCursors($partition)
-                    $sortedCursors = $cursorsArray |Sort-Object -Descending -Property LastSuccessfulSyncTime
-
-                    $hour    = @()
-                    $day     = @()
-                    $week    = @()
-                    $month   = @()
-                    $tooLong = @()
-                    $other   = @()
-
-                    foreach ($cursor in $sortedCursors)
-                    {
-                        $timespan = New-TimeSpan -Start $cursor.LastSuccessfulSyncTime -End $(Get-Date) 
-                        
-                        if ($timespan)
-                        {
-                            if ($timespan.Days -eq 0 -and $timespan.Hours -eq 0)
-                            {
-                                $hour += $cursor.SourceServer
-                            }
-                            elseif ($timespan.Days -eq 0 -and $timespan.Hours -ge 1)
-                            {
-                                $day += $cursor.SourceServer
-                            }
-                            elseif ($timespan.Days -lt 7)
-                            {
-                                $week += $cursor.SourceServer
-                            }
-                            elseif ($timespan.Days -le 30 -and $timespan.Days -gt 7)
-                            {
-                                $month += $cursor.SourceServer
-                            }
-                            else
-                            {
-                                $tooLong += $cursor.SourceServer
-                            }
-                        }
-                        else
-                        {
-                            # no timestamp we might have a Windows 2000 server here
-                            $other += $cursor.SourceServer
-                        }
-                    }
-
-                    $latencyObject = New-Object -TypeName PsCustomObject -Property @{
-                            Hour     = $hour;
-                            Day      = $day;
-                            Week     = $week;
-                            Month    = $month;
-                            TooLong  = $tooLong;
-                            Other    = $other 
-                        }
-                    if ($FormatTable.IsPresent)
-                    {
-                        $latencyObject | Select-Object -Property Hour,Day,Week,Month,TooLong,Other | Format-Table -AutoSize
-                    }
-                    else
-                    {
-                        $latencyObject
-                    }
-                }
-            }
-        }
-                
-        if ($Neighbors.IsPresent -or $Errors.IsPresent)
-        {
-            $replicationNeighbors = $dc.GetAllReplicationNeighbors()
-    
-            foreach($neighbor in $replicationNeighbors)
-            {
-                if ($NamingContext -eq "All" -or
-                    ($NamingContext -eq "Domain" -and $neighbor.PartitionName -eq $domainDN) -or
-                    ($NamingContext -eq "Schema" -and $neighbor.PartitionName.Contains("Schema")) -or
-                    ($NamingContext -eq "Configuration" -and $neighbor.PartitionName.split(",")[0].Contains("Configuration"))
-                    )
-                {
-                    Write-Verbose -Message "Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
-
-                    if (($Errors.IsPresent -and $neighbor.LastSyncResult -ne 0) -or $Neighbors.IsPresent)
-                    {
-                        if ($FormatTable.IsPresent)
-                        {
-                            $neighbor | Select-Object SourceServer,LastSyncMessage,LastAttemptedSync,LastSuccessfulSync,PartitionName | Format-Table -AutoSize
-                        }
-                        else
-                        {
-                            $neighbor
-                        }
-                    }
-                }
-            }
-        }
-    }
+	[CmdletBinding()]
+	param ([string]$ComputerName = $null,
+		
+		[string]$Domain = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null,
+		
+		[ValidateSet("Schema", "Configuration", "Domain", "All")]
+		[String]$NamingContext = "Domain",
+		
+		[Switch]$Neighbors,
+		
+		[Switch]$Latency,
+		
+		[Switch]$Cursors,
+		
+		[Switch]$Errors,
+		
+		[Switch]$DisplayDC,
+		
+		[Switch]$FormatTable
+	)
+	
+	
+	# Try to determine how to connect to the remote DC. 
+	# A few possibilities:
+	#      A computername was provided
+	#      A domain name was provided
+	#      None of the above was provided, so try with either USERDNSDOMAIN or LOGONSERVER
+	#      Use alternate credentials if provided
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	elseif ($domain)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain", $domain, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain", $domain
+		}
+	}
+	elseif ($env:USERDNSDOMAIN)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain", $env:USERDNSDOMAIN, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "Domain", $env:USERDNSDOMAIN
+		}
+	}
+	elseif ($env:LOGONSERVER -ne '\\MicrosoftAccount')
+	{
+		$logonserver = $env:LOGONSERVER.replace('\\', '')
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $logonserver, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $logonserver
+		}
+	}
+	else
+	{
+		Write-Error -Message "Could not determine where to connect to"
+		return
+	}
+	
+	# If none of switches are present, default to at least one, so we have something to show
+	if (!$Latency.IsPresent -and !$Neighbors.IsPresent -and !$Errors.IsPresent -and !$Cursors.IsPresent)
+	{
+		[switch]$Latency = $true
+	}
+	
+	# Determine which DC to use depending on the context type. 
+	# If the context is Directory Server, simply get the provided domain controller,
+	# if the context is a domain, then find a DC.
+	switch ($context.ContextType)
+	{
+		"DirectoryServer"{ $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) }
+		"Domain" { $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::FindOne($context) }
+		default { return }
+	}
+	
+	if ($dc)
+	{
+		if ($DisplayDC.IsPresent)
+		{
+			Write-Verbose -Message "Information about $($dc.Name)"
+			$dc
+		}
+		$domainDN = ""
+		$obj = $domain.Replace(',', '\,').Split('/')
+		$obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_ }
+		$domainDN = $domainDN.Substring(1)
+		
+		if ($Cursors.IsPresent)
+		{
+			foreach ($partition in $dc.Partitions)
+			{
+				if ($NamingContext -eq "All" -or
+				($NamingContext -eq "Domain" -and $partition -eq $domainDN) -or
+				($NamingContext -eq "Schema" -and $partition.Contains("Schema")) -or
+				($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
+				)
+				{
+					Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
+					
+					$dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
+					
+				}
+			}
+		}
+		if ($Latency.IsPresent)
+		{
+			foreach ($partition in $dc.Partitions)
+			{
+				if ($NamingContext -eq "All" -or
+				($NamingContext -eq "Domain" -and $partition -eq $domainDN) -or
+				($NamingContext -eq "Schema" -and $partition.Contains("Schema")) -or
+				($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
+				)
+				{
+					Write-Verbose -Message "Replication latency for partition $partition on $($dc.Name)"
+					
+					$cursorsArray = $dc.GetReplicationCursors($partition)
+					$sortedCursors = $cursorsArray | Sort-Object -Descending -Property LastSuccessfulSyncTime
+					
+					$hour = @()
+					$day = @()
+					$week = @()
+					$month = @()
+					$tooLong = @()
+					$other = @()
+					
+					foreach ($cursor in $sortedCursors)
+					{
+						$timespan = New-TimeSpan -Start $cursor.LastSuccessfulSyncTime -End $(Get-Date)
+						
+						if ($timespan)
+						{
+							if ($timespan.Days -eq 0 -and $timespan.Hours -eq 0)
+							{
+								$hour += $cursor.SourceServer
+							}
+							elseif ($timespan.Days -eq 0 -and $timespan.Hours -ge 1)
+							{
+								$day += $cursor.SourceServer
+							}
+							elseif ($timespan.Days -lt 7)
+							{
+								$week += $cursor.SourceServer
+							}
+							elseif ($timespan.Days -le 30 -and $timespan.Days -gt 7)
+							{
+								$month += $cursor.SourceServer
+							}
+							else
+							{
+								$tooLong += $cursor.SourceServer
+							}
+						}
+						else
+						{
+							# no timestamp we might have a Windows 2000 server here
+							$other += $cursor.SourceServer
+						}
+					}
+					
+					$latencyObject = New-Object -TypeName PsCustomObject -Property @{
+						Hour = $hour;
+						Day = $day;
+						Week = $week;
+						Month = $month;
+						TooLong = $tooLong;
+						Other = $other
+					}
+					if ($FormatTable.IsPresent)
+					{
+						$latencyObject | Select-Object -Property Hour, Day, Week, Month, TooLong, Other | Format-Table -AutoSize
+					}
+					else
+					{
+						$latencyObject
+					}
+				}
+			}
+		}
+		
+		if ($Neighbors.IsPresent -or $Errors.IsPresent)
+		{
+			$replicationNeighbors = $dc.GetAllReplicationNeighbors()
+			
+			foreach ($neighbor in $replicationNeighbors)
+			{
+				if ($NamingContext -eq "All" -or
+				($NamingContext -eq "Domain" -and $neighbor.PartitionName -eq $domainDN) -or
+				($NamingContext -eq "Schema" -and $neighbor.PartitionName.Contains("Schema")) -or
+				($NamingContext -eq "Configuration" -and $neighbor.PartitionName.split(",")[0].Contains("Configuration"))
+				)
+				{
+					Write-Verbose -Message "Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
+					
+					if (($Errors.IsPresent -and $neighbor.LastSyncResult -ne 0) -or $Neighbors.IsPresent)
+					{
+						if ($FormatTable.IsPresent)
+						{
+							$neighbor | Select-Object SourceServer, LastSyncMessage, LastAttemptedSync, LastSuccessfulSync, PartitionName | Format-Table -AutoSize
+						}
+						else
+						{
+							$neighbor
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 function Move-ADSIReplicaToSite
@@ -3161,35 +3250,39 @@ function Move-ADSIReplicaToSite
 .LINK  
     https://balladelli.com
 #>
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null,
-              [Parameter(Mandatory=$true)][string] $Site = $null
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        Write-Verbose -Message "Moving $($dc.name) to site $Site"
-        $dc.MoveToAnotherSite($Site)
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null,
+		
+		[Parameter(Mandatory = $true)]
+		[string]$Site = $null
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		Write-Verbose -Message "Moving $($dc.name) to site $Site"
+		$dc.MoveToAnotherSite($Site)
+	}
 }
 
 function Start-ADSIReplicationConsistencyCheck
@@ -3226,34 +3319,36 @@ function Start-ADSIReplicationConsistencyCheck
 .LINK  
     https://balladelli.com
 #>	
-      [CmdletBinding()] 
-      param ( [Parameter(Mandatory=$true)][string] $ComputerName = $null,
-              [Management.Automation.PSCredential] $Credential = $null
-              )
-                  
-    if ($ComputerName)
-    {
-        if ($Credential)
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName,$Credential.UserName,$Credential.GetNetworkCredential().Password
-        }    
-        else
-        {
-            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer",$ComputerName
-        }
-    }
-
-    if ($context)
-    {
-        Write-Verbose -Message "Connecting to $ComputerName"
-        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context) 
-    }
-
-    if ($dc)
-    {
-        $dc.CheckReplicationConsistency()
-        Write-Verbose -Message "KCC Check started on $($dc.name)"
-    }
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName = $null,
+		
+		[Management.Automation.PSCredential]$Credential = $null
+	)
+	
+	if ($ComputerName)
+	{
+		if ($Credential)
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+		}
+		else
+		{
+			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+		}
+	}
+	
+	if ($context)
+	{
+		Write-Verbose -Message "Connecting to $ComputerName"
+		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+	}
+	
+	if ($dc)
+	{
+		$dc.CheckReplicationConsistency()
+		Write-Verbose -Message "KCC Check started on $($dc.name)"
+	}
 }
 
 #endregion
@@ -3305,7 +3400,7 @@ function Get-ADSISite
 			
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -3352,13 +3447,13 @@ whencreated
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSISite End."
@@ -3418,8 +3513,7 @@ function Get-ADSISitesInfo
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
 		
-		[Management.Automation.PSCredential]
-		$Credential = $null
+		[Management.Automation.PSCredential]$Credential = $null
 	)
 	
 	if ($ComputerName)
@@ -3493,7 +3587,7 @@ function Get-ADSISiteLink
 			
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -3519,13 +3613,13 @@ function Get-ADSISiteLink
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSISite End."
@@ -3590,7 +3684,7 @@ function Get-ADSISiteServer
 			
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -3622,13 +3716,13 @@ function Get-ADSISiteServer
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
-		}#TRY
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSISite End."
@@ -3798,7 +3892,7 @@ function Get-ADSIUser
 			
 			IF ($DomainDistinguishedName)
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -3920,18 +4014,18 @@ function Get-ADSIUser
 					l
 					
 					#>
-				}#Properties
+				} #Properties
 				
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
-			}#FOREACH
-		}#TRY
+			} #FOREACH
+		} #TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
+	} #PROCESS
 	END { Write-Verbose -Message "[END] Function Get-ADSIUser End." }
 }
 
