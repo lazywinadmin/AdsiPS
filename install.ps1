@@ -3,8 +3,8 @@ param([string]$InstallDirectory)
 $ModuleName = "AdsiPs"
 
 $fileList = echo `
-    $($ModuleName).psd1 `
-    $($ModuleName).psm1
+    AdsiPs.psd1 `
+    AdsiPs.psm1
     
 if ('' -eq $InstallDirectory)
 {
