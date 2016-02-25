@@ -2,11 +2,9 @@ param([string]$InstallDirectory)
 
 $ModuleName = "AdsiPS"
 
-$fileList = echo `
-    "$($ModuleName).psd1" `
-    "$($ModuleName).psm1"
+$fileList = "$ModuleName.psd1",
+"$ModuleName.psm1"
     
-
 if ('' -eq $InstallDirectory)
 {
     $personalModules = Join-Path -Path ([Environment]::GetFolderPath('MyDocuments')) -ChildPath WindowsPowerShell\Modules
