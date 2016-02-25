@@ -1,4 +1,4 @@
-#AdsiPS
+# AdsiPS
 
 PowerShell module to interact with Active Directory using ADSI and DirectoryServices (.NET)
 
@@ -7,7 +7,7 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  * Being able to specify different credentials
  * Being able to specify different domain
  * If possible avoid use of C# code
-
+  
 
 #### Use Cases
 
@@ -16,13 +16,22 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  * Performance, ADSI is way faster...
  * I can't see the code behind AD Module and Quest AD Snapin, so this is a good way to learn how Active Directory is working
 
-#### ToDo
+# Installation
+To install in your personal modules folder (e.g. ~\Documents\WindowsPowerShell\Modules), run:
 
-##### Brainstorm
-- [ ] Find a smarter way to return all the properties (keys/values) after a findall()
-- [ ] Create custom views for each Cmdlets
+```powershell
+iex (new-object System.Net.WebClient).DownloadString('https://raw.githubusercontent.com/lazywinadmin/AdsiPS/master/install.ps1')
+```
 
-##### Cmdlets
+# Cmdlets
+
+# Change Log
+
+# Examples
+
+
+
+# To Do
 - [x] Add-ADSIGroupMember
 - [ ] Add-ADSISiteSubnet
 - [ ] Disable-ADSIAccount
