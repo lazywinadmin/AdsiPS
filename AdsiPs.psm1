@@ -2020,7 +2020,7 @@ function Get-ADSIGroupMembership
 		
 		[Switch]$Recurse,
 		
-		[System.DirectoryServices.AccountManagement.PrincipalContext]$ContextObject,
+		$ContextObject,
 		
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
@@ -2056,6 +2056,16 @@ function Get-ADSIGroupMembership
 					$ContextObject = New-ADSIPrincipalContext -PrincipalContext "Domain"
 				}
 			}
+			IF ($PSBoundParameters['ContextType'])
+			{
+				IF ($ContextType -isnot [System.DirectoryServices.AccountManagement.PrincipalContext])
+				{
+					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] ContextType is not a System.DirectoryServices.AccountManagement.PrincipalContext Object."
+					Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Creating a System.DirectoryServices.AccountManagement.PrincipalContext Object with $ContextType as argument"
+					$ContextObject = New-ADSIPrincipalContext -PrincipalContext $ContextType
+				}
+			}
+			
 			
 			IF ($PSBoundParameters['Recurse'])
 			{
