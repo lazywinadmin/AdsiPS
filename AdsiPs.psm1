@@ -432,7 +432,7 @@ Function New-ADSIDirectoryContextDomain
 		
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
+	#[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
@@ -504,7 +504,7 @@ Function New-ADSIDirectoryContextForest
 		
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
+	#[OutputType([System.DirectoryServices.ActiveDirectory.DirectoryContext])]
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
@@ -569,7 +569,7 @@ function New-ADSIPrincipalContext
 	
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
 #>
-	[OutputType([System.DirectoryServices.AccountManagement.PrincipalContext])]
+	#[OutputType([System.DirectoryServices.AccountManagement.PrincipalContext])]
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(Mandatory)]
@@ -654,7 +654,7 @@ Function Get-ADSIDomain
 		LazyWinAdmin.com
 		@lazywinadm
 #>	
-	[OutputType([System.DirectoryServices.ActiveDirectory.Domain])]
+	#[OutputType([System.DirectoryServices.ActiveDirectory.Domain])]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
@@ -1090,7 +1090,7 @@ Function Get-ADSIForest
 		LazyWinAdmin.com
 		@lazywinadm
 #>	
-	[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
+	#[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
