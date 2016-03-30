@@ -36,7 +36,7 @@
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-		$ForestName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
+		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 	)
 	PROCESS
 	{
@@ -49,7 +49,7 @@
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
 				
-				$DomainContext = New-ADSIDirectoryContextDomain @splatting
+				$DomainContext = New-ADSIDirectoryContext @splatting -contextType Domain
 				[System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DomainContext)
 			}
 			ELSE

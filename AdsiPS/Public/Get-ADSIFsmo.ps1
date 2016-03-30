@@ -1,105 +1,83 @@
 ﻿function Get-ADSIFsmo
 {
 <#
-.SYNOPSIS
-	This function will query Active Directory for all the Flexible Single Master Operation (FSMO) role owner.
+	.SYNOPSIS
+		Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
 	
-.PARAMETER Credential
-    Specify the Credential to use
+	.DESCRIPTION
+		Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
 	
-.PARAMETER DomainDistinguishedName
-    Specify the DistinguishedName of the Domain to query
+	.PARAMETER Credential
+		Specifies the Alternative credential to use
 	
-.PARAMETER SizeLimit
-    Specify the number of item(s) to output.
-    Default is 100.
+	.PARAMETER ForestName
+		Specifies the alternative forest name
 	
-.NOTES
-	Francois-Xavier Cat
-	LazyWinAdmin.com
-	@lazywinadm
+	.NOTES
+		Francois-Xavier Cat
+		lazywinadmin.com
+		@lazywinadm
+		github.com/lazywinadmin
 #>
+	
 	[CmdletBinding()]
-	PARAM (
-		[Parameter()]
-		[Alias("Domain", "DomainDN")]
-		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
-		[Alias("RunAs")]
+	[OutputType([System.Management.Automation.PSCustomObject])]
+	param
+	(
 		[System.Management.Automation.Credential()]
+		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-		[Alias("ResultLimit", "Limit")]
-		[int]$SizeLimit = '100'
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	BEGIN { }
+	
 	PROCESS
 	{
 		TRY
 		{
-			# Building the basic search object with some parameters
-			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-			$Search.SizeLimit = $SizeLimit
-			$Search.Filter = "((fSMORoleOwner=*))"
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential'])
+				{
+					$Splatting.Credential = $Credential
+				}
+				IF ($PSBoundParameters['ForestName'])
+				{
+					$Splatting.ForestName = $ForestName
+				}
+				
+				# Forest Query
+				$Forest = (Get-ADSIForest @splatting)
+				
+				# Domain Splatting cleanup
+				$Splatting.Remove("ForestName")
+				$Splatting.DomainName = $Forest.RootDomain.name
+				
+				# Domain Query
+				$Domain = (Get-ADSIDomain @Splatting)
+				
+			}
+			ELSE
+			{
+				$Forest = Get-ADSIForest
+				$Domain = Get-ADSIDomain
+			}
 			
-			IF ($PSBoundParameters['DomainDistinguishedName'])
-			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
-				$Search.SearchRoot = $DomainDistinguishedName
-			}
-			IF ($PSBoundParameters['Credential'])
-			{
-				Write-Verbose -Message "[PROCESS] Different Credential specified: $($credential.username)"
-				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-				$Search.SearchRoot = $Cred
-			}
-			If (-not $PSBoundParameters["SizeLimit"])
-			{
-				Write-Warning -Message "Default SizeLimit: 100 Results"
+			[Pscustomobject][ordered]@{
+				SchemaRoleOwner = $Forest.SchemaRoleOwner
+				NamingRoleOwner = $Forest.NamingRoleOwner
+				InfrastructureRoleOwner = $Domain.InfrastructureRoleOwner
+				RidRoleOwner = $Domain.RidRoleOwner
+				PdcRoleOwner = $Domain.PdcRoleOwner
 			}
 			
-			foreach ($FSMO in $($Search.FindAll()))
-			{
-				# Define the properties
-				#  The properties need to be lowercase!!!!!!!!
-				$FSMO.properties
-				
-				# Output the info
-				#New-Object -TypeName PSObject -Property $Properties
-<#
-
-#'PDC FSMO
-(&(objectClass=domainDNS)(fSMORoleOwner=*))
-
-#'Rid FSMO
-(&(objectClass=rIDManager)(fSMORoleOwner=*))
-
-#'Infrastructure FSMO
-
-(&(objectClass=infrastructureUpdate)(fSMORoleOwner=*))
-
-
-#'Schema FSMO
-(&(objectClass=dMD)(fSMORoleOwner=*))
-OR [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema().SchemaRoleOwner
-
-'Domain Naming FSMO
-(&(objectClass=crossRefContainer)(fSMORoleOwner=*))
-
-#>
-				
-				
-			}
-		}#TRY
+		}
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message '[PROCESS] Something wrong happened!'
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
-	END
-	{
-		Write-Verbose -Message "[END] Function Get-ADSIFsmo End."
 	}
 }

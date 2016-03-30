@@ -1,4 +1,4 @@
-﻿Function Get-ADSIForest
+﻿function Get-ADSIForest
 {
 <#
 	.SYNOPSIS
@@ -15,29 +15,36 @@
 	
 	.EXAMPLE
 		Get-ADSIForest
+	
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com
+	
 	.EXAMPLE
 		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+	
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.Forest
 	
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-	
-	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.Forest
 #>
-	[cmdletbinding()]
-	PARAM (
-		[Alias('RunAs')]
+	
+	[CmdletBinding()]
+	[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
+	param
+	(
 		[System.Management.Automation.Credential()]
+		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
+	
 	PROCESS
 	{
 		TRY

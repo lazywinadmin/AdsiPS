@@ -100,7 +100,7 @@
 			
 			IF ($PSboundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
@@ -166,13 +166,13 @@
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
-		} #TRY
+		}#TRY
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	} #PROCESS
+	}#PROCESS
 	END
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIGroup End."

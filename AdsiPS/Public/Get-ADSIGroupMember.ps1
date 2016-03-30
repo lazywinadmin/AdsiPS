@@ -1,27 +1,27 @@
-﻿function Get-ADSIUser
+﻿function Get-ADSIGroupMember
 {
 <#
 	.SYNOPSIS
-		Function to retrieve a User in Active Directory
+		Function to retrieve the members from a specific group in Active Directory
 	
 	.DESCRIPTION
-		Function to retrieve a User in Active Directory
+		Function to retrieve the members from a specific group in Active Directory
 	
 	.PARAMETER Identity
-		Specifies the Identity
+		Specifies the Identity of the Group
 	
 	.PARAMETER Credential
 		Specifies alternative credential
 	
 	.EXAMPLE
-		Get-ADSIUser -Identity 'testaccount'
+		Get-ADSIGroupMember -Identity 'SERVER01'
 	
 	.EXAMPLE
-		Get-ADSIUser -Identity 'testaccount' -Credential (Get-Credential)
+		Get-ADSIGroupMember -Identity 'SERVER01' -Credential (Get-Credential)
 	
 	.EXAMPLE
-		$user = Get-ADSIUser -Identity 'testaccount'
-		$user.GetUnderlyingObject()| select-object *
+		$Comp = Get-ADSIGroupMember -Identity 'SERVER01'
+		$Comp.GetUnderlyingObject()| select-object *
 	
 		Help you find all the extra properties
 	
@@ -37,7 +37,8 @@
 		
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		[Switch]$Recurse
 	)
 	BEGIN
 	{
@@ -55,6 +56,6 @@
 	PROCESS
 	{
 		
-		[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
+		([System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)).GetMembers($Recurse)
 	}
 }

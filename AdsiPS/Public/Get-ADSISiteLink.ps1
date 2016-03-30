@@ -1,84 +1,70 @@
 ﻿function Get-ADSISiteLink
 {
 <#
-.SYNOPSIS
-	This function will query Active Directory for all Sites Links
+	.SYNOPSIS
+		Function to retrieve the Active Directory Site Link(s)
 	
-.PARAMETER Credential
-    Specify the Credential to use
+	.DESCRIPTION
+		Function to retrieve the Active Directory Site Link(s)
 	
-.PARAMETER DomainDistinguishedName
-    Specify the DistinguishedName of the Domain to query
+	.PARAMETER Credential
+		Specifies alternative credential to use. Default is the current user.
 	
-.PARAMETER SizeLimit
-    Specify the number of item(s) to output.
-    Default is 100.
+	.PARAMETER ForestName
+		Specifies the ForestName to query. Default is the current one
 	
-.NOTES
-	Francois-Xavier Cat
-	LazyWinAdmin.com
-	@lazywinadm
+	.PARAMETER Name
+		Specifies the Site Name to find.
+	
+	.EXAMPLE
+		Get-ADSISiteLink
+	
+	.EXAMPLE
+		Get-ADSISiteLink -ForestName lazywinadmin.com
+	
+	.EXAMPLE
+		Get-ADSISiteLink -Credential (Get-Credential superAdmin) -Verbose
+	
+	.EXAMPLE
+		Get-ADSISiteLink -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+	
+	.EXAMPLE
+		Get-ADSISiteLink -Name 'Azure'
+	
+	.OUTPUTS
+		System.DirectoryServices.ActiveDirectory.ActiveDirectorySiteLink
+	
+	.NOTES
+		Francois-Xavier Cat
+		LazyWinAdmin.com
+		@lazywinadm
+		github.com/lazywinadmin
 #>
+	
 	[CmdletBinding()]
-	PARAM (
-		[Parameter()]
-		[Alias("Domain", "DomainDN")]
-		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
-		[Alias("RunAs")]
+	[OutputType([System.DirectoryServices.ActiveDirectory.ActiveDirectorySiteLink])]
+	PARAM
+	(
 		[System.Management.Automation.Credential()]
+		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-		[Alias("ResultLimit", "Limit")]
-		[int]$SizeLimit = '100'
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
+		
+		[Parameter(ValueFromPipelineByPropertyName)]
+		[String]$Name
 	)
-	BEGIN { }
+	
 	PROCESS
 	{
 		TRY
 		{
-			# Building the basic search object with some parameters
-			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-			$Search.SizeLimit = $SizeLimit
-			$Search.Filter = "(objectClass=siteLink)"
-			
-			IF ($PSBoundParameters['DomainDistinguishedName'])
-			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
-				$Search.SearchRoot = $DomainDistinguishedName
-			}
-			IF ($PSBoundParameters['Credential'])
-			{
-				Write-Verbose -Message "[PROCESS] Different Credential specified: $($credential.username)"
-				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-				$Search.SearchRoot = $Cred
-			}
-			If (-not $PSBoundParameters["SizeLimit"])
-			{
-				Write-Warning -Message "Default SizeLimit: 100 Results"
-			}
-			
-			$Search.SearchRoot = $DomainDistinguishedName -replace "LDAP://", "LDAP://CN=Sites,CN=Configuration,"
-			
-			foreach ($SiteLink in $($Search.FindAll()))
-			{
-				# Define the properties
-				#  The properties need to be lowercase!!!!!!!!
-				$SiteLink.properties
-				
-				# Output the info
-				#New-Object -TypeName PSObject -Property $Properties
-			}
-		}#TRY
+			(Get-ADSISite @PSBoundParameters).Sitelinks
+		}
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message "[Get-ADSISiteLink][PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
-	}#PROCESS
-	END
-	{
-		Write-Verbose -Message "[END] Function Get-ADSISite End."
 	}
 }

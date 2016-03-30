@@ -1,4 +1,4 @@
-﻿function Get-ADSISite
+﻿function Get-ADSIComputerSite
 {
 <#
 	.SYNOPSIS
@@ -17,19 +17,19 @@
 		Specifies the Site Name to find.
 	
 	.EXAMPLE
-		Get-ADSISite
+		Get-ADSIComputerSite
 	
 	.EXAMPLE
-		Get-ADSISite -ForestName lazywinadmin.com
+		Get-ADSIComputerSite -ForestName lazywinadmin.com
 	
 	.EXAMPLE
-		Get-ADSISite -Credential (Get-Credential superAdmin) -Verbose
+		Get-ADSIComputerSite -Credential (Get-Credential superAdmin) -Verbose
 	
 	.EXAMPLE
-		Get-ADSISite -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+		Get-ADSIComputerSite -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
 	
 	.EXAMPLE
-		Get-ADSISite -Name 'Montreal'
+		Get-ADSIComputerSite -Name 'Montreal'
 	
 	.OUTPUTS
 		System.DirectoryServices.ActiveDirectory.ActiveDirectorySite
@@ -51,23 +51,23 @@
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 		
-		[String]$Name
+		[String]$ComputerName
 	)
 	
 	PROCESS
 	{
 		TRY
 		{
-			IF ($PSBoundParameters['Name'])
+			IF ($PSBoundParameters['ComputerName'])
 			{
 				# Remove Name from the PSBoundParameters Splatting
-				[Void]$PSBoundParameters.Remove('Name')
+				[Void]$PSBoundParameters.Remove('ComputerName')
 				
 				# Create a Forest Context
 				$Context = New-ADSIDirectoryContext -ContextType Forest @PSBoundParameters
 				
 				# Get the site name specified
-				[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::FindByName($Context, $Name)
+				[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
 			}
 			ELSE
 			{

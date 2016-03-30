@@ -1,11 +1,11 @@
-﻿function Get-ADSISiteServer
+﻿function Get-ADSISiteSubnet
 {
 <#
 	.SYNOPSIS
-		Function to retrieve the Active Directory Site Servers
+		Function to retrieve the Active Directory Site subnets
 	
 	.DESCRIPTION
-		Function to retrieve the Active Directory Site Servers
+		Function to retrieve the Active Directory Site subnets
 	
 	.PARAMETER Credential
 		Specifies alternative credential to use. Default is the current user.
@@ -17,22 +17,22 @@
 		Specifies the Site Name to find.
 	
 	.EXAMPLE
-		Get-ADSISiteServer
+		Get-ADSISiteSubnet
 	
 	.EXAMPLE
-		Get-ADSISiteServer -ForestName lazywinadmin.com
+		Get-ADSISiteSubnet -ForestName lazywinadmin.com
 	
 	.EXAMPLE
-		Get-ADSISiteServer -Credential (Get-Credential superAdmin) -Verbose
+		Get-ADSISiteSubnet -Credential (Get-Credential superAdmin) -Verbose
 	
 	.EXAMPLE
-		Get-ADSISiteServer -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+		Get-ADSISiteSubnet -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
 	
 	.EXAMPLE
-		Get-ADSISiteServer -Name 'Azure'
+		Get-ADSISiteSubnet -Name 'Azure'
 	
 	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.DomainController
+		System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet
 	
 	.NOTES
 		Francois-Xavier Cat
@@ -42,7 +42,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.DomainController])]
+	[OutputType([System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet])]
 	PARAM
 	(
 		[System.Management.Automation.Credential()]
@@ -59,11 +59,11 @@
 	{
 		TRY
 		{
-			(Get-ADSISite @PSBoundParameters).servers
+			(Get-ADSISite @PSBoundParameters).subnets
 		}
 		CATCH
 		{
-			Write-Warning -Message "[Get-ADSISiteServer][PROCESS] Something wrong happened!"
+			Write-Warning -Message "[Get-ADSISiteSubnet][PROCESS] Something wrong happened!"
 			Write-Warning -Message $error[0].Exception.Message
 		}
 	}
