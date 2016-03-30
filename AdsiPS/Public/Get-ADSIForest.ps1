@@ -32,7 +32,6 @@
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-		github.com/lazywinadmin
 #>
 	
 	[CmdletBinding()]
@@ -57,7 +56,7 @@
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
 				
-				$ForestContext = New-ADSIDirectoryContext @splatting
+				$ForestContext = New-ADSIDirectoryContextForest @splatting
 				[System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
 			}
 			ELSE
