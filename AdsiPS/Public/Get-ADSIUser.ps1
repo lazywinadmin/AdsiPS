@@ -1,4 +1,4 @@
-﻿function Get-ADSIUser
+function Get-ADSIUser
 {
 <#
 	.SYNOPSIS
@@ -22,7 +22,7 @@
 	.EXAMPLE
 		$user = Get-ADSIUser -Identity 'testaccount'
 		$user.GetUnderlyingObject()| select-object *
-	
+		
 		Help you find all the extra properties
 	
 	.NOTES
@@ -31,14 +31,19 @@
 		@lazywinadm
 		github.com/lazywinadmin
 #>
+	
 	[CmdletBinding()]
-	param ([Parameter(Mandatory)]
+	[OutputType([System.DirectoryServices.AccountManagement.UserPrincipal])]
+	param
+	(
+		[Parameter(Mandatory = $true)]
 		[string]$Identity,
 		
-		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
+		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
+	
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
