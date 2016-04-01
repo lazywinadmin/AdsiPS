@@ -1,4 +1,4 @@
-﻿function Get-ADSIGroup
+function Get-ADSIGroup
 {
 <#
 	.SYNOPSIS
@@ -39,12 +39,16 @@
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 	
-		$SearchBase
+		#$SearchBase,
+
+        [Alias("Domain","Server")]
+        $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
 	)
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
+        <#
 		IF ($PSBoundParameters['Credential'])
 		{
 			$Context = New-ADSIPrincipalContext -contexttype Domain -Credential $Credential
@@ -62,6 +66,10 @@
 				$Context = New-ADSIPrincipalContext -contexttype Domain -Container $SearchBase
 			}
 		}
+        #>
+        $Splatting = $PSBoundParameters.Remove("Identity")
+        $Splatting = $Splatting.Remove("SearchBase")
+        $Context = New-ADSIPrincipalContext -contexttype Domain $SearchBase
 	}
 	PROCESS
 	{
