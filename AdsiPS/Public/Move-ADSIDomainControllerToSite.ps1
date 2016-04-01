@@ -6,6 +6,9 @@
 	
 	.DESCRIPTION
 		Move-ADSIDomainControllerToSite moves the current DC to another site.
+		
+		MSDN Documention on 'DirectoryServer.MoveToAnotherSite Method'
+		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directoryserver.movetoanothersite(v=vs.110).aspx
 	
 	.PARAMETER ComputerName
 		Specifies the Domain Controller
