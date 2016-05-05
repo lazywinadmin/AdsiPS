@@ -18,12 +18,23 @@ function Get-ADSIGroup
 	
 	.EXAMPLE
 		Get-ADSIGroup -Identity 'SERVER01' -Credential (Get-Credential)
+
+    .EXAMPLE
+        Get-ADSIGroup -Name "*ADSIPS*"
+    .EXAMPLE
+        Get-ADSIGroup -ISSecurityGroup:$true -Description "*"
 	
 	.EXAMPLE
 		$Comp = Get-ADSIGroup -Identity 'SERVER01'
 		$Comp.GetUnderlyingObject()| select-object *
 	
 		Help you find all the extra properties
+
+    .EXAMPLE
+        Get-ADSIGroup -GroupScope Universal -IsSecurityGroup
+
+    .EXAMPLE
+        Get-ADSIGroup -GroupScope Universal -IsSecurityGroup:$false
 	
 	.NOTES
 		Francois-Xavier Cat
@@ -31,8 +42,9 @@ function Get-ADSIGroup
 		@lazywinadm
 		github.com/lazywinadmin
 #>
-	[CmdletBinding()]
-	param ([Parameter(Mandatory)]
+	[CmdletBinding(DefaultParameterSetName='All')]
+	param (
+        [Parameter(ParameterSetName='Identity')]
 		[string]$Identity,
 		
 		[Alias('RunAs')]
@@ -42,7 +54,29 @@ function Get-ADSIGroup
 		#$SearchBase,
 
         [Alias("Domain","Server")]
-        $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
+        $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
+
+        [Parameter(ParameterSetName='Filter')]
+        [system.directoryservices.accountmanagement.groupscope]$GroupScope,
+
+        [Parameter(ParameterSetName='Filter')]
+        [switch]$IsSecurityGroup=$true,
+
+        [Parameter(ParameterSetName='Filter')]
+        $Description,
+
+        [Parameter(ParameterSetName='Filter')]
+        $UserPrincipalName,
+
+        [Parameter(ParameterSetName='Filter')]
+        $Displayname ,
+        #[Parameter(ParameterSetName='Filter')]
+        #$DistinguishedName,
+        [Parameter(ParameterSetName='Filter')]
+        $Name,
+        [Parameter(ParameterSetName='Filter')]
+        $SID
+
 	)
 	BEGIN
 	{
@@ -68,11 +102,37 @@ function Get-ADSIGroup
 		}
         #>
         $Splatting = $PSBoundParameters.Remove("Identity")
-        $Splatting = $Splatting.Remove("SearchBase")
-        $Context = New-ADSIPrincipalContext -contexttype Domain $SearchBase
+       #$Splatting = $Splatting.Remove("SearchBase")
+        $Context = New-ADSIPrincipalContext -contexttype Domain # $SearchBase
 	}
 	PROCESS
 	{
-		[System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
+        TRY
+        {
+            IF($Identity)
+            {
+		        [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
+            }
+            ELSE{
+                $GroupPrincipal =New-object -TypeName System.DirectoryServices.AccountManagement.GroupPrincipal -argu $Context
+                #$GroupPrincipal.Name = $Identity
+                $searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+                $searcher.QueryFilter = $GroupPrincipal
+                $searcher.QueryFilter.IsSecurityGroup = $IsSecurityGroup
+                if($PSBoundParameters['GroupScope']){$searcher.QueryFilter.GroupScope = $GroupScope}
+                if($PSBoundParameters['UserPrincipalName']){$searcher.QueryFilter.UserPrincipalName = $UserPrincipalName}
+                if($PSBoundParameters['Description']){$searcher.QueryFilter.Description = $Description}
+                if($PSBoundParameters['DisplayName']){$searcher.QueryFilter.DisplayName = $DisplayName}
+                #if($PSBoundParameters['DistinguishedName']){$searcher.QueryFilter.DistinguishedName = $DistinguishedName}
+                if($PSBoundParameters['Sid']){$searcher.QueryFilter.Sid.Value = $SID}
+                if($PSBoundParameters['Name']){$searcher.QueryFilter.Name = $Name}
+
+                $searcher.FindAll()
+            }
+        }
+        CATCH
+        {
+            Write-Error $error[0]
+        }
 	}
 }

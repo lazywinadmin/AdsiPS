@@ -30,7 +30,8 @@ function Get-ADSIComputerSite
 	[OutputType([pscustomobject])]
 	param
 	(
-		[String[]]$ComputerName
+        [parameter()]
+		[String[]]$ComputerName=$env:computername
 	)
 	
 	BEGIN
