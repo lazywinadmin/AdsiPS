@@ -51,7 +51,8 @@
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 		
-		[String]$Name
+        [Alias("Name")]
+		[String]$SiteName
 	)
 	
 	PROCESS

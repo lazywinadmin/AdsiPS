@@ -52,19 +52,37 @@
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 		
 		[Parameter(ValueFromPipelineByPropertyName)]
-		[String]$Name
+        [Alias("Name")]
+		[String]$SubnetName
 	)
-	
+    BEGIN{
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+		
+        # Create Context splatting
+        $ContextSplatting=@{ ContextType = "Forest" }
+
+		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
+        IF ($PSBoundParameters['ForestName']){$ContextSplatting.ForestName = $ForestName}
+        
+        $Context = New-ADSIDirectoryContext @ContextSplatting
+    }
 	PROCESS
 	{
 		TRY
 		{
-			(Get-ADSISite @PSBoundParameters).subnets
+            IF($PSBoundParameters['SubnetName'])
+            {
+                [System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet]::FindByName($Context,$SubnetName)
+            }
+            IF(-not $PSBoundParameters['SubnetName'])
+            {
+			    (Get-ADSISite @PSBoundParameters).subnets
+            }
 		}
 		CATCH
 		{
 			Write-Warning -Message "[Get-ADSISiteSubnet][PROCESS] Something wrong happened!"
-			Write-Warning -Message $error[0].Exception.Message
+			$error[0]
 		}
 	}
 }
