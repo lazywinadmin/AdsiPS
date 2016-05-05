@@ -65,4 +65,3 @@ PARAM(
         
     }
 }
-New-ADSIGroup -Name "TestfromADSIPS5" -Description "some description" -GroupScope Local -IsSecurityGroup -Passthru -domain "FX.LAB"
