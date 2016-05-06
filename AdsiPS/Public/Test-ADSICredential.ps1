@@ -16,13 +16,20 @@ function Test-ADSICredential
 	.EXAMPLE
 		Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
 	
+	.EXAMPLE
+		PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -Password "Password1" -Passthru
+	
+		# You can test the credential using the following function
+		Test-ADSICredential -AccountName "fxtest04" -Password "Password1"
+	
 	.OUTPUTS
 		System.Boolean
 	
 	.NOTES
-		Francois-Xavier Cat
-		www.lazywinadmin.com
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
 		@lazywinadm
+		github.com/lazywinadmin
 #>
 	[OutputType([System.Boolean])]
 	[CmdletBinding()]

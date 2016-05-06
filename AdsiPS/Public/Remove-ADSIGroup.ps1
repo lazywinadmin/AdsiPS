@@ -1,10 +1,45 @@
 ﻿function Remove-ADSIGroup
 {
 <#
-.EXAMPLE
-    Remove-ADSIGroup FXTESTGROUP
-.EXAMPLE
-    Remove-ADSIGroup FXTESTGROUP -whatif
+	.SYNOPSIS
+		function to remove a group
+	
+	.DESCRIPTION
+		function to remove a group
+	
+	.PARAMETER Identity
+		Specifies the Identity
+	
+		You can provide one of the following properties
+			DistinguishedName
+			Guid
+			Name
+			SamAccountName
+			Sid
+			UserPrincipalName
+		
+		Those properties come from the following enumeration:
+			System.DirectoryServices.AccountManagement.IdentityType
+	
+	.PARAMETER Credential
+		Specifies the alternative credential to use.
+		By default it will use the current user windows credentials.
+	
+	.PARAMETER DomainName
+		Specifies the alternative Domain where the user should be created
+		By default it will use the current domain.
+	
+	.EXAMPLE
+		Remove-ADSIGroup FXTESTGROUP
+	
+	.EXAMPLE
+		Remove-ADSIGroup FXTESTGROUP -whatif
+	
+	.NOTES
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
+		@lazywinadm
+		github.com/lazywinadmin
 #>
 [CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(
@@ -20,11 +55,14 @@ PARAM(
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
         # Create Context splatting
-        $ContextSplatting=@{}
+		$ContextSplatting = @{
+			Contexttype = "Domain"
+		}
+		
 		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
         
-        $Context = New-ADSIPrincipalContext @ContextSplatting -contexttype Domain
+        $Context = New-ADSIPrincipalContext @ContextSplatting
     }
     PROCESS
     {

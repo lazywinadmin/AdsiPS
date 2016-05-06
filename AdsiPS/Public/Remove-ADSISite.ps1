@@ -1,14 +1,36 @@
 ﻿Function Remove-ADSISite
 {
 <#
-.EXAMPLE
-    Remove-ADSISite -SiteName WOW01
+	.SYNOPSIS
+		function to remove a Site
+	
+	.DESCRIPTION
+		function to remove a Site
+	
+	.PARAMETER SiteName
+		Specifies the Site Name
+	
+	.PARAMETER Credential
+		Specifies the alternative credential to use.
+		By default it will use the current user windows credentials.
+	
+	.PARAMETER ForestName
+		Specifies the alternative Forest where the user should be created
+		By default it will use the current Forest.
+	
+	.EXAMPLE
+		Remove-ADSISite -SiteName WOW01
+	
+	.NOTES
+		Francois-Xavier.Cat
+		LazyWinAdmin.com
+		@lazywinadm
+		github.com/lazywinadmin
 #>
 [CmdletBinding()]
 PARAM(
     [parameter(Mandatory=$true)]
     [String]$SiteName,
-    [String]$Location,
     [Alias("RunAs")]
 	[System.Management.Automation.Credential()]
 	$Credential = [System.Management.Automation.PSCredential]::Empty,
