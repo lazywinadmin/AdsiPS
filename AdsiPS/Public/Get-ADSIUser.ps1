@@ -51,11 +51,11 @@ function Get-ADSIUser
 		https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
 	
-	[CmdletBinding()]
+	[CmdletBinding(DefaultParameterSetName="All")]
 	#[OutputType([System.DirectoryServices.AccountManagement.UserPrincipal])]
 	param
 	(
-		[Parameter(Mandatory = $true)]
+		[Parameter(Mandatory = $true,ParameterSetName="Identity")]
 		[string]$Identity,
 		
 		[System.Management.Automation.Credential()]

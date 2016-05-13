@@ -1,4 +1,4 @@
-function Refresh-ADSIUserPasswordAge
+function Reset-ADSIUserPasswordAge
 {
 <#
 	.SYNOPSIS
@@ -14,10 +14,10 @@ function Refresh-ADSIUserPasswordAge
 		Specifies alternative credential
 	
 	.EXAMPLE
-		Refresh-ADSIUserPasswordAge -Identity 'testaccount'
+		Reset-ADSIUserPasswordAge -Identity 'testaccount'
 	
 	.EXAMPLE
-		Refresh-ADSIUserPasswordAge -Identity 'testaccount' -Credential (Get-Credential)
+		Reset-ADSIUserPasswordAge -Identity 'testaccount' -Credential (Get-Credential)
 	
 	.NOTES
 		Francois-Xavier Cat

@@ -26,43 +26,54 @@ Coming soon...
 
 
 # Cmdlets
-* Add-ADSIGroupMember
-* Enable-ADSIReplicaGC
-* Get-ADSIComputer
-* Get-ADSIDomain
-* Get-ADSIDomainController
-* Get-ADSIDomainMode
-* Get-ADSIDomainRoot
-* Get-ADSIDomainTrustRelationship
-* Get-ADSIForest
-* Get-ADSIForestDomain
-* Get-ADSIForestMode
-* Get-ADSIForestTrustRelationship
-* Get-ADSIFsmo
-* Get-ADSIGroup
-* Get-ADSIGroupManagedBy
-* Get-ADSIGroupMember
-* Get-ADSIGroupPolicyObject
-* Get-ADSIObject
-* Get-ADSIOrganizationalUnit
-* Get-ADSIReplicaCurrentTime
-* Get-ADSIReplicaDomainInfo
-* Get-ADSIReplicaForestInfo
-* Get-ADSIReplicaGCInfo
-* Get-ADSIReplicaInfo
-* Get-ADSISchema
-* Get-ADSISite
-* Get-ADSISiteLink
-* Get-ADSISiteServer
-* Get-ADSISiteSubnet
-* Get-ADSITokenGroup
-* Get-ADSIUser
-* Move-ADSIDomainControllerRoles
-* Move-ADSIReplicaToSite
-* New-ADSIDirectoryContext
-* New-ADSIPrincipalContext
-* New-ADSIUser
-* Remove-ADSIGroupMember
-* Start-ADSIReplicationConsistencyCheck
-* Test-ADSICredential
-* Test-ADSIUserIsGroupMember
+ * Add-ADSIGroupMember
+ * Enable-ADSIDomainControllerGlobalCatalog
+ * Get-ADSIComputer
+ * Get-ADSIComputerSite
+ * Get-ADSIDomain
+ * Get-ADSIDomainController
+ * Get-ADSIDomainMode
+ * Get-ADSIDomainRoot
+ * Get-ADSIDomainTrustRelationship
+ * Get-ADSIForest
+ * Get-ADSIForestDomain
+ * Get-ADSIForestMode
+ * Get-ADSIForestTrustRelationship
+ * Get-ADSIFsmo
+ * Get-ADSIGroup
+ * Get-ADSIGroupManagedBy
+ * Get-ADSIGroupMember
+ * Get-ADSIGroupPolicyObject
+ * Get-ADSIObject
+ * Get-ADSIOrganizationalUnit
+ * Get-ADSIReplicaCurrentTime
+ * Get-ADSIReplicaDomainInfo
+ * Get-ADSIReplicaForestInfo
+ * Get-ADSIReplicaGCInfo
+ * Get-ADSIReplicaInfo
+ * Get-ADSISchema
+ * Get-ADSISite
+ * Get-ADSISiteLink
+ * Get-ADSISiteServer
+ * Get-ADSISiteSubnet
+ * Get-ADSITokenGroup
+ * Get-ADSIUser
+ * Move-ADSIDomainControllerRole
+ * Move-ADSIDomainControllerToSite
+ * New-ADSIDirectoryContext
+ * New-ADSIGroup
+ * New-ADSIPrincipalContext
+ * New-ADSISite
+ * New-ADSIUser
+ * Remove-ADSIGroup
+ * Remove-ADSIGroupMember
+ * Remove-ADSISite
+ * Remove-ADSISiteSubnet
+ * Remove-ADSIUser
+ * Reset-ADSIUserPasswordAge
+ * Set-ADSIUserPassword
+ * Start-ADSIReplicationConsistencyCheck
+ * Test-ADSICredential
+ * Test-ADSIUserIsGroupMember
+ * Test-ADSIUserIsLockedOut
+ * Unlock-ADSIUser

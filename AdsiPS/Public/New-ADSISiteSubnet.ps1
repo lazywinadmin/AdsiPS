@@ -1,4 +1,4 @@
-﻿function New-ADSISubnet
+﻿function New-ADSISiteSubnet
 {
 <#
 	.SYNOPSIS

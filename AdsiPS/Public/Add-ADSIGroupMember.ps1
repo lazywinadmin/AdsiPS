@@ -3,6 +3,8 @@
 <#
 .SYNOPSIS
 	This function will add a AD object inside a AD Group.
+.DESCRIPTION
+    This function will add a AD object inside a AD Group.
 	
 .PARAMETER GroupSamAccountName
 	Specify the Group SamAccountName of the group
@@ -27,11 +29,12 @@
 	
 .EXAMPLE
     Add-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName fxcat -Credential (Get-Credential -Credential SuperAdmin)
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
+    github.com/lazywinadmin
 #>
 	[CmdletBinding(DefaultParameterSetName = "GroupSamAccountName")]
 	PARAM (
