@@ -42,12 +42,12 @@ function Disable-ADSIUser
 	.EXAMPLE
 		Disable-ADSIUser fxtest02 -credential (Get-Credential)
 	
-		This will emulate disabling the fxtest02 account using the credential specified
+		This will disable the fxtest02 account using the credential specified
 	
 	.EXAMPLE
 		Disable-ADSIUser fxtest02 -credential (Get-Credential) -DomainName LazyWinAdmin.local
 	
-		This will emulate disabling the fxtest02 account using the credential specified in the domain LazyWinAdmin.local
+		This will disable the fxtest02 account using the credential specified in the domain LazyWinAdmin.local
 	
 	.NOTES
 		Francois-Xavier.Cat
