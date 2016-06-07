@@ -1,4 +1,4 @@
-﻿function Get-ADSIComputer
+function Get-ADSIComputer
 {
 <#
 	.SYNOPSIS
@@ -74,5 +74,3 @@
         }
 	}
 }
-
-Get-adsicomputer
