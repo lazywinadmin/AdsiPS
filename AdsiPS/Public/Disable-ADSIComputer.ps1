@@ -2,10 +2,10 @@ function Disable-ADSIComputer
 {
 <#
 	.SYNOPSIS
-		Function to delete a Computer Account
+		Function to disable a Computer Account
 	
 	.DESCRIPTION
-		Function to delete a Computer Account
+		Function to disable a Computer Account
 	
 	.PARAMETER Identity
 		Specifies the Identity of the Computer.
