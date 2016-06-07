@@ -26,7 +26,7 @@
 		By default it will use the current user windows credentials.
 	
 	.PARAMETER DomainName
-		Specifies the alternative Domain where the user should be created
+		Specifies the alternative Domain.
 		By default it will use the current domain.
 	
 	.EXAMPLE
