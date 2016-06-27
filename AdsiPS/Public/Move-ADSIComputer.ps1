@@ -1,4 +1,4 @@
-function Get-ADSIComputer
+function Move-ADSIComputer
 {
 <#
 	.SYNOPSIS
@@ -30,6 +30,9 @@ function Get-ADSIComputer
 	
 	.PARAMETER Destination
 		Specifies the Distinguished Name where the object will be moved
+	
+	.EXAMPLE
+		Move-ADSIComputer -identity 'TESTCOMP01' -Destination 'OU=Servers,DC=FX,DC=LAB'
 	
 	.NOTES
 		Francois-Xavier Cat
