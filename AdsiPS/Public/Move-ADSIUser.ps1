@@ -48,11 +48,11 @@ function Move-ADSIUser
 		https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
 	
-	[CmdletBinding(DefaultParameterSetName = "All")]
+	[CmdletBinding()]
 	#[OutputType([System.DirectoryServices.AccountManagement.UserPrincipal])]
 	param
 	(
-		[Parameter(Mandatory = $true, ParameterSetName = "Identity")]
+		[Parameter(Mandatory = $true)]
 		[string]$Identity,
 		
 		[System.Management.Automation.Credential()]
