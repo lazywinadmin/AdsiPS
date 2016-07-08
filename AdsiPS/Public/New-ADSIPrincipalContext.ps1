@@ -46,7 +46,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.AccountManagement.PrincipalContext])]
+	[OutputType('System.DirectoryServices.AccountManagement.PrincipalContext')]
 	PARAM
 	(
 		[System.Management.Automation.Credential()]
