@@ -43,7 +43,7 @@ function Remove-ADSIComputer
 .EXAMPLE
 	Remove-ADSIComputer TESTSERVER01 -whatif
 
-	This command will emulate disabling the account TESTSERVER01
+	This command will emulate removing the account TESTSERVER01
 
 .EXAMPLE
 	Remove-ADSIComputer TESTSERVER01 -credential (Get-Credential)
