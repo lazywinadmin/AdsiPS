@@ -31,27 +31,27 @@ function Remove-ADSIComputer
     when you try to delete the object without the -recursive param
 
 .EXAMPLE
-	Remove-ADSIComputer TESTSERVER01
+	Remove-ADSIComputer -identity TESTSERVER01
 
 	This command will Remove the account TESTSERVER01
 
 .EXAMPLE
-	Remove-ADSIComputer TESTSERVER01 -recursive
+	Remove-ADSIComputer -identity TESTSERVER01 -recursive
 
 	This command will Remove the account TESTSERVER01 and all the child leaf
 
 .EXAMPLE
-	Remove-ADSIComputer TESTSERVER01 -whatif
+	Remove-ADSIComputer -identity TESTSERVER01 -whatif
 
 	This command will emulate removing the account TESTSERVER01
 
 .EXAMPLE
-	Remove-ADSIComputer TESTSERVER01 -credential (Get-Credential)
+	Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential)
 
 	This command will Remove the account TESTSERVER01 using the alternative credential specified
 
 .EXAMPLE
-	Remove-ADSIComputer TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
+	Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
 
 	This command will Remove the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
 
@@ -72,7 +72,7 @@ function Remove-ADSIComputer
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		[String]$DomainName,
-		[switch]$Recursive
+		[Switch]$Recursive
 	)
 	
 	BEGIN
