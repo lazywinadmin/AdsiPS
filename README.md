@@ -1,22 +1,24 @@
 # AdsiPS
 
-PowerShell module to interact with Active Directory using ADSI and DirectoryServices (.NET)
+PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
 
-#### Goals
- * No ActiveDirectory module/No Quest AD Snapin required
- * Being able to specify different credentials
- * Being able to specify different domain
+The initial motivation for this module was to improve my knowledge on how to interact with Active Directory without the Microsoft Active Directory module or the Quest Active Directory Snapin.
+The other elements that I wanted to work on were being able to use alternative Credentials and to specify a different Domain.
+
+Obviously I'm still learning and there is ton of space for improvements... Would love contributors, suggestions, feedback or any other help.
  
 ## Installation
-#### Download from PowerShell Gallery
-Coming soon...
-#### Download from GitHub repository
+#### Download from PowerShell Gallery (PowerShell v5+)
+``` powershell
+Install-Module -name ADSIPS
+```
 
+#### Download from GitHub repository
 * Download the repository
 * Unblock the zip file
 * Extract the folder to a module path (e.g. $home\Documents\WindowsPowerShell\Modules)
 
- 
+
 ## Use Cases
 
 * Learning Active Directory: We can't see the code behind the Microsoft ActiveDirectory Module and Quest ActiveDirectory Snapin. This module is a great way to explore and learn on how Active Directory is working,
@@ -25,55 +27,17 @@ Coming soon...
 * Restricted environment: Sometime ActiveDirectory Module is not available/ or can't install it on a machine.
 
 
-# Cmdlets
- * Add-ADSIGroupMember
- * Enable-ADSIDomainControllerGlobalCatalog
- * Get-ADSIComputer
- * Get-ADSIComputerSite
- * Get-ADSIDomain
- * Get-ADSIDomainController
- * Get-ADSIDomainMode
- * Get-ADSIDomainRoot
- * Get-ADSIDomainTrustRelationship
- * Get-ADSIForest
- * Get-ADSIForestDomain
- * Get-ADSIForestMode
- * Get-ADSIForestTrustRelationship
- * Get-ADSIFsmo
- * Get-ADSIGroup
- * Get-ADSIGroupManagedBy
- * Get-ADSIGroupMember
- * Get-ADSIGroupPolicyObject
- * Get-ADSIObject
- * Get-ADSIOrganizationalUnit
- * Get-ADSIReplicaCurrentTime
- * Get-ADSIReplicaDomainInfo
- * Get-ADSIReplicaForestInfo
- * Get-ADSIReplicaGCInfo
- * Get-ADSIReplicaInfo
- * Get-ADSISchema
- * Get-ADSISite
- * Get-ADSISiteLink
- * Get-ADSISiteServer
- * Get-ADSISiteSubnet
- * Get-ADSITokenGroup
- * Get-ADSIUser
- * Move-ADSIDomainControllerRole
- * Move-ADSIDomainControllerToSite
- * New-ADSIDirectoryContext
- * New-ADSIGroup
- * New-ADSIPrincipalContext
- * New-ADSISite
- * New-ADSIUser
- * Remove-ADSIGroup
- * Remove-ADSIGroupMember
- * Remove-ADSISite
- * Remove-ADSISiteSubnet
- * Remove-ADSIUser
- * Reset-ADSIUserPasswordAge
- * Set-ADSIUserPassword
- * Start-ADSIReplicationConsistencyCheck
- * Test-ADSICredential
- * Test-ADSIUserIsGroupMember
- * Test-ADSIUserIsLockedOut
- * Unlock-ADSIUser
+
+## Help !!
+Would love contributors, suggestions, feedback, and other help! Feel free to open an Issue ticket
+ 
+
+
+## More Information
+ * MSDN is a great resource if you want to find more information on the NET classes to use 
+
+
+
+## Notes
+ * Thanks to PowerShell.com/Tobias Weltner for the great content on ADSI [PowerShell.com ADSI](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx)
+ * Thanks to @RamblingCookieMonster for your great guidelines and contributions [RamblingCookieMonster's Blog](http://ramblingcookiemonster.github.io/Building-A-PowerShell-Module/)
