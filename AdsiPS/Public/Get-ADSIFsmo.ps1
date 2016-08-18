@@ -21,7 +21,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.Management.Automation.PSCustomObject])]
+	[OutputType('System.Management.Automation.PSCustomObject')]
 	param
 	(
 		[System.Management.Automation.Credential()]

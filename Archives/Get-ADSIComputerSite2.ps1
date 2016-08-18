@@ -42,7 +42,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.ActiveDirectorySite])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySite')]
 	PARAM
 	(
 		[System.Management.Automation.Credential()]

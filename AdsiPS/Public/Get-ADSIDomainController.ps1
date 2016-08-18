@@ -30,7 +30,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.DomainController])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.DomainController')]
 	param
 	(
 		[System.Management.Automation.Credential()]

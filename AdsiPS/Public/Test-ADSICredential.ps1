@@ -31,7 +31,7 @@ function Test-ADSICredential
 		@lazywinadm
 		github.com/lazywinadmin
 #>
-	[OutputType([System.Boolean])]
+	[OutputType('System.Boolean')]
 	[CmdletBinding()]
 	PARAM
 	(

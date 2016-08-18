@@ -42,7 +42,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.DomainController])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.DomainController')]
 	PARAM
 	(
 		[System.Management.Automation.Credential()]

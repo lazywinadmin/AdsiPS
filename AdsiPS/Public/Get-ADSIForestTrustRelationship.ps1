@@ -21,7 +21,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.ForestTrustRelationshipInformation])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.ForestTrustRelationshipInformation')]
 	param
 	(
 		[System.Management.Automation.Credential()]

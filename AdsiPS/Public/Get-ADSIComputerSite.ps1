@@ -27,7 +27,7 @@ function Get-ADSIComputerSite
 #>
 	
 	[CmdletBinding()]
-	[OutputType([pscustomobject])]
+	[OutputType('System.Management.Automation.PSCustomObject')]
 	param
 	(
         [parameter()]

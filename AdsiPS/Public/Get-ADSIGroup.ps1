@@ -85,7 +85,7 @@ function Get-ADSIGroup
 #>
 	
 	[CmdletBinding(DefaultParameterSetName = 'All')]
-	#[OutputType([System.DirectoryServices.AccountManagement.GroupPrincipal])]
+	[OutputType('System.DirectoryServices.AccountManagement.GroupPrincipal')]
 	param
 	(
 		[Parameter(ParameterSetName = 'Identity')]

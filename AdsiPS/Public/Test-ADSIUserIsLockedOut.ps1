@@ -27,7 +27,7 @@ function Test-ADSIUserIsLockedOut
 #>
 	
 	[CmdletBinding()]
-	[OutputType([Boolean])]
+	[OutputType('System.Boolean')]
 	param
 	(
 		[Parameter(Mandatory = $true)]

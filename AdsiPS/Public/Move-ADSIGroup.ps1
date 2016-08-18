@@ -46,7 +46,7 @@ function Move-ADSIGroup
 #>
 	
 	[CmdletBinding()]
-	#[OutputType([System.DirectoryServices.AccountManagement.GroupPrincipal])]
+	[OutputType('System.DirectoryServices.AccountManagement.GroupPrincipal')]
 	param
 	(
 		[Parameter(Mandatory = $true)]

@@ -21,7 +21,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.GlobalCatalog])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.GlobalCatalog')]
 	param
 	(
 		[System.Management.Automation.Credential()]

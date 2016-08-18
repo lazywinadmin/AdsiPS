@@ -49,7 +49,7 @@ function Move-ADSIUser
 #>
 	
 	[CmdletBinding()]
-	#[OutputType([System.DirectoryServices.AccountManagement.UserPrincipal])]
+	[OutputType('System.DirectoryServices.AccountManagement.UserPrincipal')]
 	param
 	(
 		[Parameter(Mandatory = $true)]

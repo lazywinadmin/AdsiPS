@@ -36,7 +36,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.Forest)]
 	param
 	(
 		[System.Management.Automation.Credential()]
