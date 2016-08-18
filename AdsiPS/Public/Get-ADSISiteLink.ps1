@@ -51,7 +51,7 @@
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 		
-		[Parameter(ValueFromPipelineByPropertyName)]
+		[Parameter(ValueFromPipelineByPropertyName=$true)]
 		[String]$Name
 	)
 	

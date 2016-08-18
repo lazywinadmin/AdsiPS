@@ -66,7 +66,7 @@ function Remove-ADSIComputer
 #>
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	PARAM (
-		[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = "SamAccountName", ValueFromPipeline = $true)]
+		[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
 		$Identity,
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
