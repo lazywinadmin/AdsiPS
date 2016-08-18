@@ -71,7 +71,12 @@
 			IF ($PSCmdlet.ShouldProcess($SubnetName, "Create new Subnet"))
 			{
 				$Subnet = New-Object -TypeName System.DirectoryServices.ActiveDirectory.ActiveDirectorysubnet -ArgumentList $Context, $SubnetName, $SiteName
-				$Subnet.Location = $Location
+
+				if ($PSBoundParameters['Location']) 
+				{
+					$Subnet.Location = $Location
+				}
+				
 				$Subnet.Save()
 				
 				#$SubnetEntry = $Subnet.GetDirectoryEntry()
