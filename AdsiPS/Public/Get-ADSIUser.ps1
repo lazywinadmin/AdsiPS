@@ -135,7 +135,7 @@ function Get-ADSIUser
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
 
-			$DirectorySearcher.Filter = $LDAPFilter
+			$DirectorySearcher.Filter = "(&(objectCategory=user)$LDAPFilter)"
             #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 
             if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
