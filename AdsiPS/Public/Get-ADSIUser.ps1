@@ -29,6 +29,11 @@ function Get-ADSIUser
 	Specifies the alternative Domain where the user should be created
 	By default it will use the current domain.
 
+.PARAMETER NoResultLimit
+    Remove the SizeLimit of 1000
+
+    SizeLimit is useless, it can't go over the server limit which is 1000 by default
+
 .EXAMPLE
 	Get-ADSIUser -Identity 'testaccount'
 	
@@ -73,7 +78,11 @@ function Get-ADSIUser
 		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		[String]$DomainName,
-		[String]$LDAPFilter
+        [Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
+		[String]$LDAPFilter,
+        [Parameter(ParameterSetName = "LDAPFilter")]
+        [Parameter(ParameterSetName = "All")]
+        [Switch]$NoResultLimit
 		
 	)
 	
@@ -95,6 +104,7 @@ function Get-ADSIUser
 		{
 			Write-Verbose "Identity"
 			[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
+
 		}
 		ELSEIF ($PSBoundParameters['LDAPFilter'])
 		{
@@ -106,10 +116,20 @@ function Get-ADSIUser
 			# Principal Searcher
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
+
 			$DirectorySearcher.Filter = $LDAPFilter
-			$DirectorySearcher.FindAll() | ForEach-Object {
+            #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+
+            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+            else{
+                # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+                # the server limit is kept
+                $DirectorySearcher.PageSize = 10000
+            }
+            
+            $DirectorySearcher.FindAll() | ForEach-Object {
 				[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
-			}
+			}# Return UserPrincipale object
 		}
 		ELSE
 		{
@@ -118,42 +138,16 @@ function Get-ADSIUser
 			$UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $Context
 			$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
 			$Searcher.QueryFilter = $UserPrincipal
-			
-   <#
-   #$searcher.QueryFilter.AccountExpirationDate
-   #$searcher.QueryFilter.AdvancedSearchFilter
-   #$searcher.QueryFilter.AdvancedSearchFilter.AccountExpirationDate(
-   #$searcher.QueryFilter.AdvancedSearchFilter.LastBadPasswordAttempt(
-   #$searcher.QueryFilter.AdvancedSearchFilter.LastLogonTime(
-   #$searcher.QueryFilter.AdvancedSearchFilter.LastPasswordSetTime(
-   $searcher.QueryFilter.Description
-   $searcher.QueryFilter.DisplayName
-   $searcher.QueryFilter.DistinguishedName
-   $searcher.QueryFilter.EmailAddress
-   $searcher.QueryFilter.EmployeeId
-   $searcher.QueryFilter.Enabled
-   $searcher.QueryFilter.GivenName
-   $searcher.QueryFilter.Guid
-   $searcher.QueryFilter.HomeDirectory
-   $searcher.QueryFilter.HomeDrive
-   $searcher.QueryFilter.MiddleName
-   $searcher.QueryFilter.Name
 
-   PasswordNeverExpires
-   PasswordNotRequired
-   PermittedLogonTimes
-   PermittedWorkstations
-   SamAccountName
-   ScriptPath
-   Sid
-   Surname
-   UserCannotChangePassword
-   UserPrincipalName
-   VoiceTelephoneNumber
-   $searcher.QueryFilter |gm
-   $searcher.FindAll()
-   #>
-			$Searcher.FindAll()
+            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+            else {
+                # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+                # the server limit is kept
+                $Searcher.GetUnderlyingSearcher().pagesize=10000
+                
+                }
+           #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+			$Searcher.FindAll() # Return UserPrincipale
 		}
 	}
 }
