@@ -35,6 +35,18 @@ function Get-ADSIUser
     SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
 .EXAMPLE
+	Get-ADSIUser
+	
+	This example will retrieve all accounts in the current domain using
+	the current user credential. There is a limit of 1000 objects returned.
+
+.EXAMPLE
+	Get-ADSIUser -NoResultLimit
+	
+	This example will retrieve all accounts in the current domain using
+	the current user credential. Using the parameter -NoResultLimit will remove the Sizelimit on the Result.
+
+.EXAMPLE
 	Get-ADSIUser -Identity 'testaccount'
 	
 	This example will retrieve the account 'testaccount' in the current domain using 
@@ -50,7 +62,13 @@ function Get-ADSIUser
 	Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab'
 	
 	This example will retrieve the user account that contains fx inside the samaccountname
-	property for the domain fx.lab
+	property for the domain fx.lab. There is a limit of 1000 objects returned.
+
+.EXAMPLE
+	Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab' -NoResultLimit
+	
+	This example will retrieve the user account that contains fx inside the samaccountname
+	property for the domain fx.lab. There is a limit of 1000 objects returned.
 	
 .EXAMPLE
 	$user = Get-ADSIUser -Identity 'testaccount'
