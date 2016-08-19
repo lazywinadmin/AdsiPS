@@ -43,7 +43,7 @@ function Add-ADSIGroupMember
     Add-ADSIGroupMember -Identity TestADSIGroup -Member 'GroupTestAccount1'
 
     Adding the Group account 'GroupTestAccount1' to the group 'TestADSIGroup'
-    
+
 .EXAMPLE
     Add-ADSIGroupMember -Identity TestADSIGroup -Member 'ComputerTestAccount1'
 
@@ -109,7 +109,7 @@ PARAM(
             }
             
 
-            if ($pscmdlet.ShouldProcess("$Identity", "Delete Account")){
+            if ($pscmdlet.ShouldProcess("$Identity", "Add Account member $member")){
                 $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting)
                 $group.members.add($Member)
                 $group.Save()
