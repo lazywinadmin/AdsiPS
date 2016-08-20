@@ -1,5 +1,6 @@
 ﻿function New-ADSIUser
 {
+
 <#
 	.SYNOPSIS
 		Function to create a new User
@@ -10,7 +11,7 @@
 	.PARAMETER SamAccountName
 		Specifies the SamAccountName parameter
 	
-	.PARAMETER Password
+	.PARAMETER AccountPassword
 		Specifies the password parameter
 	
 	.PARAMETER Enabled
@@ -18,10 +19,10 @@
 		Default is $False.
 	
 	.PARAMETER GivenName
-		Specifies the password GivenName parameter
+		Specifies the GivenName parameter
 	
 	.PARAMETER SurName
-		Specifies the password Surname parameter
+		Specifies the Surname parameter
 	
 	.PARAMETER UserPrincipalName
 		Specifies the UserPrincipalName parameter.
@@ -53,13 +54,13 @@
 		Specifies if you want to see the object created after running the command.
 	
 	.EXAMPLE
-		PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -Password "Password1" -Passthru
+		PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -AccountPassword (Read-Host -AsSecureString "AccountPassword") -Passthru
 	
 	.EXAMPLE
-		PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -Password "Password1" -Passthru
+		PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -AccountPassword (Read-Host -AsSecureString "AccountPassword") -Passthru
 	
 		# You can test the credential using the following function
-		Test-ADSICredential -AccountName "fxtest04" -Password "Password1"
+		Test-ADSICredential -AccountName "fxtest04" -AccountPassword (Read-Host -AsSecureString "AccountPassword")
 	
 	.NOTES
 		Francois-Xavier.Cat
@@ -76,7 +77,7 @@
 	(
 		[Parameter(Mandatory = $true)]
 		[String]$SamAccountName,
-		[String]$Password,
+		[System.Security.SecureString]$AccountPassword,
 		[switch]$Enabled = $false,
 		[String]$GivenName,
 		[String]$SurName,
@@ -86,8 +87,8 @@
 		[Switch]$PasswordNeverExpires = $false,
 		[Switch]$UserCannotChangePassword = $false,
 		[Switch]$PasswordNotRequired = $false,
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		[String]$DomainName,
 		[Switch]$Passthru
@@ -105,7 +106,6 @@
 		
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 		
-		#GeneratePassword
 	}
 	PROCESS
 	{
@@ -128,22 +128,15 @@
 				IF ($PSBoundParameters['GivenName']) { $User.GivenName = $GivenName }
 				IF ($PSBoundParameters['SurName']) { $User.SurName = $SurName }
 				IF ($PSBoundParameters['UserPrincipalName']) { $User.UserPrincipalName = $UserPrincipalName }
-				#IF($PSBoundParameters['Name']){$User.PasswordNotRequired = $false}
 				IF ($PSBoundParameters['Description']) { $user.Description = $Description }
 				IF ($PSBoundParameters['EmployeeId']) { $user.EmployeeId = $EmployeeId }
 				IF ($PSBoundParameters['HomeDirectory']) { $user.HomeDirectory = $HomeDirectory }
 				IF ($PSBoundParameters['HomeDrive']) { $user.HomeDrive = $HomeDrive }
 				IF ($PSBoundParameters['MiddleName']) { $user.MiddleName = $MiddleName }
 				IF ($PSBoundParameters['VoiceTelephoneNumber']) { $user.VoiceTelephoneNumber }
-				
-				
-				#$user.AccountExpirationDate
-				#$user.ExpirePasswordNow(
-				#$user.IsAccountLockedOut()
-				#$user.RefreshExpiredPassword()
+				IF ($PSBoundParameters['AccountPassword']){$User.SetPassword($AccountPassword)}
 				
 				Write-Verbose -message "Create the Account in Active Directory"
-				$User.SetPassword($Password)
 				$User.Save($Context)
 			}
 		}
