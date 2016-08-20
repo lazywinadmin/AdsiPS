@@ -59,10 +59,14 @@ function Remove-ADSIGroupMember
 PARAM(
     [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
     $Identity,
+
     [Alias("RunAs")]
-	[System.Management.Automation.Credential()]
-	$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [System.Management.Automation.PSCredential]
+    [System.Management.Automation.Credential()]
+    $Credential = [System.Management.Automation.PSCredential]::Empty,
+
     [String]$DomainName,
+
     $Member
     )
 

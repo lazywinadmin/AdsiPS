@@ -53,16 +53,24 @@
 	(
 		[Parameter(Mandatory = $true)]
 		$Name,
+
 		[String]$DisplayName,
+
 		[String]$UserPrincipalName,
+
 		[String]$Description,
+
 		[Parameter(Mandatory = $true)]
 		[system.directoryservices.accountmanagement.groupscope]$GroupScope,
 		[switch]$IsSecurityGroup = $true,
+
 		[switch]$Passthru,
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[String]$DomainName
 	)
 	

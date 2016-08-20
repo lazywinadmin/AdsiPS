@@ -1,8 +1,37 @@
 ﻿Function Get-ADSIDomainMode
 {
+<#
+.SYNOPSIS
+	Function to retrieve Domain mode
+
+.DESCRIPTION
+	Function to retrieve Domain mode
+
+.PARAMETER Credential
+	Specifies alternative credential
+
+.PARAMETER DomainName
+	Specifies the Domain Name where the function should look
+
+.EXAMPLE
+	Get-ADSIDomainMode
+
+.EXAMPLE
+	Get-ADSIDomainMode -Credential (Get-Credential)
+
+.EXAMPLE
+	Get-ADSIDomainMode -DomainName "FXTEST.local"
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin
+#>
 	[cmdletbinding()]
 	PARAM (
-		[Alias('RunAs')]
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		

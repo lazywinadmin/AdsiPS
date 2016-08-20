@@ -79,8 +79,10 @@
 		
 		[string]$Domain = $null,
 		
-		[Management.Automation.PSCredential]
-		$Credential = $null,
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[ValidateSet("Schema", "Configuration", "Domain", "All")]
 		[String]$NamingContext = "Domain",

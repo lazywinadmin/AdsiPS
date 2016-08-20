@@ -43,12 +43,17 @@
 	(
 		[Parameter(Mandatory = $true)]
 		[String]$SubnetName,
+
 		[Parameter(Mandatory = $true)]
 		[String]$SiteName,
+
 		[String]$Location,
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[String]$ForestName
 	)
 	

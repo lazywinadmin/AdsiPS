@@ -64,13 +64,20 @@ function New-ADSIComputer
 	(
 		[Parameter(Mandatory = $true)]
 		$Name,
+
 		[String]$DisplayName,
+
 		[String]$Description,
+
 		[switch]$Passthru,
+
 		[Switch]$Enable,
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
 		[String]$DomainName
 	)
 	

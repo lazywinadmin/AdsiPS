@@ -47,10 +47,13 @@ function Move-ADSIComputer
 	param ([Parameter(Mandatory=$true)]
 		[string]$Identity,
 		
-		[Alias('RunAs')]
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		$DomainName,
+
 		$Destination
 	)
 	BEGIN

@@ -31,9 +31,12 @@
 PARAM(
     [parameter(Mandatory=$true)]
     [String]$SiteName,
+
     [Alias("RunAs")]
-	[System.Management.Automation.Credential()]
-	$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [System.Management.Automation.PSCredential]
+    [System.Management.Automation.Credential()]
+    $Credential = [System.Management.Automation.PSCredential]::Empty,
+
     [String]$ForestName
 
 )

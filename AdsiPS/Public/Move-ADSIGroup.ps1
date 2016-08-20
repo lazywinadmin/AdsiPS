@@ -51,11 +51,15 @@ function Move-ADSIGroup
 	(
 		[Parameter(Mandatory = $true)]
 		[string]$Identity,
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[Alias('Domain', 'Server')]
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
+		
 		$Destination
 	)
 	

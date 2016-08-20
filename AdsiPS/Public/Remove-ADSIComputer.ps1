@@ -68,10 +68,14 @@ function Remove-ADSIComputer
 	PARAM (
 		[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
 		$Identity,
+
 		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[String]$DomainName,
+
 		[Switch]$Recursive
 	)
 	

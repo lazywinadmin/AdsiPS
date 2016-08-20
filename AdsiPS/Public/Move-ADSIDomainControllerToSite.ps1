@@ -51,8 +51,9 @@
 		[Parameter(Mandatory)]
 		[string]$ComputerName,
 		
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[Parameter(Mandatory = $true)]

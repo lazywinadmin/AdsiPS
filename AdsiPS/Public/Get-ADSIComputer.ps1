@@ -62,10 +62,12 @@ function Get-ADSIComputer
 	param ([Parameter(Mandatory=$true,ParameterSetName="Identity")]
 		[string]$Identity,
 		
-		[Alias('RunAs')]
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-        $DomainName
+
+		[String]$DomainName
 	)
 	BEGIN
 	{

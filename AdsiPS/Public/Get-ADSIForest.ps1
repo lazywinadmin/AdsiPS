@@ -36,11 +36,12 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType('System.DirectoryServices.ActiveDirectory.Forest)]
+	[OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
 	param
 	(
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()

@@ -50,8 +50,10 @@
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
 		
-		[Management.Automation.PSCredential]
-		$Credential = $null,
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[Switch]$Recurse
 	)

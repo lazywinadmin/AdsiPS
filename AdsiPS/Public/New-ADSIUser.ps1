@@ -77,20 +77,33 @@
 	(
 		[Parameter(Mandatory = $true)]
 		[String]$SamAccountName,
+
 		[System.Security.SecureString]$AccountPassword,
+
 		[switch]$Enabled = $false,
+
 		[String]$GivenName,
+
 		[String]$SurName,
+
 		[String]$UserPrincipalName,
+
 		[String]$DisplayName,
+
 		[String]$Name,
+
 		[Switch]$PasswordNeverExpires = $false,
+
 		[Switch]$UserCannotChangePassword = $false,
+
 		[Switch]$PasswordNotRequired = $false,
+
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[String]$DomainName,
+		
 		[Switch]$Passthru
 	)
 	

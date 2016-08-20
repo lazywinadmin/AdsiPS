@@ -57,9 +57,12 @@
 	[CmdletBinding()]
 	PARAM (
 		$Path = $(([adsisearcher]"").Searchroot.path),
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+		
 		[System.DirectoryServices.AuthenticationTypes[]]$AuthenticationType
 	)
 	#Building Argument

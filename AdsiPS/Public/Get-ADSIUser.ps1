@@ -92,12 +92,17 @@ function Get-ADSIUser
 	(
 		[Parameter(Mandatory = $true, ParameterSetName = "Identity")]
 		[string]$Identity,
+
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[String]$DomainName,
+
         [Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
 		[String]$LDAPFilter,
+
         [Parameter(ParameterSetName = "LDAPFilter")]
         [Parameter(ParameterSetName = "All")]
         [Switch]$NoResultLimit

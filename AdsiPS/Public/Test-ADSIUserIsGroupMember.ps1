@@ -14,9 +14,12 @@
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	PARAM ($GroupSamAccountName,
+	PARAM (
+		$GroupSamAccountName,
 		
-		$UserSamAccountName)
+		$UserSamAccountName
+	)
+	
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
 	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
 	

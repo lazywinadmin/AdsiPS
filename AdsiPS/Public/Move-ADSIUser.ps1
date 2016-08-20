@@ -55,8 +55,9 @@ function Move-ADSIUser
 		[Parameter(Mandatory = $true)]
 		[string]$Identity,
 		
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		[Alias('RunAs')]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[String]$DomainName,
