@@ -1,32 +1,32 @@
 ﻿function Get-ADSIDomainController
 {
 <#
-	.SYNOPSIS
-		Function to retrieve Domain Controllers
-	
-	.DESCRIPTION
-		Function to retrieve Domain Controllers
-	
-	.PARAMETER Credential
-		Specifies alternative credential
-	
-	.PARAMETER DomainName
-		Specifies the Domain Name where the function should look
-	
-	.EXAMPLE
-		Get-ADSIDomainController
-	
-	.EXAMPLE
-		Get-ADSIDomainController -Credential (Get-Credential)
-	
-	.EXAMPLE
-		Get-ADSIDomainController -DomainName "FXTEST.local"
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+.SYNOPSIS
+	Function to retrieve Domain Controllers
+
+.DESCRIPTION
+	Function to retrieve Domain Controllers
+
+.PARAMETER Credential
+	Specifies alternative credential
+
+.PARAMETER DomainName
+	Specifies the Domain Name where the function should look
+
+.EXAMPLE
+	Get-ADSIDomainController
+
+.EXAMPLE
+	Get-ADSIDomainController -Credential (Get-Credential)
+
+.EXAMPLE
+	Get-ADSIDomainController -DomainName "FXTEST.local"
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/ADSIPS
 #>
 	
 	[CmdletBinding()]

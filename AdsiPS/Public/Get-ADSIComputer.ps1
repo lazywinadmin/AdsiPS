@@ -53,7 +53,7 @@ function Get-ADSIComputer
 		Francois-Xavier Cat
 		lazywinadmin.com
 		@lazywinadm
-		github.com/lazywinadmin
+		github.com/lazywinadmin/ADSIPS
 	
 	.LINK
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx

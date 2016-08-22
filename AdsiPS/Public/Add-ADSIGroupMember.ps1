@@ -50,20 +50,23 @@ function Add-ADSIGroupMember
     Adding the Computer account 'ComputerTestAccount1' to the group 'TestADSIGroup'
 
 .NOTES
-    Francois-Xavier.Cat
+    Francois-Xavier Cat
     LazyWinAdmin.com
     @lazywinadm
-    github.com/lazywinadmin
+    github.com/lazywinadmin/ADSIPS
 #>
 [CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(
     [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
     $Identity,
+    
     [Alias("RunAs")]
     [System.Management.Automation.PSCredential]
     [System.Management.Automation.Credential()]
     $Credential = [System.Management.Automation.PSCredential]::Empty,
+
     [String]$DomainName,
+
     $Member
     )
 

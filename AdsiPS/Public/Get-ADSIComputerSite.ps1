@@ -1,29 +1,40 @@
 function Get-ADSIComputerSite
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the AD Site of a Computer
+.SYNOPSIS
+	Function to retrieve the AD Site of a Computer
+
+.DESCRIPTION
+	Function to retrieve the AD Site of a Computer
 	
-	.DESCRIPTION
-		Function to retrieve the AD Site of a Computer
-		
-		This function does not rely on the .NET Framework to retrieve the information
-		http://www.pinvoke.net/default.aspx/netapi32.dsgetsitename
+	This function does not rely on the .NET Framework to retrieve the information
+	http://www.pinvoke.net/default.aspx/netapi32.dsgetsitename
+
+	There is .NET method to get this information but only works on the local machine.
+	[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
+
+.PARAMETER ComputerName
+	Specifies the computer name(s) that you want to know the site.
+
+.EXAMPLE
+	Get-ADSIComputerName -ComputerName TestServer01
+
+	This will retrieve the Site of the Computer TestServer01
+
+.EXAMPLE
+	Get-ADSIComputerName -ComputerName TestServer01,TestServer02
+
+	This will retrieve the Site of the Computers TestServer01 and TestServer02
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/ADSIPS
 	
-		There is .NET method to get this information but only works on the local machine.
-		[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
-	
-	.PARAMETER ComputerName
-		Specifies the computer name(s) to query
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-		
-	  Thanks to the Reddit folks for their help! :-)
-	  https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
+	Thanks to the Reddit folks for their help! :-)
+	https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
+
 #>
 	
 	[CmdletBinding()]

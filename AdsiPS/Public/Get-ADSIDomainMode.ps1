@@ -26,7 +26,7 @@
 	Francois-Xavier Cat
 	lazywinadmin.com
 	@lazywinadm
-	github.com/lazywinadmin
+	github.com/lazywinadmin/ADSIPS
 #>
 	[cmdletbinding()]
 	PARAM (

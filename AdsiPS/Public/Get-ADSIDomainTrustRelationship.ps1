@@ -1,23 +1,44 @@
 ﻿function Get-ADSIDomainTrustRelationship
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the Trust relationship of a domain. Current one by default.
+.SYNOPSIS
+	Function to retrieve the Trust relationship of a domain. Current one by default.
+
+.DESCRIPTION
+	Function to retrieve the Trust relationship of a domain. Current one by default.
+
+.PARAMETER Credential
+	Specifies the alternative credential to use. Default is the current user.
+
+.PARAMETER DomainName
+	Specifies the alternative domain name to use. Default is the current one.
+
+.EXAMPLE
+	Get-ADSIDomainTrustRelationship
+
+	Retrieve the Trust relationship(s) of a current domain
+
+.EXAMPLE
+	Get-ADSIDomainTrustRelationship -DomainName FX.lab
+
+	Retrieve the Trust relationship(s) of domain fx.lab
 	
-	.DESCRIPTION
-		Function to retrieve the Trust relationship of a domain. Current one by default.
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use. Default is the current user.
-	
-	.PARAMETER DomainName
-		Specifies the alternative domain name to use. Default is the current one.
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadm
+.EXAMPLE
+	Get-ADSIDomainTrustRelationship -DomainName FX.lab -Credential (Get-Credential)
+
+	Retrieve the Trust relationship(s) of domain fx.lab with the credential specified
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/ADSIPS
+
+.OUTPUTS
+	System.DirectoryServices.ActiveDirectory.TrustRelationshipInformation
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.trustrelationshipinformation(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]
