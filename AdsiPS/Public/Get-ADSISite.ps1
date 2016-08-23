@@ -13,7 +13,7 @@
 .PARAMETER ForestName
 	Specifies the ForestName to query. Default is the current one
 
-.PARAMETER Name
+.PARAMETER SiteName
 	Specifies the Site Name to find.
 
 .EXAMPLE

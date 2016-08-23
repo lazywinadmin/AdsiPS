@@ -18,7 +18,10 @@
     The object needs to be a System.Security.SecureString.
     You can use something like that:
         $AccountPassword = (read-host -AsSecureString -Prompt "AccountPassword")
-
+.PARAMETER DomainName
+	Specifies the DomainName to query
+	By default it will take the current domain.
+	
 .EXAMPLE
 	Set-ADSIUserPassword -Identity 'testaccount' -AccountPassword (read-host -AsSecureString -Prompt "AccountPassword")
 

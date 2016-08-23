@@ -4,6 +4,15 @@
 .SYNOPSIS
     This function will check if a domain user is member of a domain group
 
+.DESCRIPTION
+    This function will check if a domain user is member of a domain group
+
+.PARAMETER GroupSamAccountName
+	Specifies the Group to query
+
+.PARAMETER UserSamAccountName
+	Specifies the user account 
+
 .EXAMPLE
     Test-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 

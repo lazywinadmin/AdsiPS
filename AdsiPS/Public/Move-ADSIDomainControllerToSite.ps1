@@ -26,22 +26,22 @@
 	moves it to the site "Paris".
 
 .NOTES
+	Micky Balladelli
+	balladelli.com
+	micky@balladelli.com
+	@mickyballadelli
+	
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
 	Version History
 		1.0 Initial Version (Micky Balladelli)
 		1.1 Update (Francois-Xavier Cat)
 				Rename from Move-ADSIReplicaToSite to Move-ADSIDomainControllerToSite
 				Add New-ADSIDirectoryContext to take care of the Context
-				Other minor modifications
-	Authors
-		Micky Balladelli
-		balladelli.com
-		micky@balladelli.com
-		@mickyballadelli
-		
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin/AdsiPS
+				Other minor modifications	
 #>
 	
 	[CmdletBinding()]
