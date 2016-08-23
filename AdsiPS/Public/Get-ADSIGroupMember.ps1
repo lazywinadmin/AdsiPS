@@ -24,7 +24,7 @@ function Get-ADSIGroupMember
 .PARAMETER Credential
 	Specifies alternative credential
 
-.PARAMETER Recursive
+.PARAMETER Recurse
 	Retrieves all the recursive members (Members of group(s)'s members)
 	
 .PARAMETER DomainName
@@ -72,7 +72,7 @@ function Get-ADSIGroupMember
 	Francois-Xavier Cat
 	lazywinadmin.com
 	@lazywinadm
-	github.com/lazywinadmin
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding(DefaultParameterSetName='All')]
 	param ([Parameter(Mandatory=$true)]

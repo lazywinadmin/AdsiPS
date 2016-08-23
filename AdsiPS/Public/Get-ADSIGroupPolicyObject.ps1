@@ -3,6 +3,9 @@
 <#
 .SYNOPSIS
 	This function will query Active Directory Group Policy Objects
+
+.DESCRIPTION
+	This function will query Active Directory Group Policy Objects
 	
 .PARAMETER Credential
     Specify the Credential to use
@@ -13,11 +16,17 @@
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
+.EXAMPLE
+	Get-ADSIGroupPolicyObject
+
+	Retrieve all the group policy in the current domain	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding()]
 	PARAM (

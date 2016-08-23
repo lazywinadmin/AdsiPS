@@ -3,7 +3,11 @@
 <#
 .SYNOPSIS
 	This function retrieve the group that the current user manage in the ActiveDirectory.
+
+.DESCRIPTION
+	This function retrieve the group that the current user manage in the ActiveDirectory.
 	Typically the function will search for group(s) and look at the 'ManagedBy' property where it matches the current user.
+	
 	
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Manager of the group
@@ -48,6 +52,7 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding(DefaultParameterSetName = "One")]
 	PARAM (

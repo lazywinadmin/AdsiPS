@@ -4,6 +4,9 @@
 .SYNOPSIS
 	This function will query Active Directory for Organization Unit Objects
 
+.DESCRIPTION
+	This function will query Active Directory for Organization Unit Objects
+
 .PARAMETER Name
 	Specify the Name of the OU
 	
@@ -44,6 +47,7 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding(DefaultParameterSetName = "All")]
 	PARAM (

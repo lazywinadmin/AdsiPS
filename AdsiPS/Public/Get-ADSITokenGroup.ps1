@@ -1,35 +1,39 @@
 ﻿function Get-ADSITokenGroup
 {
-	<#
-	.SYNOPSIS
-		Retrieve the list of group present in the tokengroups of a user or computer object.
-	
-	.DESCRIPTION
-		Retrieve the list of group present in the tokengroups of a user or computer object.
+<#
+.SYNOPSIS
+	Retrieve the list of group present in the tokengroups of a user or computer object.
 
-		TokenGroups attribute
-		https://msdn.microsoft.com/en-us/library/ms680275%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-	
-	.PARAMETER SamAccountName
-		Specifies the SamAccountName to retrieve
-	
-	.PARAMETER Credential
-		Specifies Credential to use
-	
-	.PARAMETER DomainDistinguishedName
-		Specify the Domain or Domain DN path to use
-	
-	.PARAMETER SizeLimit
-		Specify the number of item maximum to retrieve
-	
-	.NOTES
-		Francois-Xavier Cat
-		www.lazywinadmin.com
-		@lazywinadm
+.DESCRIPTION
+	Retrieve the list of group present in the tokengroups of a user or computer object.
 
-		Version History
-		1.0 2015/04/02 Initial Version
-	#>
+	TokenGroups attribute
+	https://msdn.microsoft.com/en-us/library/ms680275%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
+
+.PARAMETER SamAccountName
+	Specifies the SamAccountName to retrieve
+
+.PARAMETER Credential
+	Specifies Credential to use
+
+.PARAMETER DomainDistinguishedName
+	Specify the Domain or Domain DN path to use
+
+.PARAMETER SizeLimit
+	Specify the number of item maximum to retrieve
+
+.EXAMPLE
+	Get-ADSITokenGroup -SamAccountName 'testaccount'
+
+	Retrieve the list of groups present in the TokenGroups for the user 'testaccount'
+
+.NOTES
+	Francois-Xavier Cat
+	www.lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+#>
 	[CmdletBinding()]
 	param
 	(

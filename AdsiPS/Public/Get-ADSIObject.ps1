@@ -17,8 +17,8 @@
 	
 .PARAMETER Credential
     Specify the Credential to use
-	
-.PARAMETER $DomainDistinguishedName
+
+.PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
@@ -34,6 +34,7 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	
 	[CmdletBinding()]

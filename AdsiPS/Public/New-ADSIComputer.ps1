@@ -1,62 +1,62 @@
 function New-ADSIComputer
 {
 <#
-	.SYNOPSIS
-		function to create a new computer
-	
-	.DESCRIPTION
-		function to create a new computer
-	
-	.PARAMETER Name
-		Specifies the property Name
-	
-	.PARAMETER DisplayName
-		Specifies the property DisplayName
-	
-	.PARAMETER Description
-		Specifies the property Description
-	
-	.PARAMETER Enable
-		Specifies you want the account enabled after creation.
-		By Default the account is disable
-	
-	.PARAMETER Passthru
-		Specifies if you want to see the object created after running the command.
-	
-	.PARAMETER Credential
-		Specifies if you want to specifies alternative credentials
-	
-	.PARAMETER DomainName
-		Specifies if you want to specifies alternative DomainName
-	
-	.EXAMPLE
-		New-ADSIComputer FXTEST01 -Description 'Dev system'
-	
-		Create a new computer account FXTEST01 and add the description 'Dev System'
-	
-	.EXAMPLE
-		New-ADSIComputer FXTEST01 -enable
-	
-		Create a new computer account FXTEST01 inside the default Computers Organizational Unit and Enable the account
+.SYNOPSIS
+	function to create a new computer
 
-	.EXAMPLE
-		New-ADSIComputer FXTEST01 -Description 'Dev system'
-	
-		Create a new computer account FXTEST01 and add the description 'Dev System'
-	
-	.EXAMPLE
-		New-ADSIComputer FXTEST01 -Passthru
-	
-		Create a new computer account FXTEST01 and return the object created and its properties.
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
+.DESCRIPTION
+	function to create a new computer
+
+.PARAMETER Name
+	Specifies the property Name
+
+.PARAMETER DisplayName
+	Specifies the property DisplayName
+
+.PARAMETER Description
+	Specifies the property Description
+
+.PARAMETER Enable
+	Specifies you want the account enabled after creation.
+	By Default the account is disable
+
+.PARAMETER Passthru
+	Specifies if you want to see the object created after running the command.
+
+.PARAMETER Credential
+	Specifies if you want to specifies alternative credentials
+
+.PARAMETER DomainName
+	Specifies if you want to specifies alternative DomainName
+
+.EXAMPLE
+	New-ADSIComputer FXTEST01 -Description 'Dev system'
+
+	Create a new computer account FXTEST01 and add the description 'Dev System'
+
+.EXAMPLE
+	New-ADSIComputer FXTEST01 -enable
+
+	Create a new computer account FXTEST01 inside the default Computers Organizational Unit and Enable the account
+
+.EXAMPLE
+	New-ADSIComputer FXTEST01 -Description 'Dev system'
+
+	Create a new computer account FXTEST01 and add the description 'Dev System'
+
+.EXAMPLE
+	New-ADSIComputer FXTEST01 -Passthru
+
+	Create a new computer account FXTEST01 and return the object created and its properties.
+
+.NOTES
+	Francois-Xavier.Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
 	
 	[CmdletBinding(SupportsShouldProcess = $true)]

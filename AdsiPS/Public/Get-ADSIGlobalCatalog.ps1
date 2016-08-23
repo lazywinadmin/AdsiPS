@@ -1,23 +1,33 @@
 ﻿function Get-ADSIGlobalCatalog
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the Global Catalog in the Forest
+.SYNOPSIS
+	Function to retrieve the Global Catalog in the Forest
+
+.DESCRIPTION
+	Function to retrieve the Global Catalog in the Forest
+
+.PARAMETER Credential
+	Specifies the alternative credential to use. Default is the current user.
+
+.PARAMETER ForestName
+	Specifies the alternative Forest name to query. Default is the current one.
+
+.EXAMPLE
+	Get-ADSIGlobalCatalog
 	
-	.DESCRIPTION
-		Function to retrieve the Global Catalog in the Forest
+	Retrieve the Global Catalog in the current Forest
+
+.EXAMPLE
+	Get-ADSIGlobalCatalog -forestname 'lazywinadmin.com'
 	
-	.PARAMETER Credential
-		Specifies the alternative credential to use. Default is the current user.
-	
-	.PARAMETER ForestName
-		Specifies the alternative Forest name to query. Default is the current one.
-	
-	.NOTES
-		Francois-Xavier Cat
-		www.lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+	Retrieve the Global Catalog in the forest 'lazywinadmin.com'
+
+.NOTES
+	Francois-Xavier Cat
+	www.lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	
 	[CmdletBinding()]

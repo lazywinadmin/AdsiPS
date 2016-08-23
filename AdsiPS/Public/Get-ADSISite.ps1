@@ -1,44 +1,44 @@
 ﻿function Get-ADSISite
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the Active Directory Site(s)
-	
-	.DESCRIPTION
-		Function to retrieve the Active Directory Site(s)
-	
-	.PARAMETER Credential
-		Specifies alternative credential to use. Default is the current user.
-	
-	.PARAMETER ForestName
-		Specifies the ForestName to query. Default is the current one
-	
-	.PARAMETER Name
-		Specifies the Site Name to find.
-	
-	.EXAMPLE
-		Get-ADSISite
-	
-	.EXAMPLE
-		Get-ADSISite -ForestName lazywinadmin.com
-	
-	.EXAMPLE
-		Get-ADSISite -Credential (Get-Credential superAdmin) -Verbose
-	
-	.EXAMPLE
-		Get-ADSISite -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
-	
-	.EXAMPLE
-		Get-ADSISite -Name 'Montreal'
-	
-	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.ActiveDirectorySite
-	
-	.NOTES
-		Francois-Xavier Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+.SYNOPSIS
+	Function to retrieve the Active Directory Site(s)
+
+.DESCRIPTION
+	Function to retrieve the Active Directory Site(s)
+
+.PARAMETER Credential
+	Specifies alternative credential to use. Default is the current user.
+
+.PARAMETER ForestName
+	Specifies the ForestName to query. Default is the current one
+
+.PARAMETER Name
+	Specifies the Site Name to find.
+
+.EXAMPLE
+	Get-ADSISite
+
+.EXAMPLE
+	Get-ADSISite -ForestName lazywinadmin.com
+
+.EXAMPLE
+	Get-ADSISite -Credential (Get-Credential superAdmin) -Verbose
+
+.EXAMPLE
+	Get-ADSISite -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+
+.EXAMPLE
+	Get-ADSISite -Name 'Montreal'
+
+.OUTPUTS
+	System.DirectoryServices.ActiveDirectory.ActiveDirectorySite
+
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS 
 #>
 	
 	[CmdletBinding()]

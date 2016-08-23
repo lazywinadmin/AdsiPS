@@ -53,7 +53,7 @@ function Remove-ADSIGroupMember
     Francois-Xavier.Cat
     LazyWinAdmin.com
     @lazywinadm
-    github.com/lazywinadmin
+    github.com/lazywinadmin/AdsiPS
 #>
 [CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(

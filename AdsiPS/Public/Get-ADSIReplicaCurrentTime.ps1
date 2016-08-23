@@ -1,40 +1,35 @@
 ﻿function Get-ADSIReplicaCurrentTime
 {
-	<#  
+<#  
 .SYNOPSIS  
     Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
 
 .DESCRIPTION  
-
     Get-ADSIReplicaCurrentTime retrieves the current time of a given DC. 
     When using the verbose switch, this cmdlet will display the time difference with the current system.
       
 .PARAMETER ComputerName
-
     Defines the remote computer to connect to.
 
 .PARAMETER Credential
-
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
-
 .EXAMPLE
-
       Get-ADSIReplicaCurrentTime -ComputerName dc1.ad.local
 
       Connects to remote domain controller dc1.ad.local using current credentials and retrieves the current time.
 
-
 .NOTES  
-    Filename    : Get-ADSIReplicaGCInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Micky Balladelli
+	micky@balladelli.com
+	https://balladelli.com
+	
+	github.com/lazywinadmin/AdsiPS  
 
-.LINK  
-    https://balladelli.com
 #>	
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName = $null,
+		[string]$ComputerName,
 		
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]

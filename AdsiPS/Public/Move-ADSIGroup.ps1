@@ -1,48 +1,48 @@
 function Move-ADSIGroup
 {
 <#
-	.SYNOPSIS
-		Function to Move an Active Directory group in a different Organizational Unit (OU)
+.SYNOPSIS
+	Function to Move an Active Directory group in a different Organizational Unit (OU)
+
+.DESCRIPTION
+	Function to Move an Active Directory group in a different Organizational Unit (OU)
+
+.PARAMETER Identity
+	Specifies the Identity of the group
 	
-	.DESCRIPTION
-		Function to Move an Active Directory group in a different Organizational Unit (OU)
+	You can provide one of the following properties
+	DistinguishedName
+	Guid
+	Name
+	SamAccountName
+	Sid
+	UserPrincipalName
 	
-	.PARAMETER Identity
-		Specifies the Identity of the group
-		
-		You can provide one of the following properties
-		DistinguishedName
-		Guid
-		Name
-		SamAccountName
-		Sid
-		UserPrincipalName
-		
-		Those properties come from the following enumeration:
-		System.DirectoryServices.AccountManagement.IdentityType
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use.
-		By default it will use the current user windows credentials.
-	
-	.PARAMETER DomainName
-		Specifies the alternative Domain where the user should be created
-		By default it will use the current Domain.
-	
-	.PARAMETER Destination
-		Specifies the Distinguished Name where the object will be moved	
-	
-	.EXAMPLE
-		Move-ADSIGroup -Identity 'FXGROUPTEST01' -Destination 'OU=TEST,DC=FX,DC=lab'
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
+	Those properties come from the following enumeration:
+	System.DirectoryServices.AccountManagement.IdentityType
+
+.PARAMETER Credential
+	Specifies the alternative credential to use.
+	By default it will use the current user windows credentials.
+
+.PARAMETER DomainName
+	Specifies the alternative Domain where the user should be created
+	By default it will use the current Domain.
+
+.PARAMETER Destination
+	Specifies the Distinguished Name where the object will be moved	
+
+.EXAMPLE
+	Move-ADSIGroup -Identity 'FXGROUPTEST01' -Destination 'OU=TEST,DC=FX,DC=lab'
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]

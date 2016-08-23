@@ -65,7 +65,7 @@
 	Francois-Xavier.Cat
 	LazyWinAdmin.com
 	@lazywinadm
-	github.com/lazywinadmin
+	github.com/lazywinadmin/AdsiPS
 	
 .LINK
 	https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx

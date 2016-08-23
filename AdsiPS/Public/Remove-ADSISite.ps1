@@ -1,31 +1,31 @@
 ﻿Function Remove-ADSISite
 {
 <#
-	.SYNOPSIS
-		function to remove a Site
-	
-	.DESCRIPTION
-		function to remove a Site
-	
-	.PARAMETER SiteName
-		Specifies the Site Name
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use.
-		By default it will use the current user windows credentials.
-	
-	.PARAMETER ForestName
-		Specifies the alternative Forest where the user should be created
-		By default it will use the current Forest.
-	
-	.EXAMPLE
-		Remove-ADSISite -SiteName WOW01
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+.SYNOPSIS
+    function to remove a Site
+
+.DESCRIPTION
+    function to remove a Site
+
+.PARAMETER SiteName
+    Specifies the Site Name
+
+.PARAMETER Credential
+    Specifies the alternative credential to use.
+    By default it will use the current user windows credentials.
+
+.PARAMETER ForestName
+    Specifies the alternative Forest where the user should be created
+    By default it will use the current Forest.
+
+.EXAMPLE
+    Remove-ADSISite -SiteName WOW01
+
+.NOTES
+    Francois-Xavier.Cat
+    LazyWinAdmin.com
+    @lazywinadm
+    github.com/lazywinadmin/AdsiPS
 #>
 [CmdletBinding()]
 PARAM(

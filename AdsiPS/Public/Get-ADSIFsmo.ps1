@@ -1,23 +1,42 @@
 ﻿function Get-ADSIFsmo
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
-	
-	.DESCRIPTION
-		Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
-	
-	.PARAMETER Credential
-		Specifies the Alternative credential to use
-	
-	.PARAMETER ForestName
-		Specifies the alternative forest name
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+.SYNOPSIS
+	Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
+
+.DESCRIPTION
+	Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
+
+.PARAMETER Credential
+	Specifies the Alternative credential to use
+
+.PARAMETER ForestName
+	Specifies the alternative forest name
+
+.EXAMPLE
+	Get-ADSIFsmo
+
+	Retrieve the Flexible single master operation (FSMO) roles owner(s) of the current domain/forest
+
+.EXAMPLE
+	Get-ADSIFsmo -ForestName 'lazywinadmin.com'
+
+	Retrieve the Flexible single master operation (FSMO) roles owner(s) of the root domain/forest lazywinadmin.com
+
+.EXAMPLE
+	Get-ADSIFsmo -ForestName 'lazywinadmin.com' -credential (Get-Credential)
+
+	Retrieve the Flexible single master operation (FSMO) roles owner(s) of the root domain/forest lazywinadmin.com using
+	the specified credential.
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.OUTPUTS
+	System.Management.Automation.PSCustomObject
 #>
 	
 	[CmdletBinding()]

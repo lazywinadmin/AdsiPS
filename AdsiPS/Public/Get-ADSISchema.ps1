@@ -1,31 +1,32 @@
 ﻿function Get-ADSISchema
 {
-	<#
-	.SYNOPSIS
-		The Get-ADSISchema function gather information about the current Active Directory Schema
-	
-	.DESCRIPTION
-		The Get-ADSISchema function gather information about the current Active Directory Schema
-	
-	.PARAMETER PropertyType
-		Specify the type of property to return
-	
-	.PARAMETER ClassName
-		Specify the name of the Class to retrieve
-	
-	.PARAMETER AllClasses
-		This will list all the property present in the domain
-	
-	.PARAMETER FindClassName
-		Specify the exact or partial name of the class to search
-	
-	.EXAMPLE
-		Get-ADSISchema -PropertyType Mandatory -ClassName user
-	
-	.NOTES
-		Francois-Xavier Cat
-		LazyWinAdmin.com
-		@lazywinadm
+<#
+.SYNOPSIS
+	The Get-ADSISchema function gather information about the current Active Directory Schema
+
+.DESCRIPTION
+	The Get-ADSISchema function gather information about the current Active Directory Schema
+
+.PARAMETER PropertyType
+	Specify the type of property to return
+
+.PARAMETER ClassName
+	Specify the name of the Class to retrieve
+
+.PARAMETER AllClasses
+	This will list all the property present in the domain
+
+.PARAMETER FindClassName
+	Specify the exact or partial name of the class to search
+
+.EXAMPLE
+	Get-ADSISchema -PropertyType Mandatory -ClassName user
+
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS 
 #>
 	[CmdletBinding(DefaultParameterSetName = 'Default')]
 	param

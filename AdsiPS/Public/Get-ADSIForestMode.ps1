@@ -1,6 +1,47 @@
 ﻿Function Get-ADSIForestMode
 {
+<#
+.SYNOPSIS
+	Function to retrieve the forest mode
+
+.DESCRIPTION
+	Function to retrieve the forest mode
+
+.PARAMETER Credential
+	Specifies alternative credential to use
+
+.PARAMETER ForestName
+	Specifies the ForestName to query
+
+.EXAMPLE
+	Get-ADSIForestMode
+
+	Retrieve the forest mode of the current forest
+.EXAMPLE
+	Get-ADSIForestMode -ForestName lazywinadmin.com
+
+	Retrieve the forest mode of the forest lazywinadmin.com
+.EXAMPLE
+	Get-ADSIForestMode -Credential (Get-Credential superAdmin) -Verbose
+
+	Retrieve the forest mode of the current forest using the credentials specified
+.EXAMPLE
+	Get-ADSIForestMode -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+
+	Retrieve the forest mode of the forest lazywinadmin.com using the credentials specified
+.OUTPUTS
+	System.directoryservices.activedirectory.forest.forestmode
+
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/ADSIPS
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest.forestmode(v=vs.110).aspx
+#>
 	[cmdletbinding()]
+	[OutputType('System.directoryservices.activedirectory.forest.forestmode')]
 	PARAM (
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]

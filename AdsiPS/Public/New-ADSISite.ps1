@@ -1,37 +1,37 @@
 ﻿function New-ADSISite
 {
 <#
-	.SYNOPSIS
-		Function to create a new Site
-	
-	.DESCRIPTION
-		Function to create a new Site
-	
-	.PARAMETER SiteName
-		Specifies the SiteName
-	
-	.PARAMETER Location
-		Specifies the Location of the site
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use.
-		By default it will use the current user windows credentials.
-	
-	.PARAMETER ForestName
-		Specifies the alternative Forest where the subnet should be created
-		By default it will use the current forest.
-	
-	.EXAMPLE
-		PS C:\> New-ADSISite -SiteName "MTL01" -Location "Montreal, QC, Canada"
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysite(v=vs.110).aspx
+.SYNOPSIS
+	Function to create a new Site
+
+.DESCRIPTION
+	Function to create a new Site
+
+.PARAMETER SiteName
+	Specifies the SiteName
+
+.PARAMETER Location
+	Specifies the Location of the site
+
+.PARAMETER Credential
+	Specifies the alternative credential to use.
+	By default it will use the current user windows credentials.
+
+.PARAMETER ForestName
+	Specifies the alternative Forest where the subnet should be created
+	By default it will use the current forest.
+
+.EXAMPLE
+	PS C:\> New-ADSISite -SiteName "MTL01" -Location "Montreal, QC, Canada"
+
+.NOTES
+	Francois-Xavier.Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysite(v=vs.110).aspx
 #>
 	
 	[CmdletBinding(SupportsShouldProcess = $true)]

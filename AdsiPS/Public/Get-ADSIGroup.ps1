@@ -93,7 +93,10 @@ function Get-ADSIGroup
 	Francois-Xavier Cat
 	lazywinadmin.com
 	@lazywinadm
-	github.com/lazywinadmin
+	github.com/lazywinadmin/AdsiPS
+
+.OUTPUTS
+	System.DirectoryServices.AccountManagement.GroupPrincipal
 
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
@@ -105,26 +108,36 @@ function Get-ADSIGroup
 	(
 		[Parameter(ParameterSetName = 'Identity')]
 		[string]$Identity,
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
 		[Alias('Domain', 'Server')]
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
+
 		[Parameter(ParameterSetName = 'Filter')]
 		[system.directoryservices.accountmanagement.groupscope]$GroupScope,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		[bool]$IsSecurityGroup,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		$Description,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		$UserPrincipalName,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		$Displayname,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		$Name,
+
 		[Parameter(ParameterSetName = 'Filter')]
 		$SID,
+		
         [Parameter(ParameterSetName = 'LDAPFilter')]
         $LDAPFilter
         

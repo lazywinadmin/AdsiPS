@@ -1,23 +1,44 @@
 ﻿function Get-ADSIForestTrustRelationship
 {
 <#
-	.SYNOPSIS
-		Function to retrieve the Forest Trust Relationship(s)
+.SYNOPSIS
+	Function to retrieve the Forest Trust Relationship(s)
+
+.DESCRIPTION
+	Function to retrieve the Forest Trust Relationship(s)
+
+.PARAMETER Credential
+	Specifies the alternative credential to use. Default is the current user.
+
+.PARAMETER ForestName
+	Specifies the alternative Forest name to query. Default is the current one.
+
+.NOTES
+	Francois-Xavier Cat
+	www.lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 	
-	.DESCRIPTION
-		Function to retrieve the Forest Trust Relationship(s)
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use. Default is the current user.
-	
-	.PARAMETER ForestName
-		Specifies the alternative Forest name to query. Default is the current one.
-	
-	.NOTES
-		Francois-Xavier Cat
-		www.lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+.EXAMPLE
+	Get-ADSIForestTrustRelationship
+
+	Retrieve the Forest Trust Relationship of the current domain
+
+.EXAMPLE
+	Get-ADSIForestTrustRelationship -ForestName 'lazywinadmin.com'
+
+	Retrieve the Forest Trust Relationship of the forest lazywinadmin.com
+
+.EXAMPLE
+	Get-ADSIForestTrustRelationship -ForestName 'lazywinadmin.com' -credential (Get-Credential)
+
+	Retrieve the Forest Trust Relationship of the forest lazywinadmin.com using the specified credential
+
+.OUTPUTS
+	System.DirectoryServices.ActiveDirectory.ForestTrustRelationshipInformation
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.foresttrustrelationshipinformation(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]
@@ -38,7 +59,6 @@
 		{
 			Write-Verbose '[Get-ADSIForestTrustRelationship][PROCESS] Credential or FirstName specified'
 			(Get-ADSIForest @PSBoundParameters).GetAllTrustRelationships()
-			
 		}
 		CATCH
 		{

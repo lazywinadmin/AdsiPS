@@ -1,38 +1,38 @@
 ﻿Function Get-ADSIForestDomain
 {
-	<#
+<#
 .SYNOPSIS
-		Function to retrieve the forest domain(s)
-	
-	.DESCRIPTION
-		Function to retrieve the forest domain(s)
-	
-	.PARAMETER Credential
-		Specifies alternative credential to use
-	
-	.PARAMETER ForestName
-		Specifies the ForestName to query
-	
-	.EXAMPLE
-		Get-ADSIForest
-	
-	.EXAMPLE
-		Get-ADSIForest -ForestName lazywinadmin.com
-	
-	.EXAMPLE
-		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
-	
-	.EXAMPLE
-		Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
-	
-	.OUTPUTS
-		System.DirectoryServices.ActiveDirectory.Forest
-	
-	.NOTES
-		Francois-Xavier Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin/ADSIPS
+	Function to retrieve the forest domain(s)
+
+.DESCRIPTION
+	Function to retrieve the forest domain(s)
+
+.PARAMETER Credential
+	Specifies alternative credential to use
+
+.PARAMETER ForestName
+	Specifies the ForestName to query
+
+.EXAMPLE
+	Get-ADSIForest
+
+.EXAMPLE
+	Get-ADSIForest -ForestName lazywinadmin.com
+
+.EXAMPLE
+	Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
+
+.EXAMPLE
+	Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
+
+.OUTPUTS
+	System.DirectoryServices.ActiveDirectory.Forest
+
+.NOTES
+	Francois-Xavier Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/ADSIPS
 #>
 	[cmdletbinding()]
 	PARAM (

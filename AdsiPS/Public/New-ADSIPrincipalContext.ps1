@@ -1,48 +1,48 @@
 ﻿function New-ADSIPrincipalContext
 {
 <#
-	.SYNOPSIS
-		Function to create an Active Directory PrincipalContext object
+.SYNOPSIS
+	Function to create an Active Directory PrincipalContext object
+
+.DESCRIPTION
+	Function to create an Active Directory PrincipalContext object
+
+.PARAMETER Credential
+	Specifies the alternative credentials to use.
+	It will use the current credential if not specified.
+
+.PARAMETER ContextType
+	Specifies which type of Context to use. Domain, Machine or ApplicationDirectory.
+
+.PARAMETER DomainName
+	Specifies the domain to query. Default is the current domain.
+	Should only be used with the Domain ContextType.
+
+.PARAMETER Container
+	Specifies the scope. Example: "OU=MyOU"
+
+.PARAMETER ContextOptions
+	Specifies the ContextOptions.
+	Negotiate
+	Sealing
+	SecureSocketLayer
+	ServerBind
+	Signing
+	SimpleBind
+
+.EXAMPLE
+	New-ADSIPrincipalContext -ContextType 'Domain'
+
+.EXAMPLE
+	New-ADSIPrincipalContext -ContextType 'Domain' -DomainName "Contoso.com" -Cred (Get-Credential)
+
+.NOTES
+	Francois-Xavier.Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 	
-	.DESCRIPTION
-		Function to create an Active Directory PrincipalContext object
-	
-	.PARAMETER Credential
-		Specifies the alternative credentials to use.
-		It will use the current credential if not specified.
-	
-	.PARAMETER ContextType
-		Specifies which type of Context to use. Domain, Machine or ApplicationDirectory.
-	
-	.PARAMETER DomainName
-		Specifies the domain to query. Default is the current domain.
-		Should only be used with the Domain ContextType.
-	
-	.PARAMETER Container
-		Specifies the scope. Example: "OU=MyOU"
-	
-	.PARAMETER ContextOptions
-		Specifies the ContextOptions.
-		Negotiate
-		Sealing
-		SecureSocketLayer
-		ServerBind
-		Signing
-		SimpleBind
-	
-	.EXAMPLE
-		New-ADSIPrincipalContext -ContextType 'Domain'
-	
-	.EXAMPLE
-		New-ADSIPrincipalContext -ContextType 'Domain' -DomainName "Contoso.com" -Cred (Get-Credential)
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-		
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
 #>
 	
 	[CmdletBinding()]

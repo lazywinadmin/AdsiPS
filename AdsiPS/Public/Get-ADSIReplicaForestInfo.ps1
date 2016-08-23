@@ -39,15 +39,15 @@
 
 
 .NOTES  
-    Filename    : Get-ADSIReplicaForestInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
-
-.LINK  
-    https://balladelli.com
+    Micky Balladelli
+	micky@balladelli.com
+	https://balladelli.com
+	
+	github.com/lazywinadmin/AdsiPS 
 #>	
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName = $null,
+		[string]$ComputerName,
 		
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]

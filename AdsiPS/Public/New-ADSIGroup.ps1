@@ -1,51 +1,51 @@
 ﻿function New-ADSIGroup
 {
 <#
-	.SYNOPSIS
-		function to create a new group
-	
-	.DESCRIPTION
-		function to create a new group
-	
-	.PARAMETER Name
-		Specifies the property Name
-	
-	.PARAMETER DisplayName
-		Specifies the property DisplayName
-	
-	.PARAMETER UserPrincipalName
-		Specifies the property UserPrincipalName
-	
-	.PARAMETER Description
-		Specifies the property Description
-	
-	.PARAMETER GroupScope
-		Specifies the Group Scope (Global, Local or Universal)
-	
-	.PARAMETER IsSecurityGroup
-		Specify if you want to create a Security Group.
-		By default this is $true.
-	
-	.PARAMETER Passthru
-		Specifies if you want to see the object created after running the command.
-	
-	.PARAMETER Credential
-		Specifies if you want to specifies alternative credentials
-	
-	.PARAMETER DomainName
-		Specifies if you want to specifies alternative DomainName
-	
-	.EXAMPLE
-		PS C:\> New-ADSIGroup -Name "TestfromADSIPS3" -Description "some description" -GroupScope Local -IsSecurityGroup
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
+.SYNOPSIS
+	function to create a new group
+
+.DESCRIPTION
+	function to create a new group
+
+.PARAMETER Name
+	Specifies the property Name
+
+.PARAMETER DisplayName
+	Specifies the property DisplayName
+
+.PARAMETER UserPrincipalName
+	Specifies the property UserPrincipalName
+
+.PARAMETER Description
+	Specifies the property Description
+
+.PARAMETER GroupScope
+	Specifies the Group Scope (Global, Local or Universal)
+
+.PARAMETER IsSecurityGroup
+	Specify if you want to create a Security Group.
+	By default this is $true.
+
+.PARAMETER Passthru
+	Specifies if you want to see the object created after running the command.
+
+.PARAMETER Credential
+	Specifies if you want to specifies alternative credentials
+
+.PARAMETER DomainName
+	Specifies if you want to specifies alternative DomainName
+
+.EXAMPLE
+	PS C:\> New-ADSIGroup -Name "TestfromADSIPS3" -Description "some description" -GroupScope Local -IsSecurityGroup
+
+.NOTES
+	Francois-Xavier.Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
 #>
 	
 	[CmdletBinding(SupportsShouldProcess = $true)]

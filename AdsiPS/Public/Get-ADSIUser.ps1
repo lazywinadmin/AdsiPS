@@ -34,6 +34,9 @@ function Get-ADSIUser
 
     SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
+.PARAMETER LDAPFilter
+	Specifies the LDAP query to apply
+
 .EXAMPLE
 	Get-ADSIUser
 	
@@ -80,7 +83,7 @@ function Get-ADSIUser
 	Francois-Xavier Cat
 	lazywinadmin.com
 	@lazywinadm
-	github.com/lazywinadmin
+	github.com/lazywinadmin/AdsiPS
 
 .LINK
 	https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
@@ -101,7 +104,7 @@ function Get-ADSIUser
 		[String]$DomainName,
 
         [Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
-		[String]$LDAPFilter,
+		[string]$LDAPFilter,
 
         [Parameter(ParameterSetName = "LDAPFilter")]
         [Parameter(ParameterSetName = "All")]

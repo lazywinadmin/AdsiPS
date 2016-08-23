@@ -1,47 +1,47 @@
 function Move-ADSIComputer
 {
 <#
-	.SYNOPSIS
-		Function to Move a Computer in Active Directory
-	
-	.DESCRIPTION
-		Function to Move a Computer in Active Directory
-	
-	.PARAMETER Identity
-		Specifies the Identity of the computer
-			
-		You can provide one of the following:
-			DistinguishedName
-			Guid
-			Name
-			SamAccountName
-			Sid
-	
-		System.DirectoryService.AccountManagement.IdentityType
-		https://msdn.microsoft.com/en-us/library/bb356425(v=vs.110).aspx
-	
-	.PARAMETER Credential
-		Specifies alternative credential
-		By default it will use the current user windows credentials.
+.SYNOPSIS
+	Function to Move a Computer in Active Directory
 
-	.PARAMETER DomainName
-		Specifies the alternative Domain.
-		By default it will use the current domain.
-	
-	.PARAMETER Destination
-		Specifies the Distinguished Name where the object will be moved
-	
-	.EXAMPLE
-		Move-ADSIComputer -identity 'TESTCOMP01' -Destination 'OU=Servers,DC=FX,DC=LAB'
-	
-	.NOTES
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
+.DESCRIPTION
+	Function to Move a Computer in Active Directory
+
+.PARAMETER Identity
+	Specifies the Identity of the computer
+		
+	You can provide one of the following:
+		DistinguishedName
+		Guid
+		Name
+		SamAccountName
+		Sid
+
+	System.DirectoryService.AccountManagement.IdentityType
+	https://msdn.microsoft.com/en-us/library/bb356425(v=vs.110).aspx
+
+.PARAMETER Credential
+	Specifies alternative credential
+	By default it will use the current user windows credentials.
+
+.PARAMETER DomainName
+	Specifies the alternative Domain.
+	By default it will use the current domain.
+
+.PARAMETER Destination
+	Specifies the Distinguished Name where the object will be moved
+
+.EXAMPLE
+	Move-ADSIComputer -identity 'TESTCOMP01' -Destination 'OU=Servers,DC=FX,DC=LAB'
+
+.NOTES
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory=$true)]

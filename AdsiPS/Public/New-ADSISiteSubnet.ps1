@@ -1,41 +1,41 @@
 ﻿function New-ADSISiteSubnet
 {
 <#
-	.SYNOPSIS
-		Function to create a new Site Subnet
-	
-	.DESCRIPTION
-		Function to create a new Site Subnet
-	
-	.PARAMETER SubnetName
-		Specifies the SubnetName.
-		Example '192.168.8.0/24'
-	
-	.PARAMETER SiteName
-		Specifies the SiteName where the subnet will be assigned
-	
-	.PARAMETER Location
-		Specifies the location of the subnet
-	
-	.PARAMETER Credential
-		Specifies the alternative credential to use.
-		By default it will use the current user windows credentials.
-	
-	.PARAMETER ForestName
-		Specifies the alternative Forest where the subnet should be created
-		By default it will use the current forest.
-	
-	.EXAMPLE
-		PS C:\> New-ADSISiteSubnet -SubnetName "5.5.5.0/24" -SiteName "FX3" -Location "test"
-	
-	.NOTES
-		Francois-Xavier.Cat
-		LazyWinAdmin.com
-		@lazywinadm
-		github.com/lazywinadmin
-	
-	.LINK
-		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysubnet(v=vs.110).aspx
+.SYNOPSIS
+	Function to create a new Site Subnet
+
+.DESCRIPTION
+	Function to create a new Site Subnet
+
+.PARAMETER SubnetName
+	Specifies the SubnetName.
+	Example '192.168.8.0/24'
+
+.PARAMETER SiteName
+	Specifies the SiteName where the subnet will be assigned
+
+.PARAMETER Location
+	Specifies the location of the subnet
+
+.PARAMETER Credential
+	Specifies the alternative credential to use.
+	By default it will use the current user windows credentials.
+
+.PARAMETER ForestName
+	Specifies the alternative Forest where the subnet should be created
+	By default it will use the current forest.
+
+.EXAMPLE
+	PS C:\> New-ADSISiteSubnet -SubnetName "5.5.5.0/24" -SiteName "FX3" -Location "test"
+
+.NOTES
+	Francois-Xavier.Cat
+	LazyWinAdmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
+
+.LINK
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysubnet(v=vs.110).aspx
 #>
 	
 	[CmdletBinding(SupportsShouldProcess = $true)]

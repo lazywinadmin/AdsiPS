@@ -1,53 +1,53 @@
 ﻿function Move-ADSIDomainControllerRole
 {
 <#
-	.SYNOPSIS
-		Function to transfers or Seizes Active Directory roles to the current DC.
+.SYNOPSIS
+	Function to transfers or Seizes Active Directory roles to the current DC.
+
+.DESCRIPTION
+	Function to transfers or Seizes Active Directory roles to the current DC.
+
+.PARAMETER ComputerName
+	Specifies the Domain Controller
+
+.PARAMETER Credential
+	Specifies alternate credentials to use. Use Get-Credential to create proper credentials.
+
+.PARAMETER Role
+	Specifies the Role(s) to transfer to Seize
+
+.PARAMETER Force
+	Forces the role(s) to be seized
+
+.EXAMPLE
+	Move-ADSIDomainControllerRole -ComputerName dc1.ad.local -Roles "PDCRole"
 	
-	.DESCRIPTION
-		Function to transfers or Seizes Active Directory roles to the current DC.
+	Connects to remote domain controller dc1.ad.local using current credentials and
+	attempts to transfer the PDCrole to dc1.ad.local.
+
+.EXAMPLE
+	Move-ADSIDomainControllerRole  -ComputerName DC1 -Credential $cred -Verbose -Roles InfrastructureRole,PDCRole,RidRole,NamingRole,SchemaRole -Force
 	
-	.PARAMETER ComputerName
-		Specifies the Domain Controller
+	Connects to remote domain controller dc1.ad.local using alternate credentials and seizes all the roles.
+
+.NOTES
+	Version History
+	1.0 Initial Version (Micky Balladelli)
+	1.1 Update (Francois-Xavier Cat)
+		Rename from Move-ADSIDomainControllerRole to Move-ADSIDomainControllerRole
+		Add New-ADSIDirectoryContext to take care of the Context
+		Other minor modifications
 	
-	.PARAMETER Credential
-		Specifies alternate credentials to use. Use Get-Credential to create proper credentials.
+	Authors
+	Micky Balladelli
+	balladelli.com
+	micky@balladelli.com
+	@mickyballadelli
 	
-	.PARAMETER Role
-		Specifies the Role(s) to transfer to Seize
-	
-	.PARAMETER Force
-		Forces the role(s) to be seized
-	
-	.EXAMPLE
-		Move-ADSIDomainControllerRole -ComputerName dc1.ad.local -Roles "PDCRole"
-		
-		Connects to remote domain controller dc1.ad.local using current credentials and
-		attempts to transfer the PDCrole to dc1.ad.local.
-	
-	.EXAMPLE
-		Move-ADSIDomainControllerRole  -ComputerName DC1 -Credential $cred -Verbose -Roles InfrastructureRole,PDCRole,RidRole,NamingRole,SchemaRole -Force
-		
-		Connects to remote domain controller dc1.ad.local using alternate credentials and seizes all the roles.
-	
-	.NOTES
-		Version History
-		1.0 Initial Version (Micky Balladelli)
-		1.1 Update (Francois-Xavier Cat)
-			Rename from Move-ADSIDomainControllerRole to Move-ADSIDomainControllerRole
-			Add New-ADSIDirectoryContext to take care of the Context
-			Other minor modifications
-		
-		Authors
-		Micky Balladelli
-		balladelli.com
-		micky@balladelli.com
-		@mickyballadelli
-		
-		Francois-Xavier Cat
-		lazywinadmin.com
-		@lazywinadm
-		github.com/lazywinadmin
+	Francois-Xavier Cat
+	lazywinadmin.com
+	@lazywinadm
+	github.com/lazywinadmin/AdsiPS
 #>
 	
 	[CmdletBinding()]

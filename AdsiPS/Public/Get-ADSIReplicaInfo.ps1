@@ -1,6 +1,6 @@
 ﻿function Get-ADSIReplicaInfo
 {
-	<#  
+<#  
 .SYNOPSIS  
     Get-ADSIReplicaInfo retrieves Active Directory replication information
 
@@ -37,6 +37,12 @@
 .PARAMETER DisplayDC
     Displays additional information about the currently connected Domain Controller.
 
+.PARAMETER DisplayDC
+    Displays additional information about the errors
+
+.PARAMETER errors
+	Display additional information on the replication errors
+
 .PARAMETER FormatTable
     Formats the output as a auto-sized table and rearranges elements according to relevance.
 
@@ -68,11 +74,11 @@
 
 
 .NOTES  
-    Filename    : Get-ADSIReplicaInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
-
-.LINK  
-    https://balladelli.com
+    Micky Balladelli
+	micky@balladelli.com
+	https://balladelli.com
+	
+	github.com/lazywinadmin/AdsiPS 
 #>
 	[CmdletBinding()]
 	param ([string]$ComputerName = $null,
