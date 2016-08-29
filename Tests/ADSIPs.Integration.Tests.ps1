@@ -65,7 +65,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
         $AST = [System.Management.Automation.Language.Parser]::ParseInput($FunctionContent, [ref]$null, [ref]$null)
 
 	    Context "$c - Help"{
-			
+
                 It "Synopsis"{$help.Synopsis| Should not BeNullOrEmpty}
                 It "Description"{$help.Description| Should not BeNullOrEmpty}
                 #It "Notes - Author" {$Notes[0].trim()| Should Be "Francois-Xavier Cat"}
@@ -73,8 +73,6 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 #It "Notes - Twitter" {$Notes[2].trim()| Should Be "@lazywinadm"}
                 #It "Notes - Github" {$Notes[3].trim() | Should Be "github.com/lazywinadmin"}
                 It "Notes - Github Project" {$Notes -contains "$GithubRepository$ModuleName" | Should Be $true}
-
-                
 
                 # Get the parameters declared in the Comment Based Help
                 #  minus the RiskMitigationParameters
@@ -156,7 +154,20 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # CmdletBinding
                 $ast.ParamBlock.attributes.typename.fullname
-		
+
+
+                # check each help keyword for indent
+                # check space between help keyword
+                # check no text pass the 80 characters 
+                # check PARAM is upper case
+                # Check help keywords are upper.
+                # check you have outputs
+                # check you have [outputType()]
+                # check for error handling
+                # check for some verbose
+                # check does not use accelerator in PARAM()
+                # parameters in AST and Help are matching (same name)
+                # PARAM() no type defined on a property
 		    #>
 	    }
     }
