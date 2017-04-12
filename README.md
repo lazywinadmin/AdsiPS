@@ -81,6 +81,7 @@ PowerShell module to interact with Active Directory using ADSI and DirectoryServ
  - [ ] Param: Disabled
 - [ ] Get-ADSIUserResultantPasswordPolicy
 - [ ] Lock-ADSIAccount
+- [x] Set-ADSIUser
 - [x] New-ADSIDirectoryContextDomain
 - [x] New-ADSIDirectoryContextForest
 - [ ] New-ADSISite
