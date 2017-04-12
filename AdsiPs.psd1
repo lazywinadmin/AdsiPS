@@ -4,10 +4,10 @@
 ModuleToProcess = 'AdsiPs.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.1'
+ModuleVersion = '1.0.0.2'
 
 # ID used to uniquely identify this module
-GUID = '7a91a332-4b42-45e5-9d0f-bc99514c2638'
+GUID = '00633cc3-ae9b-4ae0-a6f2-041261827e72'
 
 # Author of this module
 Author = 'Francois-Xavier Cat'
