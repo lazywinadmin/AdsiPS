@@ -5,7 +5,7 @@
 	Function to retrieve a PrintQueue in Active Directory
 
 .DESCRIPTION
-	Function to retrieve a PrintQueue in Active Directory
+	Function to retrieve a PrintQueue in Active Directory, you can use * as wildcard
 
 .PARAMETER  printerName
 	Specify the printerName of PrintQueue.
@@ -22,6 +22,8 @@
 .EXAMPLE
 	Get-ADSIPrintQueue -printerName MyPrinter
 
+.EXAMPLE
+	Get-ADSIPrintQueue -printerName *MyPrinter*
 .NOTES
 	Christophe Kumor
 
