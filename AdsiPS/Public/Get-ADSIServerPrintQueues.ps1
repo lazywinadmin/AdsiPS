@@ -1,4 +1,4 @@
-function Get-ADSIServerPintQueues
+function Get-ADSIServerPrintQueues
 {
 <#
 .SYNOPSIS
