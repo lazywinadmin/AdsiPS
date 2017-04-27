@@ -71,7 +71,7 @@ function Get-ADSIUser
 	Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab' -NoResultLimit
 	
 	This example will retrieve the user account that contains fx inside the samaccountname
-	property for the domain fx.lab. There is a limit of 1000 objects returned.
+	property for the domain fx.lab. There is NO limit of 1000 objects returned.
 	
 .EXAMPLE
 	$user = Get-ADSIUser -Identity 'testaccount'
