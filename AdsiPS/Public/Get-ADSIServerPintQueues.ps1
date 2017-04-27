@@ -21,7 +21,12 @@ function Get-ADSIServerPintQueues
     Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
-    Specify the number of item(s) to output
+    Specify the number of item(s) to output Max 1000, but you can specify less 
+	Use NoResultLimit for more than 1000 objects
+
+.PARAMETER NoResultLimit
+    Remove the SizeLimit of 1000
+    SizeLimit is useless, it can't go over the server limit which is 1000 by default
 	
 .EXAMPLE
 	Get-ADSIServerPintQueues -shortServerName TestServer01
@@ -29,6 +34,11 @@ function Get-ADSIServerPintQueues
 .EXAMPLE
 	Get-ADSIServerPintQueues -longServerName TestServer01.MyDomain
 
+.EXAMPLE
+	Get-ADSIServerPintQueues -shortServerName TestServer01 -NoResultLimit
+	
+	This example will retrieve all queue on a server without limit of 1000 objects returned.
+	
 .NOTES
 	Christophe Kumor
 
@@ -54,7 +64,9 @@ function Get-ADSIServerPintQueues
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[Alias("ResultLimit", "Limit")]
-		[int]$SizeLimit = '100'
+		[int]$SizeLimit,
+
+		[Switch]$NoResultLimit
 	)
 	BEGIN { }
 	PROCESS
@@ -86,6 +98,17 @@ function Get-ADSIServerPintQueues
 				$Search.SearchRoot = $Cred
 			}
 			
+			IF (-not$PSBoundParameters['NoResultLimit'])
+			{
+				Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"
+			}
+            else
+			{
+                # SizeLimit is useless, even if there is a $Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+                # the server limit is kept
+                $Search.PageSize = 10000
+            }
+
 			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
