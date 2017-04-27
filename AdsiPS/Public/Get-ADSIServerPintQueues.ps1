@@ -6,10 +6,14 @@ function Get-ADSIServerPintQueues
 
 .DESCRIPTION
 	Function to retrieve all the PrintQueues published in Active Directory for a specific server.
+	You can use shortServerName OR longServerName
 
-.PARAMETER  printerName
-	Specify the Name of server
+.PARAMETER  shortServerName
+	Specify the short name of a server
 	
+.PARAMETER  longServerName
+	Specify the long name of a server (with domain name)
+
 .PARAMETER Credential
     Specify the Credential to use
 
@@ -20,7 +24,10 @@ function Get-ADSIServerPintQueues
     Specify the number of item(s) to output
 	
 .EXAMPLE
-	Get-ADSIServerPintQueues -Server TestServer01
+	Get-ADSIServerPintQueues -shortServerName TestServer01
+
+.EXAMPLE
+	Get-ADSIServerPintQueues -longServerName TestServer01.MyDomain
 
 .NOTES
 	Christophe Kumor
@@ -30,9 +37,13 @@ function Get-ADSIServerPintQueues
 	
 	[CmdletBinding()]
 	PARAM (
-		[Parameter(ParameterSetName = "Server")]
-		[String]$Server,
+		[Parameter(ParameterSetName = "shortServerName")]
+		[Alias("Name")]
+		[String]$shortServerName,
 		
+		[Parameter(ParameterSetName = "longServerName")]
+		[String]$longServerName,
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
@@ -55,9 +66,14 @@ function Get-ADSIServerPintQueues
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			
-			$Search.filter = "(&(objectClass=printQueue)(serverName=$Server))"
-			
-
+			IF ($PSBoundParameters['shortServerName'])
+			{
+				$Search.filter = "(&(objectClass=printQueue)(shortServerName=$shortServerName))"
+			}
+			IF ($PSBoundParameters['DistinguishedName'])
+			{
+				$Search.filter = "(&(objectClass=printQueue)(serverName=$longServerName))"
+			}
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
