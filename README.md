@@ -31,6 +31,8 @@ Install-Module -name ADSIPS
 ## Help !!
 Would love contributors, suggestions, feedback, and other help! Feel free to open an Issue ticket
  
+## TODO
+* Search-ADSIAccount (retrieve disabled account, expired, expiring,...)
 
 
 ## More Information
