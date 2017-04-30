@@ -32,11 +32,17 @@
 	
 	[CmdletBinding()]
 	PARAM (
-		[Parameter(ParameterSetName = "printerName")]
-		[String]$printerName,
+		[Parameter(ParameterSetName = "PrinterQueue")]
+		[String]$PrinterQueue,
+		[Parameter(ParameterSetName = "ServerName")]
+		[Alias("Name")]
+		[String]$ServerName,
+		[Parameter(ParameterSetName = "Domain")]
+		[Alias("Domain")]
+		[String]$Domain,
 		
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
+		[Alias("DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
 		
 		[Alias("RunAs")]
@@ -45,7 +51,8 @@
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
 		[Alias("ResultLimit", "Limit")]
-		[int]$SizeLimit = '100'
+		[int]$SizeLimit = '100',
+		[Switch]$NoResultLimit
 	)
 	BEGIN { }
 	PROCESS
@@ -57,10 +64,19 @@
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			
-			$Search.filter = "(&(objectClass=printQueue)(printerName=$printerName))"
+			IF ($PSBoundParameters['ServerName'])
+			{			
+			$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
+			} else {
+			$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueue))"
+			}
 			
-
-			IF ($PSBoundParameters['DomainDistinguishedName'])
+			IF ($PSBoundParameters['Domain'])
+			{
+			$DomainDistinguishedName = "LDAP://DC=$($Domain.replace(“.”, “,DC=”))"
+			$Search.SearchRoot = $DomainDistinguishedName
+			}
+			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
@@ -72,10 +88,29 @@
 				$Search.SearchRoot = $Cred
 			}
 			
+			
+			IF (-not$PSBoundParameters['NoResultLimit'])
+			{
+				Write-warning "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
+			}
+            else
+			{
+                # SizeLimit is useless, even if there is a $Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+                # the server limit is kept
+                $Search.PageSize = 10000
+            }
+
 			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
+					IF ($PSBoundParameters['ServerName'])
+			{
+				$Properties = @{
+					"printerName" = $Object.properties.printername -as [string]
+				}	
+			 }
+			 else {
 				$Properties = @{
 					"DisplayName" = $Object.properties.displayname -as [string]
 					"Name" = $Object.properties.name -as [string]
@@ -92,6 +127,9 @@
 					"serverName" = $Object.properties.servername -as [string]
 					"uNCName" = $Object.properties.uncname -as [string]
 					"printShareName" = $Object.properties.printsharename -as [string]
+
+
+			} 
 				}
 				
 				# Output the info
