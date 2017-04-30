@@ -7,9 +7,12 @@
 .DESCRIPTION
 	Function to retrieve a PrintQueue in Active Directory, you can use * as wildcard
 
-.PARAMETER  printerName
-	Specify the printerName of PrintQueue.
-	
+.PARAMETER PrinterQueue
+	Specify the printerqueue name.
+
+.PARAMETER ServerName
+	Specify the ServerName
+
 .PARAMETER Credential
     Specify the Credential to use
 
@@ -20,10 +23,15 @@
     Specify the number of item(s) to output
 	
 .EXAMPLE
-	Get-ADSIPrintQueue -printerName MyPrinter
+	Get-ADSIPrintQueue
+
+	Returns all the printqueue(s) present in the current domain
 
 .EXAMPLE
 	Get-ADSIPrintQueue -printerName *MyPrinter*
+
+	Returns the printqueue(s) present in the current domain with the specified name
+	
 .NOTES
 	Christophe Kumor
 
@@ -34,9 +42,11 @@
 	PARAM (
 		[Parameter(ParameterSetName = "PrinterQueue")]
 		[String]$PrinterQueue,
+
 		[Parameter(ParameterSetName = "ServerName")]
 		[Alias("Name")]
 		[String]$ServerName,
+
 		[Parameter(ParameterSetName = "Domain")]
 		[Alias("Domain")]
 		[String]$Domain,
@@ -52,9 +62,9 @@
 		
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
+
 		[Switch]$NoResultLimit
 	)
-	BEGIN { }
 	PROCESS
 	{
 		TRY
@@ -63,31 +73,37 @@
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
+			$Search.filter = "(&(objectClass=printQueue))"
 			
 			IF ($PSBoundParameters['ServerName'])
 			{			
-			$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
-			} else {
-			$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueue))"
+				$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
+
+				IF($PSBoundParameters['PrinterQueue']){
+					$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
+				}
 			}
 			
 			IF ($PSBoundParameters['Domain'])
 			{
-			$DomainDistinguishedName = "LDAP://DC=$($Domain.replace(“.”, “,DC=”))"
-			$Search.SearchRoot = $DomainDistinguishedName
+				$DomainDistinguishedName = "LDAP://DC=$($Domain.replace(".", ",DC="))"
+				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				IF ($DomainDistinguishedName -notlike "LDAP://*") {
+					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
+				}#IF
+
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
 			
 			IF (-not$PSBoundParameters['NoResultLimit'])
 			{
