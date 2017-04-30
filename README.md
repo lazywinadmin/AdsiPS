@@ -32,29 +32,29 @@ Install-Module -name ADSIPS
 Would love contributors, suggestions, feedback, and other help! Feel free to open an Issue ticket
  
 ## TODO (not in a specific order)
-- [] Set-ADSIComputer
-- [] Set-ADSIGroup
-- [] Set-ADSIObject
-- [] Set-ADSIOrganizationalUnit
-- [] Restore-ADSIAccount
-- [] Unlock-ADSIAccount
-- [] Search-ADSIAccount (retrieve disabled account, expired, expiring,...)
-- [] ACL functions
-- [] GPO functions
-- [] Set-ADSIDomainMode
-- [] Set-ADSIForestMode
-- [] Get-ADSIAccountResultantPasswordReplicationPolicy
-- [] Get-ADSIDomainControllerPasswordReplicationPolicy
-- [] Add-ADSIDomainControllerPasswordReplicationPolicy
-- [] Remove-ADSIDomainControllerPasswordReplicationPolicy
-- [] Get-ADSIDefaultDomainPasswordPolicy
-- [] Set-ADSIDefaultDomainPasswordPolicy
-- [] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
-- [] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
-- [] Get-ADSIFineGrainedPasswordPolicy
-- [] Get-ADSIAccountResultantPasswordReplicationPolicy
-- [] Set-ADSIAccountPassword
-- [] Clear-ADSIAccountExpiration
+- [ ] Set-ADSIComputer
+- [ ] Set-ADSIGroup
+- [ ] Set-ADSIObject
+- [ ] Set-ADSIOrganizationalUnit
+- [ ] Restore-ADSIAccount
+- [ ] Unlock-ADSIAccount
+- [ ] Search-ADSIAccount (retrieve disabled account, expired, expiring,...)
+- [ ] ACL functions
+- [ ] GPO functions
+- [ ] Set-ADSIDomainMode
+- [ ] Set-ADSIForestMode
+- [ ] Get-ADSIAccountResultantPasswordReplicationPolicy
+- [ ] Get-ADSIDomainControllerPasswordReplicationPolicy
+- [ ] Add-ADSIDomainControllerPasswordReplicationPolicy
+- [ ] Remove-ADSIDomainControllerPasswordReplicationPolicy
+- [ ] Get-ADSIDefaultDomainPasswordPolicy
+- [ ] Set-ADSIDefaultDomainPasswordPolicy
+- [ ] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
+- [ ] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
+- [ ] Get-ADSIFineGrainedPasswordPolicy
+- [ ] Get-ADSIAccountResultantPasswordReplicationPolicy
+- [ ] Set-ADSIAccountPassword
+- [ ] Clear-ADSIAccountExpiration
 
 ## More Information
  * MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
