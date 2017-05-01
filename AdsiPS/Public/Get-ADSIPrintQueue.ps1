@@ -131,27 +131,30 @@
 			
 			IF ($PSBoundParameters['ServerName'])
 			{			
-			$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
+				$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
 			}
-		 	elseif ($PSBoundParameters['PrinterQueue']) 
+		 	ELSEIF ($PSBoundParameters['PrinterQueue']) 
 			{
-			$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueueName))"
+				$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueueName))"
 			}
-		 	else
+		 	ELSE
 		  	{
-			$Search.filter = "(objectClass=printQueue)"
+				$Search.filter = "(objectClass=printQueue)"
 			}
 			
 			IF ($PSBoundParameters['DomainName'])
 			{
-			$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(“.”, “,DC=”))"
-			$Search.SearchRoot = $DomainDistinguishedName
+				$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
+				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-				$Search.SearchRoot = $DomainDistinguishedName
+				IF ($DomainDistinguishedName -notlike "LDAP://*") 
+				{ 
+					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
+				}
+					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+					$Search.SearchRoot = $DomainDistinguishedName
 			}
 			IF ($PSBoundParameters['Credential'])
 			{
@@ -165,7 +168,7 @@
 				$Search.SizeLimit = $SizeLimit
 				Write-warning "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
 			}
-            else
+            ELSE
 			{
 
                 Write-Verbose -Message "Use NoResultLimit switch, all objects will be returned. no limit"
@@ -173,7 +176,7 @@
             }
   			
 				
-			foreach ($Object in $($Search.FindAll()))
+			FOREACH ($Object IN $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
