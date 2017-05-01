@@ -7,13 +7,13 @@
 .DESCRIPTION
 	Function to retrieve PrintQueue in Active Directory from PrinterQueue name or server name
 
-.PARAMETER  PrinterQueue
+.PARAMETER  PrinterQueueName
 	Specify the PrinterQueue, you can use * as wildcard
 
 .PARAMETER  ServerName
 	Specify the ServerName to use
 
-.PARAMETER  Domain
+.PARAMETER  DomainName
 	Specify the Domain to use
 	
 .PARAMETER Credential
@@ -61,7 +61,7 @@
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01.contoso.com
 	
-	Get all published printQueue for the server TestServer01 (default function SizeLimit return 100 objects Max)
+	Get all published printQueue for the server TestServer01.contoso.com (default function SizeLimit return 100 objects Max)
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01 -SizeLimit 200
@@ -84,7 +84,7 @@
 	This define the searchbase to the 'Mut' OU and filter on server and printQueue
 
 .EXAMPLE
-	Get-ADSIPrintQueue -ServerName TestServer01 -Domain contoso2.com -NoResultLimit
+	Get-ADSIPrintQueue -ServerName TestServer01 -DomainName contoso2.com -NoResultLimit
 	
 	You will get all the printQueue from TestServer01 on contoso2.com domain
 
