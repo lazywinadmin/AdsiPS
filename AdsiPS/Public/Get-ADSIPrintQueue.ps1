@@ -117,6 +117,7 @@
 		
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
+
 		[Switch]$NoResultLimit
 	)
 
@@ -128,6 +129,7 @@
 			# Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SearchRoot = $DomainDistinguishedName
+			$Search.filter = "(&(objectClass=printQueue))"
 			
 			IF ($PSBoundParameters['ServerName'])
 			{			
@@ -156,6 +158,7 @@
 					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 					$Search.SearchRoot = $DomainDistinguishedName
 			}
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
