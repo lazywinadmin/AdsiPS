@@ -2,13 +2,19 @@
 {
 <#
 .SYNOPSIS
-	Function to retrieve a PrintQueue in Active Directory
+	Function to retrieve PrintQueue in Active Directory from PrinterQueue name or server name
 
 .DESCRIPTION
-	Function to retrieve a PrintQueue in Active Directory, you can use * as wildcard
+	Function to retrieve PrintQueue in Active Directory from PrinterQueue name or server name
 
-.PARAMETER  printerName
-	Specify the printerName of PrintQueue.
+.PARAMETER  PrinterQueue
+	Specify the PrinterQueue, you can use * as wildcard
+
+.PARAMETER  ServerName
+	Specify the ServerName to use
+
+.PARAMETER  Domain
+	Specify the Domain to use
 	
 .PARAMETER Credential
     Specify the Credential to use
@@ -17,13 +23,71 @@
     Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
-    Specify the number of item(s) to output
-	
-.EXAMPLE
-	Get-ADSIPrintQueue -printerName MyPrinter
+    Specify the number of item(s) to output (1 to 1000)
+	Use NoResultLimit for more than 1000 objects
+
+.PARAMETER NoResultLimit
+    Remove the SizeLimit of 1000
+	Warning : can take time! depend number of queues on your domain
+	NoResultLimit parameter override SizeLimit parameter
 
 .EXAMPLE
-	Get-ADSIPrintQueue -printerName *MyPrinter*
+	Get-ADSIPrintQueue 
+	
+	Get all published printQueue on your current domain (default function SizeLimit return 100 objects Max)
+
+.EXAMPLE
+	Get-ADSIPrintQueue -SizeLimit 200
+	
+	Get 200 published printQueue on your current domain 
+
+.EXAMPLE
+	Get-ADSIPrintQueue -NoResultLimit
+	
+	Get all published printQueue on your current domain 
+	Warning : can take time! depend number of queues on your domain
+
+.EXAMPLE
+	Get-ADSIPrintQueue -PrinterQueueName MyPrinterQueue
+
+.EXAMPLE
+	Get-ADSIPrintQueue -PrinterQueueName *Printer*
+
+.EXAMPLE
+	Get-ADSIPrintQueue -ServerName TestServer01
+	
+	Get all published printQueue for the server TestServer01 (default function SizeLimit return 100 objects Max)
+
+.EXAMPLE
+	Get-ADSIPrintQueue -ServerName TestServer01.contoso.com
+	
+	Get all published printQueue for the server TestServer01 (default function SizeLimit return 100 objects Max)
+
+.EXAMPLE
+	Get-ADSIPrintQueue -ServerName TestServer01 -SizeLimit 200
+	
+	Get only 200 published printQueue for the server TestServer01 
+
+.EXAMPLE
+	Get-ADSIPrintQueue -ServerName TestServer01 -NoResultLimit
+
+	This example will retrieve all printQueue on TestServer01 without limit of 1000 objects returned.
+
+.EXAMPLE
+	Get-ADSIPrintQueue -DomainDistinguishedName 'OU=Mut,DC=CONTOSO,DC=COM'
+
+	This example will retrieve all printQueue located in the 'Mut' OU  (default function SizeLimit return 100 objects Max)
+
+.EXAMPLE
+	Get-ADSIPrintQueue -PrinterQueueName MyPrinterQueue -ServerName TestServer01 -DomainDistinguishedName 'OU=Mut,DC=CONTOSO,DC=COM'
+
+	This define the searchbase to the 'Mut' OU and filter on server and printQueue
+
+.EXAMPLE
+	Get-ADSIPrintQueue -ServerName TestServer01 -Domain contoso2.com -NoResultLimit
+	
+	You will get all the printQueue from TestServer01 on contoso2.com domain
+
 .NOTES
 	Christophe Kumor
 
@@ -32,16 +96,18 @@
 	
 	[CmdletBinding()]
 	PARAM (
-		[Parameter(ParameterSetName = "PrinterQueue")]
-		[String]$PrinterQueue,
-		[Parameter(ParameterSetName = "ServerName")]
-		[Alias("Name")]
-		[String]$ServerName,
-		[Parameter(ParameterSetName = "Domain")]
-		[Alias("Domain")]
-		[String]$Domain,
 		
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
+		
+		[Alias("PrinterQueue")]
+		[String]$PrinterQueueName,
+		
+		[Alias("Server")]
+		[String]$ServerName,
+
+		[Alias("Domain")]
+		[String]$DomainName,
+		
 		[Alias("DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
 		
@@ -61,19 +127,24 @@
 		{
 			# Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			
 			IF ($PSBoundParameters['ServerName'])
 			{			
 			$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
-			} else {
-			$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueue))"
+			}
+		 	elseif ($PSBoundParameters['PrinterQueue']) 
+			{
+			$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueueName))"
+			}
+		 	else
+		  	{
+			$Search.filter = "(objectClass=printQueue)"
 			}
 			
-			IF ($PSBoundParameters['Domain'])
+			IF ($PSBoundParameters['DomainName'])
 			{
-			$DomainDistinguishedName = "LDAP://DC=$($Domain.replace(“.”, “,DC=”))"
+			$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(“.”, “,DC=”))"
 			$Search.SearchRoot = $DomainDistinguishedName
 			}
 			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
@@ -91,26 +162,21 @@
 			
 			IF (-not$PSBoundParameters['NoResultLimit'])
 			{
+				$Search.SizeLimit = $SizeLimit
 				Write-warning "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
 			}
             else
 			{
-                # SizeLimit is useless, even if there is a $Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
-                # the server limit is kept
-                $Search.PageSize = 10000
-            }
 
+                Write-Verbose -Message "Use NoResultLimit switch, all objects will be returned. no limit"
+			    $Search.PageSize = 10000
+            }
+  			
+				
 			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
-					IF ($PSBoundParameters['ServerName'])
-			{
-				$Properties = @{
-					"printerName" = $Object.properties.printername -as [string]
-				}	
-			 }
-			 else {
 				$Properties = @{
 					"DisplayName" = $Object.properties.displayname -as [string]
 					"Name" = $Object.properties.name -as [string]
@@ -127,10 +193,10 @@
 					"serverName" = $Object.properties.servername -as [string]
 					"uNCName" = $Object.properties.uncname -as [string]
 					"printShareName" = $Object.properties.printsharename -as [string]
-
+					"printStatus" = $Object.properties.printstatus -as [string]
 
 			} 
-				}
+				
 				
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
@@ -146,4 +212,5 @@
 	{
 		Write-Verbose -Message "[END] Function Get-ADSIPrintQueue End."
 	}
+
 }
