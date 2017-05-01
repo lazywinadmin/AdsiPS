@@ -78,11 +78,11 @@
 		}
 		CATCH
 		{
-			Write-Error $Error[0]
-			break
+			$PSCmdlet.ThrowTerminatingError($_)
 		}
 	}
 	END
 	{
+		
 	}
 }
