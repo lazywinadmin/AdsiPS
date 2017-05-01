@@ -7,7 +7,6 @@
 .DESCRIPTION
 	Function to retrieve PrintQueue in Active Directory from PrinterQueue name or server name
 
-<<<<<<< HEAD
 .PARAMETER  PrinterQueue
 	Specify the PrinterQueue, you can use * as wildcard
 
@@ -17,14 +16,6 @@
 .PARAMETER  Domain
 	Specify the Domain to use
 	
-=======
-.PARAMETER PrinterQueue
-	Specify the printerqueue name.
-
-.PARAMETER ServerName
-	Specify the ServerName
-
->>>>>>> upstream/master
 .PARAMETER Credential
     Specify the Credential to use
 
@@ -46,7 +37,6 @@
 	Get all published printQueue on your current domain (default function SizeLimit return 100 objects Max)
 
 .EXAMPLE
-<<<<<<< HEAD
 	Get-ADSIPrintQueue -SizeLimit 200
 	
 	Get 200 published printQueue on your current domain 
@@ -98,17 +88,6 @@
 	
 	You will get all the printQueue from TestServer01 on contoso2.com domain
 
-=======
-	Get-ADSIPrintQueue
-
-	Returns all the printqueue(s) present in the current domain
-
-.EXAMPLE
-	Get-ADSIPrintQueue -printerName *MyPrinter*
-
-	Returns the printqueue(s) present in the current domain with the specified name
-	
->>>>>>> upstream/master
 .NOTES
 	Christophe Kumor
 
@@ -117,8 +96,6 @@
 	
 	[CmdletBinding()]
 	PARAM (
-<<<<<<< HEAD
-		
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		
 		[Alias("PrinterQueue")]
@@ -127,16 +104,6 @@
 		[Alias("Server")]
 		[String]$ServerName,
 
-=======
-		[Parameter(ParameterSetName = "PrinterQueue")]
-		[String]$PrinterQueue,
-
-		[Parameter(ParameterSetName = "ServerName")]
-		[Alias("Name")]
-		[String]$ServerName,
-
-		[Parameter(ParameterSetName = "Domain")]
->>>>>>> upstream/master
 		[Alias("Domain")]
 		[String]$DomainName,
 		
@@ -150,9 +117,10 @@
 		
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
-
 		[Switch]$NoResultLimit
 	)
+
+	BEGIN { }
 	PROCESS
 	{
 		TRY
@@ -160,12 +128,10 @@
 			# Building the basic search object with some parameters
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SearchRoot = $DomainDistinguishedName
-			$Search.filter = "(&(objectClass=printQueue))"
 			
 			IF ($PSBoundParameters['ServerName'])
 			{			
 				$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
-<<<<<<< HEAD
 			}
 		 	ELSEIF ($PSBoundParameters['PrinterQueue']) 
 			{
@@ -174,47 +140,27 @@
 		 	ELSE
 		  	{
 				$Search.filter = "(objectClass=printQueue)"
-=======
-
-				IF($PSBoundParameters['PrinterQueue']){
-					$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
-				}
->>>>>>> upstream/master
 			}
 			
 			IF ($PSBoundParameters['DomainName'])
 			{
-<<<<<<< HEAD
 				$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
-=======
-				$DomainDistinguishedName = "LDAP://DC=$($Domain.replace(".", ",DC="))"
->>>>>>> upstream/master
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-<<<<<<< HEAD
 				IF ($DomainDistinguishedName -notlike "LDAP://*") 
 				{ 
 					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
 				}
 					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 					$Search.SearchRoot = $DomainDistinguishedName
-=======
-				IF ($DomainDistinguishedName -notlike "LDAP://*") {
-					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
-				}#IF
-
-				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-				$Search.SearchRoot = $DomainDistinguishedName
->>>>>>> upstream/master
 			}
-
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
-			}
+			}		
 			
 			IF (-not$PSBoundParameters['NoResultLimit'])
 			{
@@ -252,7 +198,6 @@
 					"printStatus" = $Object.properties.printstatus -as [string]
 
 			} 
-				
 				
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
