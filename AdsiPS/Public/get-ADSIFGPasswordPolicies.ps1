@@ -32,11 +32,13 @@ function Get-ADSIFGPassWordPolicy
 	LazyWinAdmin.com
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
+	Olivier Miossec
+	@omiossec_med
 #>
 	
 
 
-    	[CmdletBinding()]
+    [CmdletBinding()]
 	PARAM (
 		[Parameter(ParameterSetName = "PolicyName")]
 		[String]$PolicyName,
@@ -55,4 +57,62 @@ function Get-ADSIFGPassWordPolicy
 	)
 
 
+
+	BEGIN { } 
+
+	PROCESS
+	{
+		TRY
+		{
+			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+			$Search.SizeLimit = $SizeLimit
+			$Search.SearchRoot = $DomainDistinguishedName
+			$Search.filter = "(objectclass=msDS-PasswordSettings)"
+			IF ($PSBoundParameters['DomainDistinguishedName'])
+			{
+				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				$Search.SearchRoot = $DomainDistinguishedName
+			}
+			IF ($PSBoundParameters['Credential'])
+			{
+				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+				$Search.SearchRoot = $Cred
+			}
+
+					foreach ($Object in $($Search.FindAll()))
+			{
+				# Define the properties
+				#  The properties need to be lowercase!!!!!!!!
+				$Properties = @{
+					"Name" = $Object.properties.name -as [string]
+					"PasswordHistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [string]
+					"MinimumPasswordLength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [string]
+					"passwordreversibleencryptionenabled" = $Object.Properties.Item("msds-passwordreversibleencryptionenabled") -as [string]
+					"minimumpasswordage" = $Object.Properties.Item("msds-minimumpasswordage") -as [string]
+					"passwordcomplexityenabled" = $Object.Properties.Item("msds-passwordcomplexityenabled") -as [string]
+					"passwordsettingsprecedence" = $Object.Properties.Item("msds-passwordsettingsprecedence") -as [string]
+					"lockoutduration" = $Object.Properties.Item("msds-lockoutduration") -as [string]
+					"lockoutobservationwindow" = $Object.Properties.Item("msds-lockoutobservationwindow") -as [string]
+					"lockoutthreshold" = $Object.Properties.Item("msds-lockoutthreshold") -as [string]
+					"psoappliesto" = $Object.Properties.Item("msds-psoappliesto") -as [string]
+					"WhenCreated" = $Object.properties.whencreated -as [string]
+					"WhenChanged" = $Object.properties.whenchanged -as [string]
+				}
+				
+				# Output the info
+				New-Object -TypeName PSObject -Property $Properties
+			}
+
+		}
+		CATCH
+		{
+			Write-Warning -Message "[PROCESS] Something wrong happened!"
+			Write-Warning -Message $error[0].Exception.Message
+		}
+	}
+	END
+	{
+		Write-Verbose -Message "[END] Function Get-ADSIObject End."
+	}
 }
