@@ -55,6 +55,8 @@ Would love contributors, suggestions, feedback, and other help! Feel free to ope
 - [ ] Get-ADSIAccountResultantPasswordReplicationPolicy
 - [ ] Set-ADSIAccountPassword
 - [ ] Clear-ADSIAccountExpiration
+- [ ] Find expensive queries
+- [ ] Improve Get TokenSize
 
 ## More Information
  * MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
@@ -62,6 +64,6 @@ Would love contributors, suggestions, feedback, and other help! Feel free to ope
 
 
 ## Notes
- * Thanks to @MickyBalladelli for your contributions on Replication functions!
+ * Thanks to all the Contributors!! @MickyBalladelli @christophekumor
  * Thanks to PowerShell.com/Tobias Weltner for the great content on ADSI [PowerShell.com ADSI](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx)
  * Thanks to @RamblingCookieMonster for your great guidelines and contributions [RamblingCookieMonster's Blog](http://ramblingcookiemonster.github.io/Building-A-PowerShell-Module/)
