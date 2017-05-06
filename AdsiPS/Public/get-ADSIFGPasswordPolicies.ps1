@@ -24,7 +24,7 @@ function Get-ADSIFGPassWordPolicy
     Retreive all the password policy on the current domain
 
 .EXAMPLE
-	Get-ADSIObject -PolicyName Name
+	get-ADSIFGPasswordPolicies -Name Name
     Retreive the password policy nammed 'Name' on the current domain
 	
 .NOTES
@@ -40,8 +40,8 @@ function Get-ADSIFGPassWordPolicy
 
     [CmdletBinding()]
 	PARAM (
-		[Parameter(ParameterSetName = "PolicyName")]
-		[String]$PolicyName,
+		[Parameter(ParameterSetName = "Name")]
+		[String]$Name,
 			
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
@@ -113,6 +113,6 @@ function Get-ADSIFGPassWordPolicy
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIObject End."
+		Write-Verbose -Message "[END] Function Get-ADSIFGPassWordPolicy End."
 	}
 }

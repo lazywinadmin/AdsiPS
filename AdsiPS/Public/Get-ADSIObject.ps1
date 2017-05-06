@@ -91,19 +91,19 @@
 			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
-				#  The properties need to be lowercase!!!!!!!!
+				
 				$Properties = @{
-					"DisplayName" = $Object.properties.displayname -as [string]
-					"Name" = $Object.properties.name -as [string]
-					"ObjectCategory" = $Object.properties.objectcategory -as [string]
-					"ObjectClass" = $Object.properties.objectclass -as [string]
-					"SamAccountName" = $Object.properties.samaccountname -as [string]
-					"Description" = $Object.properties.description -as [string]
-					"DistinguishedName" = $Object.properties.distinguishedname -as [string]
-					"ADsPath" = $Object.properties.adspath -as [string]
-					"LastLogon" = $Object.properties.lastlogon -as [string]
-					"WhenCreated" = $Object.properties.whencreated -as [string]
-					"WhenChanged" = $Object.properties.whenchanged -as [string]
+					"displayname" = $Object.properties.displayname -as [string]
+					"name" = $Object.properties.name -as [string]
+					"objectcategory" = $Object.properties.objectcategory -as [string]
+					"objectclass" = $Object.properties.objectclass -as [string]
+					"samaccountName" = $Object.properties.samaccountname -as [string]
+					"description" = $Object.properties.description -as [string]
+					"distinguishedname" = $Object.properties.distinguishedname -as [string]
+					"adspath" = $Object.properties.adspath -as [string]
+					"lastlogon" = $Object.properties.lastlogon -as [string]
+					"whencreated" = $Object.properties.whencreated -as [string]
+					"whenchanged" = $Object.properties.whenchanged -as [string]
 				}
 				
 				# Output the info
