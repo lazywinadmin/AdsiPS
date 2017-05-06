@@ -6,8 +6,22 @@ function Get-ADSIFGPassWordPolicy
 
 .DESCRIPTION
 	This function will query and list Fine-Grained Password Policies in Active Directory
+	it return 
+	name : the Name of the Policy
+	MinimumPasswordLength  : Minimum PassWord Size int
+	passwordreversibleencryptionenabled : Encryption Type reversible (not secure) or not
+	minimumpasswordage : The number of day before the user Can change the password
+	maximumpasswordage : The number of day that a password can be used before the system requires the user to change it
+	passwordcomplexityenabled : True of Fals
+	passwordsettingsprecedence : Integer needed to determine which policy to apply in a user is mapped to more than one policy
+	lockoutduration : Time in minute before reseting failed logon count
+	lockoutobservationwindow : Time between 2 failed logoin attemps before reseting the counter to 0
+	lockoutthreshold : Number of failed login attempt to trigger lockout
+	psoappliesto : Groups and/or Users 
+	WhenCreated
+	WhenChanged
 
-.PARAMETER  PolicyName
+.PARAMETER  Name
 	Specify the name of the policy to retreive
 	
 .PARAMETER Credential
@@ -86,10 +100,11 @@ function Get-ADSIFGPassWordPolicy
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
 					"Name" = $Object.properties.name -as [string]
-					"PasswordHistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [string]
-					"MinimumPasswordLength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [string]
+					"PasswordHistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
+					"MinimumPasswordLength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [int]
 					"passwordreversibleencryptionenabled" = $Object.Properties.Item("msds-passwordreversibleencryptionenabled") -as [string]
 					"minimumpasswordage" = $Object.Properties.Item("msds-minimumpasswordage") -as [string]
+					"maximumpasswordage" = $Object.Properties.Item("msds-maximumpasswordage") -as [string]
 					"passwordcomplexityenabled" = $Object.Properties.Item("msds-passwordcomplexityenabled") -as [string]
 					"passwordsettingsprecedence" = $Object.Properties.Item("msds-passwordsettingsprecedence") -as [string]
 					"lockoutduration" = $Object.Properties.Item("msds-lockoutduration") -as [string]
