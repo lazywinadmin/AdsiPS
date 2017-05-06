@@ -81,6 +81,7 @@ Function Get-ADSIDefaultDomainPasswordPolicy {
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[Alias("Domain")]
+		[ValidateScript({ if ($_ -match "^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$") {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
 		[String]$DomainName,
 		
 		[Alias("DomainDN")]
