@@ -82,6 +82,13 @@ function Get-ADSIFGPassWordPolicy
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			$Search.filter = "(objectclass=msDS-PasswordSettings)"
+
+
+			IF ($PSBoundParameters['name'])
+			{
+				$Search.filter = "(|(name=$name))"
+			}
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
