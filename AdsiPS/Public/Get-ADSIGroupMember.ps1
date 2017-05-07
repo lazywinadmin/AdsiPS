@@ -125,7 +125,7 @@ function Get-ADSIGroupMember
 		}
 		CATCH
 		{
-			$Error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

@@ -92,7 +92,7 @@
 		}
 		CATCH
 		{
-			$Error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 			break
 		}
 	}

@@ -116,7 +116,7 @@
 		}
 		CATCH
 		{
-			Write-Error $Error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 		
 	}

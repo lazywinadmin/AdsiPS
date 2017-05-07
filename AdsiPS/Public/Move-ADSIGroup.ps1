@@ -91,7 +91,7 @@ function Move-ADSIGroup
 		}
 		CATCH
 		{
-			Write-Error $error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

@@ -86,7 +86,7 @@ function Move-ADSIComputer
         }
         CATCH
         {
-        $Error[0]
+        	$pscmdlet.ThrowTerminatingError($_)
         }
 	}
 }

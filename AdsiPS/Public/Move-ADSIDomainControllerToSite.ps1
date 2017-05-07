@@ -74,8 +74,7 @@
 		}
 		CATCH
 		{
-			Write-Error -Message "[Move-ADSIDomainControllerToSite][PROCESS] Something wrong happened"
-			$Error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

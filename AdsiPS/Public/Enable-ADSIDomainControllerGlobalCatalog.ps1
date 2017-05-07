@@ -75,7 +75,7 @@
 		CATCH
 		{
 			Write-Error -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] Something wrong happened"
-			$Error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

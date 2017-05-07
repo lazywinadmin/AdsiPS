@@ -75,8 +75,7 @@
 		}
 		CATCH
 		{
-			Write-Warning -Message '[Get-ADSIDomainTrustRelationship][PROCESS] Something wrong happened!'
-			Write-Warning -Message $error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

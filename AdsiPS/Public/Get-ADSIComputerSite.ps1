@@ -87,8 +87,7 @@ public static class NetApi32 {
 			}
 			CATCH
 			{
-				Write-Error -Message "[Get-ADSIComputerSite][PROCESS] Something wrong happened when quering $Computer"
-				$Error[0].Exception.Message
+				$pscmdlet.ThrowTerminatingError($_)
 			}
 		}
 	}

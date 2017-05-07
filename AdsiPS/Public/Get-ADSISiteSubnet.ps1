@@ -82,8 +82,7 @@
 		}
 		CATCH
 		{
-			Write-Warning -Message "[Get-ADSISiteSubnet][PROCESS] Something wrong happened!"
-			$error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

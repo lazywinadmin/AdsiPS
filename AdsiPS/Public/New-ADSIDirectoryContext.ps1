@@ -129,8 +129,7 @@
 		} #TRY
 		CATCH
 		{
-			Write-Error -Message "[New-ADSIDirectoryContext][PROCESS] Issue while creating the context"
-			$Error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	} #PROCESS
 }
