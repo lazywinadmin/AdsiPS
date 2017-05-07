@@ -56,7 +56,7 @@ PARAM(
             (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
         }
         CATCH{
-            Write-Error $Error[0]
+            $pscmdlet.ThrowTerminatingError($_)
             break
         }
     }

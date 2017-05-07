@@ -57,8 +57,7 @@ function Test-ADSICredential
 		}
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Issue while running the function"
-			$Error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
 }

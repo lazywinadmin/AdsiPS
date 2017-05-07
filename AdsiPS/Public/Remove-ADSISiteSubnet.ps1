@@ -63,7 +63,7 @@
 		}
 		CATCH
 		{
-			Write-Error $Error[0]
+			$pscmdlet.ThrowTerminatingError($_)
 			break
 		}
 	}
