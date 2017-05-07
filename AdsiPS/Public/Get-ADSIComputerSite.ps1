@@ -80,10 +80,12 @@ public static class NetApi32 {
 		{
 			TRY
 			{
-				[PSCustomObject][ordered]@{
+				$Properties = @{
 					ComputerName = $Computer
 					SiteName = [NetApi32]::DsGetSiteName($Computer)
 				}
+
+				New-Object -Type PSObject -property $Properties
 			}
 			CATCH
 			{

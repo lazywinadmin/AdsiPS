@@ -85,13 +85,15 @@
 				$Domain = Get-ADSIDomain
 			}
 			
-			[Pscustomobject][ordered]@{
+			$Properties = @{
 				SchemaRoleOwner = $Forest.SchemaRoleOwner
 				NamingRoleOwner = $Forest.NamingRoleOwner
 				InfrastructureRoleOwner = $Domain.InfrastructureRoleOwner
 				RidRoleOwner = $Domain.RidRoleOwner
 				PdcRoleOwner = $Domain.PdcRoleOwner
 			}
+
+			New-Object -Type PSObject -property $Properties
 			
 		}
 		CATCH
