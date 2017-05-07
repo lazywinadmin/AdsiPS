@@ -143,9 +143,7 @@
 		}#TRY
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
-			#if ($ProcessErrorGetADSIUser) { Write-Warning -Message "[PROCESS] Issue while getting information on the user using Get-ADSIUser" }
-			Write-Warning -Message $error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}#PROCESS
 	END

@@ -94,8 +94,7 @@ OR [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
 		}#TRY
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
-			Write-Warning -Message $error[0].Exception.Message
+			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}#PROCESS
 	END
