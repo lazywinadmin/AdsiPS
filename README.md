@@ -30,7 +30,25 @@ Install-Module -name ADSIPS
 
 ## Help !!
 Would love contributors, suggestions, feedback, and other help! Feel free to open an Issue ticket
- 
+
+### Guidelines
+* Don't use Write-Host
+* Use Verb-Noun format, Check Get-Verb for approved verb
+* Always use explicit parameter names, don't assume position
+* If you want to show informational information use Write-Verbose
+* If you use Verbose, show the name of the function, you can do this:
+```powershell
+# Define this variable a the beginning
+$ScriptName = (Get-Variable -name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
+# Show your verbose message this way
+Write-Verbose -Message "[$ScriptName] Querying system X"
+```
+* You need to have Error Handling (TRY/CATCH)
+* Return terminating error using ```$PSCmdlet.ThrowTerminatingError($_)```
+* Think about the next guy, document your function, help them understand what you are achieving, give at least one example
+* Implement appropriate WhatIf/Confirm support if you function is changing something
+
 ## TODO (not in a specific order)
 - [ ] Set-ADSIComputer
 - [ ] Set-ADSIGroup
@@ -60,8 +78,6 @@ Would love contributors, suggestions, feedback, and other help! Feel free to ope
 
 ## More Information
  * MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
-
-
 
 ## Notes
  * Thanks to all the Contributors!! @MickyBalladelli @christophekumor
