@@ -35,6 +35,8 @@ Would love contributors, suggestions, feedback, and other help! Feel free to ope
 * Don't use Write-Host
 * Use Verb-Noun format, Check Get-Verb for approved verb
 * Always use explicit parameter names, don't assume position
+* Don't use Aliases
+* Should support Credential input
 * If you want to show informational information use Write-Verbose
 * If you use Verbose, show the name of the function, you can do this:
 ```powershell
