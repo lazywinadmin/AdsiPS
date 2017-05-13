@@ -1,4 +1,4 @@
-function Get-ADSIFGPassWordPolicy
+function Get-ADSIFineGrainedPasswordPolicy
 {
 <#
 .SYNOPSIS
@@ -34,11 +34,11 @@ function Get-ADSIFGPassWordPolicy
     Specify the number of item(s) to output
 	
 .EXAMPLE
-	Get-ADSIFGPassWordPolicy 
+	Get-ADSIFineGrainedPasswordPolicy
     Retreive all the password policy on the current domain
 
 .EXAMPLE
-	get-ADSIFGPasswordPolicies -Name Name
+	Get-ADSIFineGrainedPasswordPolicy -Name Name
     Retreive the password policy nammed 'Name' on the current domain
 	
 .NOTES
@@ -106,9 +106,9 @@ function Get-ADSIFGPassWordPolicy
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
-					"Name" = $Object.properties.name -as [string]
-					"PasswordHistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
-					"MinimumPasswordLength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [int]
+					"name" = $Object.properties.name -as [string]
+					"passwordhistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
+					"minimumpasswordlength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [int]
 					"passwordreversibleencryptionenabled" = $Object.Properties.Item("msds-passwordreversibleencryptionenabled") -as [string]
 					"minimumpasswordage" = $Object.Properties.Item("msds-minimumpasswordage") -as [string]
 					"maximumpasswordage" = $Object.Properties.Item("msds-maximumpasswordage") -as [string]
@@ -135,6 +135,6 @@ function Get-ADSIFGPassWordPolicy
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIFGPassWordPolicy End."
+		Write-Verbose -Message "[END] Function Get-ADSIFineGrainedPasswordPolicy End."
 	}
 }
