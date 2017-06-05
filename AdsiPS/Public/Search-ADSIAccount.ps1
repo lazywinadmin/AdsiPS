@@ -108,7 +108,6 @@ Function Search-ADSIAccount
     github.com/lazywinadmin/ADSIPS
 #>
     
-    #[CmdletBinding( DefaultParameterSetName = 'p3')]
     [CmdletBinding()]
     param
     (
@@ -304,7 +303,7 @@ Function Search-ADSIAccount
 
             $Now = Get-Date
             $start = $Now.ToFileTime()
-            $end = ($Now.Adddays($Days)).ToFileTime() #attention 29 jours en réalité, va cherche jusque lendemain du 30eme jour 00:00
+            $end = ($Now.Adddays($Days)).ToFileTime() 
 
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires>=$start)(accountExpires<=$end)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
@@ -319,7 +318,7 @@ Function Search-ADSIAccount
             write-verbose -Message "Show inactive accounts for more than $Days day(s)"
 
             $Now = Get-Date
-            $start = ($Now.Adddays( - $Days)).ToFileTime() #attention 29 jours en réalité, va cherche jusque lendemain du 30eme jour 00:00
+            $start = ($Now.Adddays( - $Days)).ToFileTime() 
 
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogonTimestamp<=$start)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
@@ -367,24 +366,5 @@ Function Search-ADSIAccount
     }
  
     $Search.FindAll()
-
-    #Not yet implemented
-    #Lockout
-    #-#  $DirectorySearcher.Filter = "(&(objectCategory=user)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=16))"
-
-    #Lockout second method
-    #-#  $DirectorySearcher.Filter = "(&(objectCategory=user)(objectClass=user)(lockoutTime>=1))"
-
-    #CANT Change password
-    #-# $DirectorySearcher.Filter = "(&(objectCategory=user)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=64))"
-   
-    #PASSWORD_EXPIRED (don't work)
-    #$DirectorySearcher.Filter = "(&(objectCategory=user)((&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=8388608))))"
-
-    #PASSWORD_EXPIRED (don't work)
-    #$DirectorySearcher.Filter = "(&(objectCategory=user)((&(objectClass=user)(userAccountControl:1.2.840.113556.1.4.1460:=‭8388608‬))))"
-
-    #Never loged but password is set without ask must change ->  Needed ????
-    ##$DirectorySearcher.Filter = "(&(objectCategory=user)((&(objectClass=user)(!(pwdLastSet=0))(lastLogon=0))))"
 
 }
