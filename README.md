@@ -58,7 +58,7 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 - [ ] Set-ADSIOrganizationalUnit
 - [ ] Restore-ADSIAccount
 - [ ] Unlock-ADSIAccount
-- [ ] Search-ADSIAccount (retrieve disabled account, expired, expiring,...)
+- [x] Search-ADSIAccount (retrieve disabled account, expired, expiring,...)
 - [ ] ACL functions
 - [ ] GPO functions
 - [ ] Set-ADSIDomainMode
@@ -67,11 +67,11 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 - [ ] Get-ADSIDomainControllerPasswordReplicationPolicy
 - [ ] Add-ADSIDomainControllerPasswordReplicationPolicy
 - [ ] Remove-ADSIDomainControllerPasswordReplicationPolicy
-- [ ] Get-ADSIDefaultDomainPasswordPolicy
+- [x] Get-ADSIDefaultDomainPasswordPolicy
 - [ ] Set-ADSIDefaultDomainPasswordPolicy
 - [ ] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
 - [ ] Get-ADSIDomainControllerPasswordReplicationPolicyUsage
-- [ ] Get-ADSIFineGrainedPasswordPolicy
+- [x] Get-ADSIFineGrainedPasswordPolicy
 - [ ] Get-ADSIAccountResultantPasswordReplicationPolicy
 - [ ] Set-ADSIAccountPassword
 - [ ] Clear-ADSIAccountExpiration
