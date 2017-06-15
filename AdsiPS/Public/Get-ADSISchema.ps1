@@ -19,6 +19,12 @@
 .PARAMETER FindClassName
 	Specify the exact or partial name of the class to search
 
+.PARAMETER Credential
+	Specifies alternative credential to use
+
+.PARAMETER DomainName
+	Specifies the DomainName to query
+
 .EXAMPLE
 	Get-ADSISchema -PropertyType Mandatory -ClassName user
 
@@ -46,17 +52,35 @@
 		
 		[Parameter(ParameterSetName = 'FindClasses',
 				   Mandatory = $true)]
-		[String]$FindClassName
+		[String]$FindClassName,
+		
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 	
 	BEGIN
 	{
 		TRY
 		{
-			$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
-			
+			IF ($PSBoundParameters['Credential'])
+			{
+				Write-Verbose '[PROCESS] Credential specified'
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				
+				$SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
+				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
+			}
+			ELSE
+			{
+				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
+			}			
 		}
-		CATCH { }
+		CATCH { 
+			$pscmdlet.ThrowTerminatingError($_)
+		 }
 	}
 	
 	PROCESS
