@@ -54,7 +54,9 @@
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
+
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	
 	BEGIN
@@ -66,6 +68,7 @@
 				Write-Verbose '[PROCESS] Credential specified'
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
 				
 				$SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
 				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
