@@ -63,7 +63,7 @@
 	{
 		TRY
 		{
-			IF ($PSBoundParameters['Credential'])
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
 			{
 				Write-Verbose '[PROCESS] Credential or ForestName specified'
 				$Splatting = @{ }
