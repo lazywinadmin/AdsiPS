@@ -22,9 +22,6 @@
 .PARAMETER Credential
 	Specifies alternative credential to use
 
-.PARAMETER DomainName
-	Specifies the DomainName to query
-
 .EXAMPLE
 	Get-ADSISchema -PropertyType Mandatory -ClassName user
 
