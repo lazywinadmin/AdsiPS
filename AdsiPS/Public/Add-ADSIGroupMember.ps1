@@ -72,49 +72,71 @@ PARAM(
 
     BEGIN
     {
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
+        Write-Verbose -Message "[$FunctionName] Loading assembly System.DirectoryServices.AccountManagement"
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement -ErrorAction Stop
 		
         # Create Context splatting
+        Write-Verbose -Message "[$FunctionName] Create context splatting"
 		$ContextSplatting = @{
 			Contexttype = "Domain"
 		}
 		
-		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
+		IF ($PSBoundParameters['Credential']){
+            Write-Verbose -Message "[$FunctionName] Context splatting - Add Credential"
+            $ContextSplatting.Credential = $Credential
+        }
+        IF ($PSBoundParameters['DomainName']){
+            Write-Verbose -Message "[$FunctionName] Context splatting - Add DomainName"
+            $ContextSplatting.DomainName = $DomainName
+        }
         
-        $Context = New-ADSIPrincipalContext @ContextSplatting
+        Write-Verbose -Message "[$FunctionName] Create New Principal Context using Context Splatting"
+        $Context = New-ADSIPrincipalContext @ContextSplatting -ErrorAction Stop
     }
     PROCESS
     {
         TRY{
             # Resolving member
             # Directory Entry object
+            Write-Verbose -Message "[$FunctionName] Copy Context splatting and remove ContextType property"
 			$DirectoryEntryParams = $ContextSplatting.remove('ContextType')
+            Write-Verbose -Message "[$FunctionName] Create New Directory Entry using using the copied context"
 			$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 			
 			# Principal Searcher
+            Write-Verbose -Message "[$FunctionName] Create a System.DirectoryServices.DirectorySearcher"
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
+            Write-Verbose -Message "[$FunctionName] Append DirectoryEntry to in the property SearchRoot of DirectorySearcher"
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
             
-            # Adding an Ambiguous Name Resolution LDAP Filter
+            # Adding an Ambiguous Name Resolution (ANR) LDAP Filter
+            Write-Verbose -Message "[$FunctionName] Append LDAP Filter '(anr=$member)' to the property Filter of DirectorySearcher"
 			$DirectorySearcher.Filter = "(anr=$member)"
             
             # Retrieve a single object
+            Write-Verbose -Message "[$FunctionName] Retrieve the account"
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
 
             if($Account)
             {
+                Write-Verbose -Message "[$FunctionName] Account Retrieved"
                 switch ($Account.SchemaClassName)
                 {
-                'user' {$member =[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                'group' {$member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                'computer' {$member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
+                    'user' {$member =[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
+                    'group' {$member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
+                    'computer' {$member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
                 }
+            }
+            else{
+                Write-Error -Message "[$FunctionName] Can't retrieve the identity '$identity'"
             }
             
 
             if ($pscmdlet.ShouldProcess("$Identity", "Add Account member $member")){
-                $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting)
+                Write-Verbose -Message "[$FunctionName] Retrieve group with the identity '$identity' using Get-ADSIGroup using the Context Splatting"
+                $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting -ErrorAction Stop)
                 $group.members.add($Member)
                 $group.Save()
             }
@@ -122,5 +144,8 @@ PARAM(
         CATCH{
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    END{
+        Write-Verbose -Message "[$FunctionName] Done."
     }
 }
