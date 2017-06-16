@@ -69,15 +69,13 @@ function Get-ADSIFineGrainedPasswordPolicy
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
-
-
-
-	BEGIN { } 
-
 	PROCESS
 	{
 		TRY
 		{
+			$FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
+
+			Write-Verbose -Message "[$FunctionName] Create DirectorySearcher"
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
@@ -87,6 +85,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 			IF ($PSBoundParameters['name'])
 			{
 				$Search.filter = "(|(name=$name))"
+				Write-Verbose -Message "[$FunctionName] Set Filter to '$($Search.filter)'"
 			}
 
 			IF ($PSBoundParameters['DomainDistinguishedName'])
@@ -94,17 +93,20 @@ function Get-ADSIFineGrainedPasswordPolicy
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
+				Write-Verbose -Message "[$FunctionName] Set SearchRoot to '$($Search.SearchRoot)'"
 			}
 			IF ($PSBoundParameters['Credential'])
 			{
+				Write-Verbose -Message "[$FunctionName] Add Credential'"
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
 
-					foreach ($Object in $($Search.FindAll()))
+
+			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
-				#  The properties need to be lowercase!!!!!!!!
+				#  The properties need to be lowercase!
 				$Properties = @{
 					"name" = $Object.properties.name -as [string]
 					"passwordhistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
@@ -129,12 +131,12 @@ function Get-ADSIFineGrainedPasswordPolicy
 		}
 		CATCH
 		{
-			Write-Warning -Message "[PROCESS] Something wrong happened!"
-			Write-Warning -Message $error[0].Exception.Message
+			# Return current error
+			$PSCmdlet.ThrowTerminatingError($_)
 		}
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIFineGrainedPasswordPolicy End."
+		Write-Verbose -Message "[$FunctionName] Done"
 	}
 }
