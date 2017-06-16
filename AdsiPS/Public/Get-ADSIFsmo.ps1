@@ -55,20 +55,24 @@
 	{
 		TRY
 		{
+			$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
 			{
-				Write-Verbose '[PROCESS] Credential or FirstName specified'
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential'])
 				{
+					Write-Verbose -message "[$FunctionName] Add Credential to splatting"
 					$Splatting.Credential = $Credential
 				}
 				IF ($PSBoundParameters['ForestName'])
 				{
+					Write-Verbose -message "[$FunctionName] Add ForestName to splatting"
 					$Splatting.ForestName = $ForestName
 				}
 				
 				# Forest Query
+				Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
 				$Forest = (Get-ADSIForest @splatting)
 				
 				# Domain Splatting cleanup
@@ -76,15 +80,19 @@
 				$Splatting.DomainName = $Forest.RootDomain.name
 				
 				# Domain Query
+				Write-Verbose -message "[$FunctionName] Retrieve Domain information '$($Forest.RootDomain.name)'"
 				$Domain = (Get-ADSIDomain @Splatting)
 				
 			}
 			ELSE
 			{
+				Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
 				$Forest = Get-ADSIForest
+				Write-Verbose -message "[$FunctionName] Retrieve Domain information"
 				$Domain = Get-ADSIDomain
 			}
 			
+			Write-Verbose -message "[$FunctionName] Prepare Output"
 			$Properties = @{
 				SchemaRoleOwner = $Forest.SchemaRoleOwner
 				NamingRoleOwner = $Forest.NamingRoleOwner
@@ -100,5 +108,8 @@
 		{
 			$pscmdlet.ThrowTerminatingError($_)
 		}
+	}
+	END{
+		Write-Verbose -message "[$FunctionName] Done."
 	}
 }
