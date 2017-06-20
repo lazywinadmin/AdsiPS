@@ -77,6 +77,8 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 - [ ] Clear-ADSIAccountExpiration
 - [ ] Find expensive queries
 - [ ] Improve Get TokenSize
+- [ ] Pester tests
+
 
 ## More Information
  * MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
