@@ -41,7 +41,7 @@
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.domain(v=vs.110).aspx	
 #>
 	[cmdletbinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.Domain])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.Domain')]
 	PARAM (
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]

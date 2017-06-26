@@ -38,7 +38,7 @@
 #>
 	
 	[CmdletBinding()]
-	[OutputType([System.DirectoryServices.ActiveDirectory.Forest])]
+	[OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
 	param
 	(
 		[Alias("RunAs")]
