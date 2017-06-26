@@ -4,25 +4,19 @@
 .SYNOPSIS  
     Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
-.DESCRIPTION  
+.DESCRIPTION
+	Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
-      Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
-
-      
 .PARAMETER ComputerName
-
     Defines the remote computer to connect to.
 
 .PARAMETER Credential
-
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
 .PARAMETER Recurse
-
     Recursively retrieves information about child domains
 
 .EXAMPLE
-
     Get-ADSIReplicaDomainInfo -ComputerName dc1.ad.local
 
         Forest                  : ad.local
@@ -38,7 +32,6 @@
 
       Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
-
 .NOTES  
     Micky Balladelli
 	micky@balladelli.com
@@ -48,7 +41,7 @@
 #>	
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName = $null,
+		[string]$ComputerName,
 		
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
