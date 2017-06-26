@@ -75,7 +75,6 @@ function Enable-ADSIComputer
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
 		
-		$Context = New-ADSIPrincipalContext @ContextSplatting -contexttype Domain
 	}
 	PROCESS
 	{
