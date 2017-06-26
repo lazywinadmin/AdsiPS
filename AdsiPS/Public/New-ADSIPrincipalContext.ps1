@@ -66,6 +66,8 @@
 	
 	BEGIN
 	{
+		$ScriptName = (Get-Variable -name MyInvocation -Scope 0 -ValueOnly).MyCommand
+		Write-Verbose -Message "[$ScriptName] Add Type System.DirectoryServices.AccountManagement"
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 	}
 	PROCESS
@@ -101,8 +103,7 @@
 		} #TRY
 		CATCH
 		{
-			Write-Error -Message "[New-ADSIPrincipalContext][PROCESS] Issue while creating the context"
-			$Error[0].Exception.Message
+			$PSCmdlet.ThrowTerminatingError($_)
 		}
 	} #PROCESS
 }
