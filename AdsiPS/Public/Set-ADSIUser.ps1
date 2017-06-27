@@ -117,14 +117,15 @@
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-				$Search.SearchRoot = $DomainDN
+				$Search.SearchRoot = $Cred
 			}
 			
 			# Resolve the Object
 			
 		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
 			$user = $Search.FindAll()
-			IF ($user.Count -eq 0) 
+		
+        	IF ($user.Count -eq 0) 
 			{
     		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
 	    		$user = $Search.FindAll()
