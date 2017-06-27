@@ -121,7 +121,9 @@
 		[Switch]$NoResultLimit
 	)
 
-	BEGIN { }
+	BEGIN {
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	 }
 	PROCESS
 	{
 		TRY
@@ -155,7 +157,7 @@
 				{ 
 					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
 				}
-					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+					Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
 					$Search.SearchRoot = $DomainDistinguishedName
 			}
 
@@ -173,7 +175,7 @@
             ELSE
 			{
 
-                Write-Verbose -Message "Use NoResultLimit switch, all objects will be returned. no limit"
+                Write-Verbose -Message "[$FunctionName] Use NoResultLimit switch, all objects will be returned. no limit"
 			    $Search.PageSize = 10000
             }
   			
@@ -213,7 +215,7 @@
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIPrintQueue End."
+		Write-Verbose -Message "[$FunctionName][END] Function Get-ADSIPrintQueue End."
 	}
 
 }

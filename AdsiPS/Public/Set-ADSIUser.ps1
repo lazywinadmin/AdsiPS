@@ -1,6 +1,6 @@
 ﻿function Set-ADSIUser
 {
-<#
+    <#
 .SYNOPSIS
 	This function modifies an account identified by its display name, sam account name or distinguished name.
 
@@ -55,103 +55,106 @@
 .NOTES
 	Micky Balladelli
 #>
-	[CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = 'High')]
-	PARAM (
-		[Parameter(Mandatory = $true)]
-		[String]$Identity,
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    PARAM (
+        [Parameter(Mandatory = $true)]
+        [String]$Identity,
 		
-		[Parameter(Mandatory = $false)]
-		[string]$Country,
+        [Parameter(Mandatory = $false)]
+        [string]$Country,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Description,
+        [Parameter(Mandatory = $false)]
+        [string]$Description,
 
-		[Parameter(Mandatory = $false)]
-		[string]$DisplayName,
+        [Parameter(Mandatory = $false)]
+        [string]$DisplayName,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Location,
+        [Parameter(Mandatory = $false)]
+        [string]$Location,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Mail,
+        [Parameter(Mandatory = $false)]
+        [string]$Mail,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Manager,
+        [Parameter(Mandatory = $false)]
+        [string]$Manager,
 
-		[Parameter(Mandatory = $false)]
-		[string]$PostalCode,
+        [Parameter(Mandatory = $false)]
+        [string]$PostalCode,
 
-		[Parameter(Mandatory = $false)]
-		[String]$SamAccountName,
+        [Parameter(Mandatory = $false)]
+        [String]$SamAccountName,
 		
-		[Parameter(Mandatory = $false)]
-		[String]$TelephoneNumber,
+        [Parameter(Mandatory = $false)]
+        [String]$TelephoneNumber,
 		
-		[Parameter(Mandatory = $false)]
-		[string]$UserPrincipalName,
+        [Parameter(Mandatory = $false)]
+        [string]$UserPrincipalName,
 		
-		[Alias("Domain")]
-		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
+        [Alias("Domain")]
+        [String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
 		
-		[Alias("RunAs")]
-		[pscredential]
+        [Alias("RunAs")]
+        [pscredential]
         [System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
-	BEGIN { }
-	PROCESS
-	{
-		TRY
-		{
-			# Building the basic search object with some parameters
-			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher
-			$Search.SizeLimit = 2
-			$Search.SearchRoot = $DomainDN
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
+    BEGIN
+    { 
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    {
+        TRY
+        {
+            # Building the basic search object with some parameters
+            $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher
+            $Search.SizeLimit = 2
+            $Search.SearchRoot = $DomainDN
 			
-			IF ($PSBoundParameters['DomainDN'])
-			{
-				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
-				Write-Verbose -Message "Different Domain specified: $DomainDN"
-				$Search.SearchRoot = $DomainDN
-			}
-			
-			IF ($PSBoundParameters['Credential'])
-			{
-				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-				$Search.SearchRoot = $Cred
-			}
-			
-			# Resolve the Object
-			
-		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
-			$user = $Search.FindAll()
-		
-        	IF ($user.Count -eq 0) 
-			{
-    		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
-	    		$user = $Search.FindAll()
+            IF ($PSBoundParameters['DomainDN'])
+            {
+                IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
+                Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDN"
+                $Search.SearchRoot = $DomainDN
             }
-			IF ($user.Count -eq 0) 
-			{
-    		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
-    			$user = $Search.FindAll()
+			
+            IF ($PSBoundParameters['Credential'])
+            {
+                $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+                $Search.SearchRoot = $Cred
+            }
+			
+            # Resolve the Object
+			
+            $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
+            $user = $Search.FindAll()
+		
+            IF ($user.Count -eq 0) 
+            {
+                $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
+                $user = $Search.FindAll()
+            }
+            IF ($user.Count -eq 0) 
+            {
+                $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
+                $user = $Search.FindAll()
             }			
 
-			IF ($user.Count -eq 1) 
-			{
-				$Account = $user.Properties.samaccountname -as [string]
-				$adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
+            IF ($user.Count -eq 1) 
+            {
+                $Account = $user.Properties.samaccountname -as [string]
+                $adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
 
                 # Country
                 if ($Country -ne '')
                 {
-                    Write-Verbose -Message "[$($Account)] Setting Country value to : $Country"
+                    Write-Verbose -Message "[$FunctionName][$($Account)] Setting Country value to : $Country"
 
                     if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, "Set Country of account $account to $Country"))
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Country of account $account to $Country" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Country of account $account to $Country" -Verbose:$true
                         }
                         else
                         {
@@ -170,7 +173,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Description of account $account to $Description" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Description of account $account to $Description" -Verbose:$true
                         }
                         else
                         {
@@ -189,7 +192,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting DisplayName of account $account to $DisplayName" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting DisplayName of account $account to $DisplayName" -Verbose:$true
                         }
                         else
                         {
@@ -208,7 +211,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Location of account $account to $Location" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Location of account $account to $Location" -Verbose:$true
                         }
                         else
                         {
@@ -227,7 +230,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Mail of account $account to $Mail" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Mail of account $account to $Mail" -Verbose:$true
                         }
                         else
                         {
@@ -246,12 +249,12 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Manager of account $account to $Manager" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Manager of account $account to $Manager" -Verbose:$true
                         }
                         else
                         {
                             $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Manager))"
-			                $user = $Search.FindOne()
+                            $user = $Search.FindOne()
 
                             $Adspath.Put("manager", ($user.properties.distinguishedname -as [string]))
                             $Adspath.SetInfo()
@@ -268,7 +271,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting Location of account $account to $PostalCode" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting Location of account $account to $PostalCode" -Verbose:$true
                         }
                         else
                         {
@@ -287,7 +290,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting TelephoneNumber of account $account to $TelephoneNumber" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting TelephoneNumber of account $account to $TelephoneNumber" -Verbose:$true
                         }
                         else
                         {
@@ -305,7 +308,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting SamAccountName of account $account to $SamAccountName" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting SamAccountName of account $account to $SamAccountName" -Verbose:$true
                         }
                         else
                         {
@@ -324,7 +327,7 @@
                     {
                         if ($PSBoundParameters.ContainsKey('WhatIf'))
                         {
-                            Write-Verbose -Message "WhatIf: Setting UPN of account $account to $UserPrincipalName" -Verbose:$true
+                            Write-Verbose -Message "[$FunctionName] WhatIf: Setting UPN of account $account to $UserPrincipalName" -Verbose:$true
                         }
                         else
                         {
@@ -334,9 +337,9 @@
                     }
                 }			
 
-			}
-			ELSEIF ($user.Count -gt 1)
-			{
+            }
+            ELSEIF ($user.Count -gt 1)
+            {
                 Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique" 
             }
             ELSEIF ($Search.FindAll().Count -eq 0) 
@@ -344,14 +347,14 @@
                 Write-Warning -Message "[Set-ADSIUser] Account $identity not found" 
             }
 			
-		}#TRY
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}#PROCESS
-	END
-	{
-		Write-Verbose -Message "[END] Function Set-ADSIUser End."
-	}
+        }#TRY
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }#PROCESS
+    END
+    {
+        Write-Verbose -Message "[$FunctionName][END] Function Set-ADSIUser End."
+    }
 }

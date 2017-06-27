@@ -1,6 +1,6 @@
 ﻿function Get-ADSIGlobalCatalog
 {
-<#
+    <#
 .SYNOPSIS
 	Function to retrieve the Global Catalog in the Forest
 
@@ -30,28 +30,31 @@
 	github.com/lazywinadmin/AdsiPS
 #>
 	
-	[CmdletBinding()]
-	[OutputType('System.DirectoryServices.ActiveDirectory.GlobalCatalog')]
-	param
-	(
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [CmdletBinding()]
+    [OutputType('System.DirectoryServices.ActiveDirectory.GlobalCatalog')]
+    param
+    (
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-	)
-	
-	PROCESS
-	{
-		TRY
-		{
-			Write-Verbose '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
-			(Get-ADSIForest @PSBoundParameters).GlobalCatalogs
-		}
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}
+        $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    {
+        TRY
+        {
+            Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
+            (Get-ADSIForest @PSBoundParameters).GlobalCatalogs
+        }
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }
 }

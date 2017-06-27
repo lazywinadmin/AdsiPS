@@ -1,6 +1,6 @@
 ﻿function Get-ADSIReplicaGCInfo
 {
-	<#  
+    <#  
 .SYNOPSIS  
     Get-ADSIReplicaGCInfo finds out if a given DC holds the GC role.
 
@@ -31,45 +31,52 @@
 	
 	github.com/lazywinadmin/AdsiPS 
 #>
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 		
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    { 
+        if ($ComputerName)
+        {
+            if ($Credential)
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+            }
+            else
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+            }
+        }
 	
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+        if ($context)
+        {
+            Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
+            $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+        }
 	
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
-	
-	if ($dc)
-	{
-		$IsGC = $dc.IsGlobalCatalog()
-		if ($IsGC)
-		{
-			Write-Verbose -Message "$($dc.name) is a Global Catalog"
-		}
-		else
-		{
-			Write-Verbose -Message "$($dc.name) is a normal Domain Controller"
-		}
-		$IsGC
-	}
+        if ($dc)
+        {
+            $IsGC = $dc.IsGlobalCatalog()
+            if ($IsGC)
+            {
+                Write-Verbose -Message "[$FunctionName] $($dc.name) is a Global Catalog"
+            }
+            else
+            {
+                Write-Verbose -Message "[$FunctionName] $($dc.name) is a normal Domain Controller"
+            }
+            $IsGC
+        }
+    }
+    END {}
 }

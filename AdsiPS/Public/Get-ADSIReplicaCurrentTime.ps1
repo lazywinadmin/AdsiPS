@@ -1,6 +1,6 @@
 ﻿function Get-ADSIReplicaCurrentTime
 {
-<#  
+    <#  
 .SYNOPSIS  
     Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
 
@@ -27,39 +27,47 @@
 	github.com/lazywinadmin/AdsiPS  
 
 #>	
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 		
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
 	
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    { 
+        if ($ComputerName)
+        {
+            if ($Credential)
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+            }
+            else
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+            }
+        }
 	
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
+        if ($context)
+        {
+            Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
+            $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+        }
 	
-	if ($dc)
-	{
-		$now = Get-Date
-		$minDiff = (New-TimeSpan -start $dc.CurrentTime -end ([System.TimeZoneInfo]::ConvertTimeToUtc($now))).minutes
-		Write-Verbose -Message "Difference in minutes between $($dc.name) and current system is $minDiff"
-		$dc.CurrentTime
-	}
+        if ($dc)
+        {
+            $now = Get-Date
+            $minDiff = (New-TimeSpan -start $dc.CurrentTime -end ([System.TimeZoneInfo]::ConvertTimeToUtc($now))).minutes
+            Write-Verbose -Message "[$FunctionName] Difference in minutes between $($dc.name) and current system is $minDiff"
+            $dc.CurrentTime
+        }
+    }
+    END {}
 }

@@ -1,6 +1,6 @@
 function Test-ADSICredential
 {
-<#
+    <#
 .SYNOPSIS
 	Function to test credential
 
@@ -31,33 +31,34 @@ function Test-ADSICredential
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS 
 #>
-	[OutputType('System.Boolean')]
-	[CmdletBinding()]
-	PARAM
-	(
-		[Parameter(Mandatory)]
-		[Alias("UserName")]
-		[string]$AccountName,
+    [OutputType('System.Boolean')]
+    [CmdletBinding()]
+    PARAM
+    (
+        [Parameter(Mandatory)]
+        [Alias("UserName")]
+        [string]$AccountName,
 		
-		[Parameter(Mandatory)]
-		[System.Security.SecureString]$AccountPassword
-	)
-	BEGIN
-	{
-		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-	}
-	PROCESS
-	{
-		TRY
-		{
-			$DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
+        [Parameter(Mandatory)]
+        [System.Security.SecureString]$AccountPassword
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+    }
+    PROCESS
+    {
+        TRY
+        {
+            $DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
 			
-			Write-Verbose -Message "[Test-ADCredential][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
-			$DomainPrincipalContext.ValidateCredentials($AccountName, $AccountPassword)
-		}
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}
+            Write-Verbose -Message "[$FunctionName][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
+            $DomainPrincipalContext.ValidateCredentials($AccountName, $AccountPassword)
+        }
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }
 }

@@ -114,6 +114,8 @@ function Get-ADSIUser
 	
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
 		# Create Context splatting
@@ -128,7 +130,7 @@ function Get-ADSIUser
 	{
 		IF ($Identity)
 		{
-			Write-Verbose "Identity"
+			Write-Verbose -Message "[$FunctionName] Identity"
 			[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
 
 		}
@@ -159,7 +161,7 @@ function Get-ADSIUser
 		}
 		ELSE
 		{
-			Write-Verbose "Searcher"
+			Write-Verbose -Message "[$FunctionName] Searcher"
 			
 			$UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $Context
 			$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher

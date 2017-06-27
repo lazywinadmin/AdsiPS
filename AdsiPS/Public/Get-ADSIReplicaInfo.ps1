@@ -105,8 +105,11 @@
 		
 		[Switch]$FormatTable
 	)
-	
-	
+	BEGIN {
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
+	PROCESS { 
+
 	# Try to determine how to connect to the remote DC. 
 	# A few possibilities:
 	#      A computername was provided
@@ -184,7 +187,7 @@
 	{
 		if ($DisplayDC.IsPresent)
 		{
-			Write-Verbose -Message "Information about $($dc.Name)"
+			Write-Verbose -Message "[$FunctionName] Information about $($dc.Name)"
 			$dc
 		}
 		$domainDN = ""
@@ -202,7 +205,7 @@
 				($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
 				)
 				{
-					Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
+					Write-Verbose -Message "[$FunctionName] Replication cursors for partition $partition on $($dc.Name)"
 					
 					$dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
 					
@@ -219,7 +222,7 @@
 				($NamingContext -eq "Configuration" -and $partition.split(",")[0].Contains("Configuration"))
 				)
 				{
-					Write-Verbose -Message "Replication latency for partition $partition on $($dc.Name)"
+					Write-Verbose -Message "[$FunctionName] Replication latency for partition $partition on $($dc.Name)"
 					
 					$cursorsArray = $dc.GetReplicationCursors($partition)
 					$sortedCursors = $cursorsArray | Sort-Object -Descending -Property LastSuccessfulSyncTime
@@ -297,7 +300,7 @@
 				($NamingContext -eq "Configuration" -and $neighbor.PartitionName.split(",")[0].Contains("Configuration"))
 				)
 				{
-					Write-Verbose -Message "Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
+					Write-Verbose -Message "[$FunctionName] Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
 					
 					if (($Errors.IsPresent -and $neighbor.LastSyncResult -ne 0) -or $Neighbors.IsPresent)
 					{
@@ -314,4 +317,6 @@
 			}
 		}
 	}
+	}
+END {}
 }

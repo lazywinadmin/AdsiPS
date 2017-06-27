@@ -1,5 +1,6 @@
-Function Get-ADSIDefaultDomainAccountLockout {
-<#
+Function Get-ADSIDefaultDomainAccountLockout
+{
+    <#
 .SYNOPSIS
 	Function to retrieve default Domain Account Lockout Policy
 
@@ -55,60 +56,64 @@ Function Get-ADSIDefaultDomainAccountLockout {
 	github.com/lazywinadmin/ADSIPS
 #>
 	
-	[CmdletBinding()]
-	param
-	(
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [CmdletBinding()]
+    param
+    (
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-		[Alias("Domain")]
-		[ValidateScript({ if ($_ -match "^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$") {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
-		[String]$DomainName,
+        [Alias("Domain")]
+        [ValidateScript( { if ($_ -match "^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$") {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
+        [String]$DomainName,
 		
-		[Alias("DomainDN")]
-		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path)
-	)
+        [Alias("DomainDN")]
+        [String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path)
+    )
 
-	BEGIN {	}
-	PROCESS
-	{
+    BEGIN
+    {	
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    {
 			
-        	IF ($PSBoundParameters['DomainName'])
-			{
-				$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
+        IF ($PSBoundParameters['DomainName'])
+        {
+            $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
              
-                Write-Verbose -Message "Current Domain: $DomainDistinguishedName"
+            Write-Verbose -Message "[$FunctionName] Current Domain: $DomainDistinguishedName"
 
-			}
-			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
-			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") 
-				{ 
-					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
-				}
-					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-
-			}
-
-			IF ($PSBoundParameters['Credential'])
-			{
-				$DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-			
-			}
-            ELSE {
-
-                $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName
+        }
+        ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
+        {
+            IF ($DomainDistinguishedName -notlike "LDAP://*") 
+            { 
+                $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
             }
+            Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
+
+        }
+
+        IF ($PSBoundParameters['Credential'])
+        {
+            $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+			
+        }
+        ELSE
+        {
+
+            $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName
+        }
 
 				
-				$Properties = @{
-                    "lockoutDuration" = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'lockoutDuration'[0]) / -600000000) -as [int]
-					"lockoutObservationWindow" = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'lockoutObservationWindow'[0]) / -600000000) -as [int]
-					"lockoutThreshold" = $DomainAccount.lockoutThreshold -as [int]
-				}
-				New-Object -TypeName psobject -Property $Properties
-	}
+        $Properties = @{
+            "lockoutDuration"          = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'lockoutDuration'[0]) / -600000000) -as [int]
+            "lockoutObservationWindow" = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'lockoutObservationWindow'[0]) / -600000000) -as [int]
+            "lockoutThreshold"         = $DomainAccount.lockoutThreshold -as [int]
+        }
+        New-Object -TypeName psobject -Property $Properties
+    }
 
 }

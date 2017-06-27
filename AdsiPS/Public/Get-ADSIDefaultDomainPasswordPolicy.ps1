@@ -1,5 +1,6 @@
-Function Get-ADSIDefaultDomainPasswordPolicy {
-<#
+Function Get-ADSIDefaultDomainPasswordPolicy
+{
+    <#
 .SYNOPSIS
 	Function to retrieve default Domain Password Policy
 
@@ -72,70 +73,76 @@ Function Get-ADSIDefaultDomainPasswordPolicy {
 	github.com/lazywinadmin/ADSIPS
 #>
 	
-	[CmdletBinding()]
-	param
-	(
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [CmdletBinding()]
+    param
+    (
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-		[Alias("Domain")]
-		[ValidateScript({ if ($_ -match "^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$") {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
-		[String]$DomainName,
+        [Alias("Domain")]
+        [ValidateScript( { if ($_ -match "^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$") {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
+        [String]$DomainName,
 		
-		[Alias("DomainDN")]
-		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path)
-	)
+        [Alias("DomainDN")]
+        [String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path)
+    )
 
-	BEGIN {	}
-	PROCESS
-	{
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    {
 			
-        	IF ($PSBoundParameters['DomainName'])
-			{
-				$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
+        IF ($PSBoundParameters['DomainName'])
+        {
+            $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
              
-                Write-Verbose -Message "Current Domain: $DomainDistinguishedName"
+            Write-Verbose -Message "[$FunctionName] Current Domain: $DomainDistinguishedName"
 
-			}
-			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
-			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") 
-				{ 
-					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
-				}
-					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-
-			}
-
-			IF ($PSBoundParameters['Credential'])
-			{
-				$DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-			
-			}
-            ELSE {
-
-                $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName
+        }
+        ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
+        {
+            IF ($DomainDistinguishedName -notlike "LDAP://*") 
+            { 
+                $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
             }
+            Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
+
+        }
+
+        IF ($PSBoundParameters['Credential'])
+        {
+            $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+			
+        }
+        ELSE
+        {
+
+            $DomainAccount = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName
+        }
 
 				
-				$Properties = @{
-                    "minPwdAge" = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'minPwdAge'[0]) / -864000000000) -as [int]
-					"maxPwdAge" = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'maxPwdAge'[0]) / -864000000000) -as [int]
-					"minPwdLength" = $DomainAccount.minPwdLength -as [int]
-                    "pwdHistoryLength" = $DomainAccount.pwdHistoryLength -as [int]
-                    "pwdProperties" = Switch ($DomainAccount.pwdProperties) {
-                                  1 {"DOMAIN_PASSWORD_COMPLEX : The server enforces password complexity policy"; break} 
-                                  2 {"DOMAIN_PASSWORD_NO_ANON_CHANGE : Reserved. No effect on password policy"; break} 
-                                  4 {"DOMAIN_PASSWORD_NO_CLEAR_CHANGE : Change-password methods that provide the cleartext password are disabled by the server"; break} 
-                                  8 {"DOMAIN_LOCKOUT_ADMINS : Reserved. No effect on password policy"; break}
-                                  16 {"DOMAIN_PASSWORD_STORE_CLEARTEXT : The server MUST store the cleartext password, not just the computed hashes."; break}
-                                  32 {"DOMAIN_REFUSE_PASSWORD_CHANGE : Reserved. No effect on password policy"; break}
-                                  Default {$DomainAccount.pwdProperties}}
-				}
-				New-Object -TypeName psobject -Property $Properties
+        $Properties = @{
+            "minPwdAge"        = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'minPwdAge'[0]) / -864000000000) -as [int]
+            "maxPwdAge"        = ($DomainAccount.ConvertLargeIntegerToInt64($DomainAccount.'maxPwdAge'[0]) / -864000000000) -as [int]
+            "minPwdLength"     = $DomainAccount.minPwdLength -as [int]
+            "pwdHistoryLength" = $DomainAccount.pwdHistoryLength -as [int]
+            "pwdProperties"    = Switch ($DomainAccount.pwdProperties)
+            {
+                1 {"DOMAIN_PASSWORD_COMPLEX : The server enforces password complexity policy"; break} 
+                2 {"DOMAIN_PASSWORD_NO_ANON_CHANGE : Reserved. No effect on password policy"; break} 
+                4 {"DOMAIN_PASSWORD_NO_CLEAR_CHANGE : Change-password methods that provide the cleartext password are disabled by the server"; break} 
+                8 {"DOMAIN_LOCKOUT_ADMINS : Reserved. No effect on password policy"; break}
+                16 {"DOMAIN_PASSWORD_STORE_CLEARTEXT : The server MUST store the cleartext password, not just the computed hashes."; break}
+                32 {"DOMAIN_REFUSE_PASSWORD_CHANGE : Reserved. No effect on password policy"; break}
+                Default {$DomainAccount.pwdProperties}
+            }
+        }
+        New-Object -TypeName psobject -Property $Properties
                     
-	}
+    }
 
 }

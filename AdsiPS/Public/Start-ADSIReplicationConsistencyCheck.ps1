@@ -1,6 +1,6 @@
 ﻿function Start-ADSIReplicationConsistencyCheck
 {
-<#  
+    <#  
 .SYNOPSIS  
     Start-ADSIReplicationConsistencyCheck starts the knowledge consistency checker on a given DC.
 
@@ -32,37 +32,44 @@
 	
 	github.com/lazywinadmin/AdsiPS 
 #>	
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 		
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    { 
+        if ($ComputerName)
+        {
+            if ($Credential)
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+            }
+            else
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+            }
+        }
 	
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+        if ($context)
+        {
+            Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
+            $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+        }
 	
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
-	
-	if ($dc)
-	{
-		$dc.CheckReplicationConsistency()
-		Write-Verbose -Message "KCC Check started on $($dc.name)"
-	}
+        if ($dc)
+        {
+            $dc.CheckReplicationConsistency()
+            Write-Verbose -Message "[$FunctionName] KCC Check started on $($dc.name)"
+        }
+    }
+    END {}
 }

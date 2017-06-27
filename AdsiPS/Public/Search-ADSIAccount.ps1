@@ -200,171 +200,177 @@ Function Search-ADSIAccount
 
         
     )
-
-    $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    { 
+        $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
    
 
-    IF ($PSBoundParameters['DomainName'])
-    {
-        $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace('.', ',DC='))"
+        IF ($PSBoundParameters['DomainName'])
+        {
+            $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace('.', ',DC='))"
              
-        Write-Verbose -Message "Current Domain: $DomainDistinguishedName"
+            Write-Verbose -Message "[$FunctionName] Current Domain: $DomainDistinguishedName"
 
-    }
-    ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
-    {
-        IF ($DomainDistinguishedName -notlike 'LDAP://*') 
-        { 
-            $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
         }
-        Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+        ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
+        {
+            IF ($DomainDistinguishedName -notlike 'LDAP://*') 
+            { 
+                $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
+            }
+            Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
 
-    }
+        }
 
-    $Search.SearchRoot = $DomainDistinguishedName
+        $Search.SearchRoot = $DomainDistinguishedName
 
-    IF ($PSBoundParameters['Credential'])
-    {
-        $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-        $Search.SearchRoot = $Cred
-    }
+        IF ($PSBoundParameters['Credential'])
+        {
+            $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+            $Search.SearchRoot = $Cred
+        }
 
 
-    write-verbose -Message ('ParameterSetName : {0}' -f $PSCmdlet.ParameterSetName)
+        Write-Verbose -Message ('ParameterSetName : {0}' -f $PSCmdlet.ParameterSetName)
      
-    IF ($PSBoundParameters['Computers']) 
-    {
-        $type = 'computer'
-    }
-    ELSE
-    {
-        $type = 'user'
-    }
+        IF ($PSBoundParameters['Computers']) 
+        {
+            $type = 'computer'
+        }
+        ELSE
+        {
+            $type = 'user'
+        }
                  
-    SWITCH -wildcard ($PSCmdlet.ParameterSetName) 
-    {
+        SWITCH -wildcard ($PSCmdlet.ParameterSetName) 
+        {
     
-        '?AccountNeverLogged' 
-        {
-            #Never logged and must change password and not disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogon=0)(!lastLogonTimestamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
+            '?AccountNeverLogged' 
+            {
+                #Never logged and must change password and not disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogon=0)(!lastLogonTimestamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
 
-        }
+            }
 
-        '?AccountNeverLoggedChangePassword' 
-        {
-            #Never logged and must change password and not disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(lastLogon=0)(!lastlogontime‌​stamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
+            '?AccountNeverLoggedChangePassword' 
+            {
+                #Never logged and must change password and not disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(lastLogon=0)(!lastlogontime‌​stamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
 
-        }
+            }
 
-        '?AccountNeverLoggedPasswordNeverExpire' 
-        {
+            '?AccountNeverLoggedPasswordNeverExpire' 
+            {
 
-            #Never loged and password never expire and not disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=65536)(lastLogon=0)(!lastlogontime‌​stamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
+                #Never loged and password never expire and not disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=65536)(lastLogon=0)(!lastlogontime‌​stamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
 
-        }
+            }
         
-        '?AccountDisabled' 
-        {
-            #Disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
+            '?AccountDisabled' 
+            {
+                #Disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
 
+            }
+        
+            '?PasswordNeverExpires' 
+            {
+                #Password never expire and not disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
+
+            }
+        
+            '?AccountExpired' 
+            {
+                #Account expired and not disabled
+                $date = (Get-Date).ToFileTime()
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires<=$date)(!accountExpires=0)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
+
+            }
+        
+            '?AccountExpiring' 
+            {
+                #Account expiring in x days and not disabled
+                #Attention : Account set to expire on 22/05/2017, attribute is set to 23/05/2017 00:00 or 22:00 
+
+                Write-Verbose -Message "[$FunctionName] Show accounts expiring between now and $Days day(s)"
+
+                $Now = Get-Date
+                $start = $Now.ToFileTime()
+                $end = ($Now.Adddays($Days)).ToFileTime() 
+
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires>=$start)(accountExpires<=$end)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
+
+            }
+        
+            '?AccountInactive' 
+            {
+                #Account Inactive and not disabled
+                #Returns all accounts that have been inactive for more than X days.
+
+                Write-Verbose -Message "[$FunctionName] Show inactive accounts for more than $Days day(s)"
+
+                $Now = Get-Date
+                $start = ($Now.Adddays( - $Days)).ToFileTime() 
+
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogonTimestamp<=$start)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
+
+            }
+        
+            '?PasswordExpired' 
+            {
+                #PASSWORD Expired and account not disabled 
+                #Rule : User must be connected at least one time to be in the result
+
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(!(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))(|(lastLogon>=1)(lastLogonTimestamp>=1)))"
+                break
+
+            }
+        
+            '?AccountNeverExpire' 
+            {
+                #Account never expire and account not disabled
+                $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires=0)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
+                break
+
+            }
+        
+            Default 
+            {
+                Write-Verbose -Message "[$FunctionName] unknown ParameterSetName"
+                return
+
+            }
         }
-        
-        '?PasswordNeverExpires' 
+
+
+        IF (-not$PSBoundParameters['NoResultLimit']) 
         {
-            #Password never expire and not disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
-
-        }
+            Write-warning -Message "Result is limited to $SizeLimit entries, specify a specific number (1-1000) on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
         
-        '?AccountExpired' 
+            $Search.SizeLimit = $SizeLimit
+        }
+        ELSE 
         {
-            #Account expired and not disabled
-            $date = (Get-Date).ToFileTime()
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires<=$date)(!accountExpires=0)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
-
+            Write-Verbose -Message "[$FunctionName] Use NoResultLimit switch, all objects will be returned. no limit"
+        
+            $Search.PageSize = 10000
         }
-        
-        '?AccountExpiring' 
-        {
-            #Account expiring in x days and not disabled
-            #Attention : Account set to expire on 22/05/2017, attribute is set to 23/05/2017 00:00 or 22:00 
-
-            write-verbose -Message "Show accounts expiring between now and $Days day(s)"
-
-            $Now = Get-Date
-            $start = $Now.ToFileTime()
-            $end = ($Now.Adddays($Days)).ToFileTime() 
-
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires>=$start)(accountExpires<=$end)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
-
-        }
-        
-        '?AccountInactive' 
-        {
-            #Account Inactive and not disabled
-            #Returns all accounts that have been inactive for more than X days.
-
-            write-verbose -Message "Show inactive accounts for more than $Days day(s)"
-
-            $Now = Get-Date
-            $start = ($Now.Adddays( - $Days)).ToFileTime() 
-
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogonTimestamp<=$start)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
-
-        }
-        
-        '?PasswordExpired' 
-        {
-            #PASSWORD Expired and account not disabled 
-            #Rule : User must be connected at least one time to be in the result
-
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(!(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))(|(lastLogon>=1)(lastLogonTimestamp>=1)))"
-            break
-
-        }
-        
-        '?AccountNeverExpire' 
-        {
-            #Account never expire and account not disabled
-            $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires=0)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
-            break
-
-        }
-        
-        Default 
-        {
-            write-verbose -Message 'unknown ParameterSetName'
-            return
-
-        }
-    }
-
-
-    IF (-not$PSBoundParameters['NoResultLimit']) 
-    {
-        Write-warning -Message "Result is limited to $SizeLimit entries, specify a specific number (1-1000) on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
-        
-        $Search.SizeLimit = $SizeLimit
-    }
-    ELSE 
-    {
-        Write-Verbose -Message 'Use NoResultLimit switch, all objects will be returned. no limit'
-        
-        $Search.PageSize = 10000
-    }
  
-    $Search.FindAll()
-
+        $Search.FindAll()
+    }
+    END {}
 }

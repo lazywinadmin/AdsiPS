@@ -1,6 +1,6 @@
 ﻿function Move-ADSIDomainControllerRole
 {
-<#
+    <#
 .SYNOPSIS
 	Function to transfers or Seizes Active Directory roles to the current DC.
 
@@ -50,58 +50,62 @@
 	github.com/lazywinadmin/AdsiPS
 #>
 	
-	[CmdletBinding()]
-	param
-	(
-		[Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param
+    (
+        [Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 		
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-		[Parameter(Mandatory = $true)]
-		[System.Directoryservices.ActiveDirectory.ActiveDirectoryRole[]]$Role,
+        [Parameter(Mandatory = $true)]
+        [System.Directoryservices.ActiveDirectory.ActiveDirectoryRole[]]$Role,
 		
-		[Switch]$Force
-	)
-	
-	PROCESS
-	{
-		TRY
-		{
-			# DirectoryContext Splatting
-			$Splatting = $PSBoundParameters.Remove("Force")
-			$Splatting = $Splatting.Remove("Role")
+        [Switch]$Force
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    {
+        TRY
+        {
+            # DirectoryContext Splatting
+            $Splatting = $PSBoundParameters.Remove("Force")
+            $Splatting = $Splatting.Remove("Role")
 			
-			# Create the Context
-			$Context = New-ADSIDirectoryContext -ContextType 'DirectoryServer' @Splatting
+            # Create the Context
+            $Context = New-ADSIDirectoryContext -ContextType 'DirectoryServer' @Splatting
 			
-			# Get the DomainController
-			$DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($Context)
+            # Get the DomainController
+            $DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($Context)
 			
-			IF ($PSBoundParameters['Force'])
-			{
-				ForEach ($RoleObj in $Role)
-				{
-					Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Forcing a role transfer of role $RoleObj"
-					$DomainController.SeizeRoleOwnership($RoleObj)
-				}
-			}
-			ELSE
-			{
-				ForEach ($RoleObj in $Role)
-				{
-					Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Transferring role $RoleObj"
-					$DomainController.TransferRoleOwnership($RoleObj)
-				}
-			}
-			Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name)  Done."
-		}
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}
+            IF ($PSBoundParameters['Force'])
+            {
+                ForEach ($RoleObj in $Role)
+                {
+                    Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Forcing a role transfer of role $RoleObj"
+                    $DomainController.SeizeRoleOwnership($RoleObj)
+                }
+            }
+            ELSE
+            {
+                ForEach ($RoleObj in $Role)
+                {
+                    Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Transferring role $RoleObj"
+                    $DomainController.TransferRoleOwnership($RoleObj)
+                }
+            }
+            Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name)  Done."
+        }
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }
+    END {}
 }

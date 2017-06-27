@@ -1,6 +1,6 @@
 ﻿function Get-ADSIReplicaForestInfo
 {
-	<#  
+    <#  
 .SYNOPSIS  
     Get-ADSIReplicaForestInfo returns information about the connected DC's Forest.
 
@@ -45,37 +45,44 @@
 	
 	github.com/lazywinadmin/AdsiPS 
 #>	
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 		
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
+    BEGIN
+    {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+    }
+    PROCESS
+    { 
+        if ($ComputerName)
+        {
+            if ($Credential)
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+            }
+            else
+            {
+                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+            }
+        }
 	
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+        if ($context)
+        {
+            Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
+            $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+        }
 	
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
-	
-	if ($dc)
-	{
-		Write-Verbose -Message "Information about forest $($dc.forest.name)"
-		$dc.forest
-	}
+        if ($dc)
+        {
+            Write-Verbose -Message "[$FunctionName] Information about forest $($dc.forest.name)"
+            $dc.forest
+        }
+    }
+    END {}
 }
