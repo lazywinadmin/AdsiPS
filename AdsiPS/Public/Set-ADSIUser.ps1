@@ -94,7 +94,8 @@
 		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
 		
 		[Alias("RunAs")]
-		[System.Management.Automation.Credential()]
+		[pscredential]
+        [System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
 	BEGIN { }
