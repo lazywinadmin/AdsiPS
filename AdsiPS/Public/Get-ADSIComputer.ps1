@@ -71,35 +71,35 @@ function Get-ADSIComputer
 	)
 	BEGIN
 	{
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
-        # Create Context splatting
-        $ContextSplatting = @{ ContextType = "Domain" }
+		# Create Context splatting
+		$ContextSplatting = @{ ContextType = "Domain" }
 		
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
+		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
 		
-        $Context = New-ADSIPrincipalContext @ContextSplatting
+		$Context = New-ADSIPrincipalContext @ContextSplatting
 
 	}
 	PROCESS
 	{
-        TRY{
-            IF($Identity)
-            {
-                [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
-            }
-            ELSE{
-                $ComputerPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
-			    $Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
-			    $Searcher.QueryFilter = $ComputerPrincipal
+		TRY{
+			IF($Identity)
+			{
+				[System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
+			}
+			ELSE{
+				$ComputerPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
+				$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+				$Searcher.QueryFilter = $ComputerPrincipal
 
-                $Searcher.FindAll()
-            }
-        }
-        CATCH
-        {
-        	$pscmdlet.ThrowTerminatingError($_)
-        }
+				$Searcher.FindAll()
+			}
+		}
+		CATCH
+		{
+			$pscmdlet.ThrowTerminatingError($_)
+		}
 	}
 }

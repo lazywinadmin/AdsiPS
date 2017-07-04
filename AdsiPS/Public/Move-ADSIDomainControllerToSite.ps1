@@ -1,6 +1,6 @@
 ﻿function Move-ADSIDomainControllerToSite
 {
-<#
+	<#
 .SYNOPSIS
 	Move-ADSIDomainControllerToSite moves the current DC to another site.
 
@@ -58,6 +58,10 @@
 		[Parameter(Mandatory = $true)]
 		[string]$Site
 	)
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -69,7 +73,7 @@
 			
 			$DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 			
-			Write-Verbose -Message "[Move-ADSIDomainControllerToSite][PROCESS] $($DomainController.name) to site $Site"
+			Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) to site $Site"
 			$DomainController.MoveToAnotherSite($Site)
 		}
 		CATCH
@@ -77,4 +81,5 @@
 			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
+	END {}
 }

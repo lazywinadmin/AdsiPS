@@ -1,6 +1,6 @@
 function Test-ADSICredential
 {
-<#
+	<#
 .SYNOPSIS
 	Function to test credential
 
@@ -44,6 +44,7 @@ function Test-ADSICredential
 	)
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 	}
 	PROCESS
@@ -52,7 +53,7 @@ function Test-ADSICredential
 		{
 			$DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
 			
-			Write-Verbose -Message "[Test-ADCredential][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
+			Write-Verbose -Message "[$FunctionName][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
 			$DomainPrincipalContext.ValidateCredentials($AccountName, $AccountPassword)
 		}
 		CATCH

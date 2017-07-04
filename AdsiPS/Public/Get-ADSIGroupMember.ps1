@@ -93,6 +93,8 @@ function Get-ADSIGroupMember
 	)
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
 		# Create Context splatting
@@ -102,6 +104,7 @@ function Get-ADSIGroupMember
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
 		
 		$Context = New-ADSIPrincipalContext @ContextSplatting
+
 	}
 	PROCESS
 	{
@@ -110,14 +113,14 @@ function Get-ADSIGroupMember
 			
 			IF ($PSBoundParameters['GroupsOnly'])
 			{
-				Write-Verbose -Message "GROUP: $($Identity.toUpper()) - Retrieving Groups only"
+				Write-Verbose -Message "[$FunctionName] GROUP: $($Identity.toUpper()) - Retrieving Groups only"
 				$Account = ([System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity))
 				$Account.GetGroups()
 			}
 			ELSE
 			{
-				Write-Verbose -Message "GROUP: $($Identity.toUpper()) - Retrieving All members"
-				IF ($PSBoundParameters['Recursive']) { Write-Verbose -Message "GROUP: $($Identity.toUpper()) - Recursive parameter Specified" }
+				Write-Verbose -Message "[$FunctionName] GROUP: $($Identity.toUpper()) - Retrieving All members"
+				IF ($PSBoundParameters['Recursive']) { Write-Verbose -Message "[$FunctionName] GROUP: $($Identity.toUpper()) - Recursive parameter Specified" }
 				# Returns a collection of the principal objects that is contained in the group.
 				# When the $recurse flag is set to true, this method searches the current group recursively and returns all nested group members.
 				([System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)).GetMembers($Recurse)

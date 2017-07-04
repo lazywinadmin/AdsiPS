@@ -1,6 +1,6 @@
 ﻿Function Get-ADSIDomainMode
 {
-<#
+	<#
 .SYNOPSIS
 	Function to retrieve Domain mode
 
@@ -37,13 +37,17 @@
 		
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
 	)
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
 			{
-				Write-Verbose '[PROCESS] Credential or DomainName specified'
+				Write-Verbose -Message "[$FunctionName][PROCESS] Credential or DomainName specified"
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }

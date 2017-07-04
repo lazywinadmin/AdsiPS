@@ -1,6 +1,6 @@
 ﻿function Get-ADSIGlobalCatalog
 {
-<#
+	<#
 .SYNOPSIS
 	Function to retrieve the Global Catalog in the Forest
 
@@ -41,12 +41,15 @@
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
 		{
-			Write-Verbose '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
+			Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
 			(Get-ADSIForest @PSBoundParameters).GlobalCatalogs
 		}
 		CATCH

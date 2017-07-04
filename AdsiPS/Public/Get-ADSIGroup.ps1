@@ -138,13 +138,15 @@ function Get-ADSIGroup
 		[Parameter(ParameterSetName = 'Filter')]
 		$SID,
 		
-        [Parameter(ParameterSetName = 'LDAPFilter')]
-        $LDAPFilter
-        
+		[Parameter(ParameterSetName = 'LDAPFilter')]
+		$LDAPFilter
+		
 	)
 	
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
 		# Create Context splatting
@@ -154,6 +156,7 @@ function Get-ADSIGroup
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
 		
 		$Context = New-ADSIPrincipalContext @ContextSplatting
+		
 	}
 	PROCESS
 	{
@@ -161,30 +164,30 @@ function Get-ADSIGroup
 		{
 			IF ($Identity)
 			{
-                Write-Verbose "Identity"
+				Write-Verbose -Message "[$FunctionName] Identity"
 				[System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
 			}
-            ELSEIF ($PSBoundParameters['LDAPFilter'])
-            {
-                Write-Verbose "LDAPFilter"
+			ELSEIF ($PSBoundParameters['LDAPFilter'])
+			{
+				Write-Verbose -Message "[$FunctionName] LDAPFilter"
 			
-	            # Directory Entry object
-	            $DirectoryEntryParams = $ContextSplatting.remove('ContextType')
-	            $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
+				# Directory Entry object
+				$DirectoryEntryParams = $ContextSplatting.remove('ContextType')
+				$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 			
-	            # Principal Searcher
-	            $DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
-	            $DirectorySearcher.SearchRoot = $DirectoryEntry
-	            $DirectorySearcher.Filter = "(&(objectCategory=group)$LDAPFilter)"
+				# Principal Searcher
+				$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
+				$DirectorySearcher.SearchRoot = $DirectoryEntry
+				$DirectorySearcher.Filter = "(&(objectCategory=group)$LDAPFilter)"
 
-            
-                $DirectorySearcher.FindAll() | ForEach-Object {
-		            [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
-	            }
-            }
+			
+				$DirectorySearcher.FindAll() | ForEach-Object {
+					[System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
+				}
+			}
 			ELSE
 			{
-                Write-Verbose "Other Filters"
+				Write-Verbose -Message "[$FunctionName] Other Filters"
 
 				$GroupPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.GroupPrincipal -ArgumentList $Context
 				#$GroupPrincipal.Name = $Identity

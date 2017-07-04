@@ -1,6 +1,6 @@
 ﻿function Get-ADSISchema
 {
-<#
+	<#
 .SYNOPSIS
 	The Get-ADSISchema function gather information about the current Active Directory Schema
 
@@ -35,20 +35,20 @@
 	param
 	(
 		[Parameter(ParameterSetName = 'Default',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[ValidateSet("mandatory", "optional")]
 		[String]$PropertyType,
 		
 		[Parameter(ParameterSetName = 'Default',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[String]$ClassName,
 		
 		[Parameter(ParameterSetName = 'AllClasses',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[Switch]$AllClasses,
 		
 		[Parameter(ParameterSetName = 'FindClasses',
-				   Mandatory = $true)]
+			Mandatory = $true)]
 		[String]$FindClassName,
 		
 		[Alias("RunAs")]
@@ -61,11 +61,13 @@
 	
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
 			{
-				Write-Verbose '[PROCESS] Credential or ForestName specified'
+				Write-Verbose -Message "[$FunctionName][PROCESS] Credential or ForestName specified"
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
@@ -78,9 +80,10 @@
 				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
 			}			
 		}
-		CATCH { 
+		CATCH
+		{ 
 			$pscmdlet.ThrowTerminatingError($_)
-		 }
+		}
 	}
 	
 	PROCESS
@@ -111,4 +114,5 @@
 		}#ELSE
 		
 	}#PROCESS
+	END {}
 }

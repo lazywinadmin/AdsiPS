@@ -1,6 +1,6 @@
 ﻿function Get-ADSIObject
 {
-<#
+	<#
 .SYNOPSIS
 	This function will query any kind of object in Active Directory
 
@@ -16,13 +16,13 @@
 	Specify the DistinguishedName of the object your are looking for
 	
 .PARAMETER Credential
-    Specify the Credential to use
+	Specify the Credential to use
 
 .PARAMETER DomainDistinguishedName
-    Specify the DistinguishedName of the Domain to query
+	Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
-    Specify the number of item(s) to output
+	Specify the number of item(s) to output
 	
 .EXAMPLE
 	Get-ADSIObject -SamAccountName Fxcat
@@ -58,7 +58,10 @@
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
-	BEGIN { }
+	BEGIN
+	{ 
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -79,7 +82,7 @@
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			IF ($PSBoundParameters['Credential'])
@@ -93,17 +96,17 @@
 				# Define the properties
 				
 				$Properties = @{
-					"displayname" = $Object.properties.displayname -as [string]
-					"name" = $Object.properties.name -as [string]
-					"objectcategory" = $Object.properties.objectcategory -as [string]
-					"objectclass" = $Object.properties.objectclass -as [string]
-					"samaccountName" = $Object.properties.samaccountname -as [string]
-					"description" = $Object.properties.description -as [string]
+					"displayname"       = $Object.properties.displayname -as [string]
+					"name"              = $Object.properties.name -as [string]
+					"objectcategory"    = $Object.properties.objectcategory -as [string]
+					"objectclass"       = $Object.properties.objectclass -as [string]
+					"samaccountName"    = $Object.properties.samaccountname -as [string]
+					"description"       = $Object.properties.description -as [string]
 					"distinguishedname" = $Object.properties.distinguishedname -as [string]
-					"adspath" = $Object.properties.adspath -as [string]
-					"lastlogon" = $Object.properties.lastlogon -as [string]
-					"whencreated" = $Object.properties.whencreated -as [string]
-					"whenchanged" = $Object.properties.whenchanged -as [string]
+					"adspath"           = $Object.properties.adspath -as [string]
+					"lastlogon"         = $Object.properties.lastlogon -as [string]
+					"whencreated"       = $Object.properties.whencreated -as [string]
+					"whenchanged"       = $Object.properties.whenchanged -as [string]
 				}
 				
 				# Output the info
@@ -117,6 +120,6 @@
 	}
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIObject End."
+		Write-Verbose -Message "[$FunctionName][END] Function Get-ADSIObject End."
 	}
 }

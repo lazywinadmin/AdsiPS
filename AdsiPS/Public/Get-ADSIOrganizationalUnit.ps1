@@ -1,6 +1,6 @@
 ﻿function Get-ADSIOrganizationalUnit
 {
-<#
+	<#
 .SYNOPSIS
 	This function will query Active Directory for Organization Unit Objects
 
@@ -20,28 +20,28 @@
 	Will show only the OU that have Group Policy Inheritance Blocked enabled.
 	
 .PARAMETER Credential
-    Specify the Credential to use
+	Specify the Credential to use
 	
 .PARAMETER DomainDistinguishedName
-    Specify the DistinguishedName of the Domain to query
+	Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
-    Specify the number of item(s) to output
+	Specify the number of item(s) to output
 	
 .EXAMPLE
 	Get-ADSIOrganizationalUnit
 
-    This returns all the OU in the Domain (Result Size is 100 per default)
+	This returns all the OU in the Domain (Result Size is 100 per default)
 
 .EXAMPLE
 	Get-ADSIOrganizationalUnit -name FX
 
-    This returns the OU with the name FX
+	This returns the OU with the name FX
 
 .EXAMPLE
 	Get-ADSIOrganizationalUnit -name FX*
 
-    This returns the OUs where the name starts by FX
+	This returns the OUs where the name starts by FX
 
 .NOTES
 	Francois-Xavier Cat
@@ -74,7 +74,10 @@
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
-	BEGIN { }
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -112,7 +115,7 @@
 			IF ($DomainDistinguishedName)
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+				Write-Verbose -Message "[$FunctionName] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			IF ($PSBoundParameters['Credential'])
@@ -130,18 +133,18 @@
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
-					"Name" = $ou.properties.name -as [string]
-					"DistinguishedName" = $ou.properties.distinguishedname -as [string]
-					"ADsPath" = $ou.properties.adspath -as [string]
-					"ObjectCategory" = $ou.properties.objectcategory -as [string]
-					"ObjectClass" = $ou.properties.objectclass -as [string]
-					"ObjectGuid" = $ou.properties.objectguid
-					"WhenCreated" = $ou.properties.whencreated -as [string] -as [datetime]
-					"WhenChanged" = $ou.properties.whenchanged -as [string] -as [datetime]
-					"usncreated" = $ou.properties.usncreated -as [string]
-					"usnchanged" = $ou.properties.usnchanged -as [string]
+					"Name"                  = $ou.properties.name -as [string]
+					"DistinguishedName"     = $ou.properties.distinguishedname -as [string]
+					"ADsPath"               = $ou.properties.adspath -as [string]
+					"ObjectCategory"        = $ou.properties.objectcategory -as [string]
+					"ObjectClass"           = $ou.properties.objectclass -as [string]
+					"ObjectGuid"            = $ou.properties.objectguid
+					"WhenCreated"           = $ou.properties.whencreated -as [string] -as [datetime]
+					"WhenChanged"           = $ou.properties.whenchanged -as [string] -as [datetime]
+					"usncreated"            = $ou.properties.usncreated -as [string]
+					"usnchanged"            = $ou.properties.usnchanged -as [string]
 					"dscorepropagationdata" = $ou.properties.dscorepropagationdata
-					"instancetype" = $ou.properties.instancetype -as [string]
+					"instancetype"          = $ou.properties.instancetype -as [string]
 				}
 				
 				# Output the info
@@ -155,6 +158,6 @@
 	}#PROCESS
 	END
 	{
-		Write-Verbose -Message "[END] Function Get-ADSIOrganizationalUnit End."
+		Write-Verbose -Message "[$FunctionName][END] Function Get-ADSIOrganizationalUnit End."
 	}
 }

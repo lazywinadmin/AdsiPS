@@ -1,7 +1,7 @@
 ﻿function New-ADSIUser
 {
 
-<#
+	<#
 .SYNOPSIS
 	Function to create a new User
 
@@ -109,6 +109,8 @@
 	
 	BEGIN
 	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
 		# Create Context splatting
@@ -126,10 +128,10 @@
 		{
 			IF ($PSCmdlet.ShouldProcess($SamAccountName, "Create User Account"))
 			{
-				Write-Verbose -message "Build the user object"
+				Write-Verbose -Message "[$FunctionName] Build the user object"
 				$User = New-Object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $context
 				
-				Write-Verbose -message "set the properties"
+				Write-Verbose -Message "[$FunctionName] set the properties"
 				$User.SamAccountName = $SamAccountName
 				$User.Enabled = $Enabled
 				$user.PasswordNeverExpires = $PasswordNeverExpires
@@ -147,9 +149,9 @@
 				IF ($PSBoundParameters['HomeDrive']) { $user.HomeDrive = $HomeDrive }
 				IF ($PSBoundParameters['MiddleName']) { $user.MiddleName = $MiddleName }
 				IF ($PSBoundParameters['VoiceTelephoneNumber']) { $user.VoiceTelephoneNumber }
-				IF ($PSBoundParameters['AccountPassword']){$User.SetPassword($AccountPassword)}
+				IF ($PSBoundParameters['AccountPassword']) {$User.SetPassword($AccountPassword)}
 				
-				Write-Verbose -message "Create the Account in Active Directory"
+				Write-Verbose -Message "[$FunctionName] Create the Account in Active Directory"
 				$User.Save($Context)
 			}
 		}

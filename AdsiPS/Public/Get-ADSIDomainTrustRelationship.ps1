@@ -1,6 +1,6 @@
 ﻿function Get-ADSIDomainTrustRelationship
 {
-<#
+	<#
 .SYNOPSIS
 	Function to retrieve the Trust relationship of a domain. Current one by default.
 
@@ -52,14 +52,17 @@
 		
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
 			{
-				Write-Verbose '[PROCESS] Credential or FirstName specified'
+				Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }

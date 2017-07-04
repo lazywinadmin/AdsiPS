@@ -41,7 +41,7 @@ function Get-ADSIComputerSite
 	[OutputType('System.Management.Automation.PSCustomObject')]
 	param
 	(
-        [parameter()]
+		[parameter()]
 		[String[]]$ComputerName=$env:computername
 	)
 	
@@ -53,22 +53,22 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 public static class NetApi32 {
-    private class unmanaged {
-        [DllImport("NetApi32.dll", CharSet=CharSet.Auto, SetLastError=true)]
-        internal static extern UInt32 DsGetSiteName([MarshalAs(UnmanagedType.LPTStr)]string ComputerName, out IntPtr SiteNameBuffer);
+	private class unmanaged {
+		[DllImport("NetApi32.dll", CharSet=CharSet.Auto, SetLastError=true)]
+		internal static extern UInt32 DsGetSiteName([MarshalAs(UnmanagedType.LPTStr)]string ComputerName, out IntPtr SiteNameBuffer);
 
-        [DllImport("Netapi32.dll", SetLastError=true)]
-        internal static extern int NetApiBufferFree(IntPtr Buffer);
-    }
+		[DllImport("Netapi32.dll", SetLastError=true)]
+		internal static extern int NetApiBufferFree(IntPtr Buffer);
+	}
 
-    public static string DsGetSiteName(string ComputerName) {
-        IntPtr siteNameBuffer = IntPtr.Zero;
-        UInt32 hResult = unmanaged.DsGetSiteName(ComputerName, out siteNameBuffer);
-        string siteName = Marshal.PtrToStringAuto(siteNameBuffer);
-        unmanaged.NetApiBufferFree(siteNameBuffer);
-        if(hResult == 0x6ba) { throw new Exception("ComputerName not found"); }
-        return siteName;
-    }
+	public static string DsGetSiteName(string ComputerName) {
+		IntPtr siteNameBuffer = IntPtr.Zero;
+		UInt32 hResult = unmanaged.DsGetSiteName(ComputerName, out siteNameBuffer);
+		string siteName = Marshal.PtrToStringAuto(siteNameBuffer);
+		unmanaged.NetApiBufferFree(siteNameBuffer);
+		if(hResult == 0x6ba) { throw new Exception("ComputerName not found"); }
+		return siteName;
+	}
 }
 "@
 		

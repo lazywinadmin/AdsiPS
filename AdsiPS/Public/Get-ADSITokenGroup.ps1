@@ -1,6 +1,6 @@
 ﻿function Get-ADSITokenGroup
 {
-<#
+	<#
 .SYNOPSIS
 	Retrieve the list of group present in the tokengroups of a user or computer object.
 
@@ -52,7 +52,10 @@
 		[Alias('ResultLimit', 'Limit')]
 		[int]$SizeLimit = '100'
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -75,7 +78,7 @@
 			IF ($DomainDistinguishedName)
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
-				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
+				Write-Verbose -Message "[$FunctionName][PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
 			
@@ -96,7 +99,7 @@
 					# Prepare Output
 					$Properties = @{
 						SamAccountName = $Account.properties.samaccountname -as [string]
-						GroupName = $principal.Translate([System.Security.Principal.NTAccount])
+						GroupName      = $principal.Translate([System.Security.Principal.NTAccount])
 					}
 					
 					# Output Information
@@ -111,5 +114,5 @@
 			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}#PROCESS
-	END { Write-Verbose -Message "[END] Function Get-ADSITokenGroup End." }
+	END { Write-Verbose -Message "[$FunctionName][END] Function Get-ADSITokenGroup End." }
 }#Function

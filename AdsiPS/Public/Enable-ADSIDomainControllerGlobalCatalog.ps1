@@ -1,6 +1,6 @@
 ﻿function Enable-ADSIDomainControllerGlobalCatalog
 {
-<#
+	<#
 .SYNOPSIS
 	Function to enable the Global Catalog role on a Domain Controller
 
@@ -54,7 +54,10 @@
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -63,18 +66,18 @@
 			$DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 			
 			IF ($DomainController.IsGlobalCatalog())
-			{ Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) is already a Global Catalog" }
+			{ Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) is already a Global Catalog" }
 			ELSE
 			{
-				Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) Enabling Global Catalog ..."
+				Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Enabling Global Catalog ..."
 				$DomainController.EnableGlobalCatalog()
 			}
 			
-			Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) Done."
+			Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Done."
 		}
 		CATCH
 		{
-			Write-Error -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] Something wrong happened"
+			Write-Error -Message "[$FunctionName][PROCESS] Something wrong happened"
 			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}

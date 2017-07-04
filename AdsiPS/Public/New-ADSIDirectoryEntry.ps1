@@ -2,7 +2,7 @@
 {
 <#
 .SYNOPSIS
-    Function to create a DirectoryEntry instance
+	Function to create a DirectoryEntry instance
 
 .DESCRIPTION
 	Function to create a DirectoryEntry instance
@@ -11,10 +11,10 @@
 	in the module ADSIPS
 	
 .PARAMETER Path
-    The path of this DirectoryEntry.
-    Default is $(([adsisearcher]"").Searchroot.path)
+	The path of this DirectoryEntry.
+	Default is $(([adsisearcher]"").Searchroot.path)
 
-    https://msdn.microsoft.com/en-us/library/system.directoryservices.directoryentry.path.aspx
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.directoryentry.path.aspx
 
 .PARAMETER Credential
 	Specifies alternative credential to use
@@ -43,13 +43,13 @@
 	Create a new DirectoryEntry object for the domain FX.Lab  with the specified credential
 	
 .LINK
-    https://msdn.microsoft.com/en-us/library/system.directoryservices.directoryentry.aspx
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.directoryentry.aspx
 
 .LINK
-    http://www.lazywinadmin.com/2013/10/powershell-using-adsi-with-alternate.html
+	http://www.lazywinadmin.com/2013/10/powershell-using-adsi-with-alternate.html
 	
 .NOTES
-    Francois-Xavier Cat
+	Francois-Xavier Cat
 	www.lazywinadmin.com
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS

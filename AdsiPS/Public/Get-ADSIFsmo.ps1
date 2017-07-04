@@ -1,6 +1,6 @@
 ﻿function Get-ADSIFsmo
 {
-<#
+	<#
 .SYNOPSIS
 	Function to retrieve the Flexible single master operation (FSMO) roles owner(s)
 
@@ -50,7 +50,10 @@
 		
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -62,17 +65,17 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential'])
 				{
-					Write-Verbose -message "[$FunctionName] Add Credential to splatting"
+					Write-Verbose -Message "[$FunctionName] Add Credential to splatting"
 					$Splatting.Credential = $Credential
 				}
 				IF ($PSBoundParameters['ForestName'])
 				{
-					Write-Verbose -message "[$FunctionName] Add ForestName to splatting"
+					Write-Verbose -Message "[$FunctionName] Add ForestName to splatting"
 					$Splatting.ForestName = $ForestName
 				}
 				
 				# Forest Query
-				Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
+				Write-Verbose -Message "[$FunctionName] Retrieve Forest information '$ForestName'"
 				$Forest = (Get-ADSIForest @splatting)
 				
 				# Domain Splatting cleanup
@@ -80,25 +83,25 @@
 				$Splatting.DomainName = $Forest.RootDomain.name
 				
 				# Domain Query
-				Write-Verbose -message "[$FunctionName] Retrieve Domain information '$($Forest.RootDomain.name)'"
+				Write-Verbose -Message "[$FunctionName] Retrieve Domain information '$($Forest.RootDomain.name)'"
 				$Domain = (Get-ADSIDomain @Splatting)
 				
 			}
 			ELSE
 			{
-				Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
+				Write-Verbose -Message "[$FunctionName] Retrieve Forest information '$ForestName'"
 				$Forest = Get-ADSIForest
-				Write-Verbose -message "[$FunctionName] Retrieve Domain information"
+				Write-Verbose -Message "[$FunctionName] Retrieve Domain information"
 				$Domain = Get-ADSIDomain
 			}
 			
-			Write-Verbose -message "[$FunctionName] Prepare Output"
+			Write-Verbose -Message "[$FunctionName] Prepare Output"
 			$Properties = @{
-				SchemaRoleOwner = $Forest.SchemaRoleOwner
-				NamingRoleOwner = $Forest.NamingRoleOwner
+				SchemaRoleOwner         = $Forest.SchemaRoleOwner
+				NamingRoleOwner         = $Forest.NamingRoleOwner
 				InfrastructureRoleOwner = $Domain.InfrastructureRoleOwner
-				RidRoleOwner = $Domain.RidRoleOwner
-				PdcRoleOwner = $Domain.PdcRoleOwner
+				RidRoleOwner            = $Domain.RidRoleOwner
+				PdcRoleOwner            = $Domain.PdcRoleOwner
 			}
 
 			New-Object -Type PSObject -property $Properties
@@ -109,7 +112,8 @@
 			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
-	END{
-		Write-Verbose -message "[$FunctionName] Done."
+	END
+	{
+		Write-Verbose -Message "[$FunctionName] Done."
 	}
 }

@@ -1,6 +1,6 @@
 ﻿function Move-ADSIDomainControllerRole
 {
-<#
+	<#
 .SYNOPSIS
 	Function to transfers or Seizes Active Directory roles to the current DC.
 
@@ -66,7 +66,10 @@
 		
 		[Switch]$Force
 	)
-	
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 	PROCESS
 	{
 		TRY
@@ -85,7 +88,7 @@
 			{
 				ForEach ($RoleObj in $Role)
 				{
-					Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Forcing a role transfer of role $RoleObj"
+					Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Forcing a role transfer of role $RoleObj"
 					$DomainController.SeizeRoleOwnership($RoleObj)
 				}
 			}
@@ -93,15 +96,16 @@
 			{
 				ForEach ($RoleObj in $Role)
 				{
-					Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Transferring role $RoleObj"
+					Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) Transferring role $RoleObj"
 					$DomainController.TransferRoleOwnership($RoleObj)
 				}
 			}
-			Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name)  Done."
+			Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name)  Done."
 		}
 		CATCH
 		{
 			$pscmdlet.ThrowTerminatingError($_)
 		}
 	}
+	END {}
 }
