@@ -1,89 +1,89 @@
 ﻿function Get-ADSIReplicaDomainInfo
 {
-    <#  
+	<#  
 .SYNOPSIS  
-    Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
+	Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
 .DESCRIPTION
 	Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
 .PARAMETER ComputerName
-    Defines the remote computer to connect to.
+	Defines the remote computer to connect to.
 
 .PARAMETER Credential
-    Defines alternate credentials to use. Use Get-Credential to create proper credentials.
+	Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
 .PARAMETER Recurse
-    Recursively retrieves information about child domains
+	Recursively retrieves information about child domains
 
 .EXAMPLE
-    Get-ADSIReplicaDomainInfo -ComputerName dc1.ad.local
+	Get-ADSIReplicaDomainInfo -ComputerName dc1.ad.local
 
-        Forest                  : ad.local
-        DomainControllers       : {DC1.ad.local, DC2.ad.local}
-        Children                : {}
-        DomainMode              : Windows2012R2Domain
-        DomainModeLevel         : 6
-        Parent                  : 
-        PdcRoleOwner            : DC1.ad.local
-        RidRoleOwner            : DC1.ad.local
-        InfrastructureRoleOwner : DC1.ad.local
-        Name                    : ad.local
+		Forest                  : ad.local
+		DomainControllers       : {DC1.ad.local, DC2.ad.local}
+		Children                : {}
+		DomainMode              : Windows2012R2Domain
+		DomainModeLevel         : 6
+		Parent                  : 
+		PdcRoleOwner            : DC1.ad.local
+		RidRoleOwner            : DC1.ad.local
+		InfrastructureRoleOwner : DC1.ad.local
+		Name                    : ad.local
 
-      Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
+	  Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
 .NOTES  
-    Micky Balladelli
+	Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
 	
 	github.com/lazywinadmin/AdsiPS 
 #>	
-    [CmdletBinding()]
-    param ([Parameter(Mandatory = $true)]
-        [string]$ComputerName,
+	[CmdletBinding()]
+	param ([Parameter(Mandatory = $true)]
+		[string]$ComputerName,
 		
-        [Alias("RunAs")]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-        [Switch]$Recurse
-    )
-    BEGIN
-    {
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-    }
+		[Switch]$Recurse
+	)
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 
-    PROCESS
-    { 
-        if ($ComputerName)
-        {
-            if ($Credential)
-            {
-                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-            }
-            else
-            {
-                $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-            }
-        }
+	PROCESS
+	{ 
+		if ($ComputerName)
+		{
+			if ($Credential)
+			{
+				$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+			}
+			else
+			{
+				$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+			}
+		}
 	
-        if ($context)
-        {
-            Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
-            $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-        }
+		if ($context)
+		{
+			Write-Verbose -Message "[$FunctionName] Connecting to $ComputerName"
+			$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+		}
 	
-        if ($dc)
-        {
-            $dc.domain
-            if ($Recurse.IsPresent)
-            {
-                $dc.domain.children | ForEach-Object { $_ }
-            }
+		if ($dc)
+		{
+			$dc.domain
+			if ($Recurse.IsPresent)
+			{
+				$dc.domain.children | ForEach-Object { $_ }
+			}
 		
-        }
-    }
-    END {}
+		}
+	}
+	END {}
 }

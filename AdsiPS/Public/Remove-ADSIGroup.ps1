@@ -43,38 +43,38 @@
 #>
 [CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(
-    [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
-    $Identity,
+	[parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
+	$Identity,
 
-    [Alias("RunAs")]
+	[Alias("RunAs")]
 	[System.Management.Automation.PSCredential]
 	[System.Management.Automation.Credential()]
 	$Credential = [System.Management.Automation.PSCredential]::Empty,
 
-    [String]$DomainName)
+	[String]$DomainName)
 
-    BEGIN
-    {
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+	BEGIN
+	{
+		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 		
-        # Create Context splatting
+		# Create Context splatting
 		$ContextSplatting = @{
 			Contexttype = "Domain"
 		}
 		
 		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
-        
-    }
-    PROCESS
-    {
-        TRY{
-            if ($pscmdlet.ShouldProcess("$Identity", "Delete Account")){
-                (Get-ADSIGroup -Identity $Identity @ContextSplatting).delete()
-            }
-        }
-        CATCH{
-            $pscmdlet.ThrowTerminatingError($_)
-        }
-    }
+		IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
+		
+	}
+	PROCESS
+	{
+		TRY{
+			if ($pscmdlet.ShouldProcess("$Identity", "Delete Account")){
+				(Get-ADSIGroup -Identity $Identity @ContextSplatting).delete()
+			}
+		}
+		CATCH{
+			$pscmdlet.ThrowTerminatingError($_)
+		}
+	}
 }

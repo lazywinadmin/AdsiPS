@@ -30,9 +30,9 @@
 	By default it will use the current domain.
 
 .PARAMETER Recursive
-    Specifies that any child object should be deleted as well
-    Typically you would use this parameter if you get the error "The directory service can perform the requested operation only on a leaf object"
-    when you try to delete the object without the -recursive param
+	Specifies that any child object should be deleted as well
+	Typically you would use this parameter if you get the error "The directory service can perform the requested operation only on a leaf object"
+	when you try to delete the object without the -recursive param
 	
 	Typically used when you have Exchange/ActiveSync in your domain, some users happens to have sub child items.
 	

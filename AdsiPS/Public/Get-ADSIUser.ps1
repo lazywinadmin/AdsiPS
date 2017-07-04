@@ -30,9 +30,9 @@ function Get-ADSIUser
 	By default it will use the current domain.
 
 .PARAMETER NoResultLimit
-    Remove the SizeLimit of 1000
+	Remove the SizeLimit of 1000
 
-    SizeLimit is useless, it can't go over the server limit which is 1000 by default
+	SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
 .PARAMETER LDAPFilter
 	Specifies the LDAP query to apply
@@ -103,12 +103,12 @@ function Get-ADSIUser
 
 		[String]$DomainName,
 
-        [Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
+		[Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
 		[string]$LDAPFilter,
 
-        [Parameter(ParameterSetName = "LDAPFilter")]
-        [Parameter(ParameterSetName = "All")]
-        [Switch]$NoResultLimit
+		[Parameter(ParameterSetName = "LDAPFilter")]
+		[Parameter(ParameterSetName = "All")]
+		[Switch]$NoResultLimit
 		
 	)
 	
@@ -146,16 +146,16 @@ function Get-ADSIUser
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
 
 			$DirectorySearcher.Filter = "(&(objectCategory=user)$LDAPFilter)"
-            #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+			#$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else{
-                # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
-                # the server limit is kept
-                $DirectorySearcher.PageSize = 10000
-            }
-            
-            $DirectorySearcher.FindAll() | ForEach-Object {
+			if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+			else{
+				# SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+				# the server limit is kept
+				$DirectorySearcher.PageSize = 10000
+			}
+			
+			$DirectorySearcher.FindAll() | ForEach-Object {
 				[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
 			}# Return UserPrincipale object
 		}
@@ -167,14 +167,14 @@ function Get-ADSIUser
 			$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
 			$Searcher.QueryFilter = $UserPrincipal
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else {
-                # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
-                # the server limit is kept
-                $Searcher.GetUnderlyingSearcher().pagesize=10000
-                
-                }
-           #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+			if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+			else {
+				# SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
+				# the server limit is kept
+				$Searcher.GetUnderlyingSearcher().pagesize=10000
+				
+				}
+		   #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 			$Searcher.FindAll() # Return UserPrincipale
 		}
 	}

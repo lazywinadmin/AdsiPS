@@ -17,17 +17,17 @@
 	Specify the Domain to use
 	
 .PARAMETER Credential
-    Specify the Credential to use
+	Specify the Credential to use
 
 .PARAMETER DomainDistinguishedName
-    Specify the DistinguishedName of the Domain to query
+	Specify the DistinguishedName of the Domain to query
 	
 .PARAMETER SizeLimit
-    Specify the number of item(s) to output (1 to 1000)
+	Specify the number of item(s) to output (1 to 1000)
 	Use NoResultLimit for more than 1000 objects
 
 .PARAMETER NoResultLimit
-    Remove the SizeLimit of 1000
+	Remove the SizeLimit of 1000
 	Warning : can take time! depend number of queues on your domain
 	NoResultLimit parameter override SizeLimit parameter
 
@@ -172,12 +172,12 @@
 				$Search.SizeLimit = $SizeLimit
 				Write-warning "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
 			}
-            ELSE
+			ELSE
 			{
 
-                Write-Verbose -Message "[$FunctionName] Use NoResultLimit switch, all objects will be returned. no limit"
-			    $Search.PageSize = 10000
-            }
+				Write-Verbose -Message "[$FunctionName] Use NoResultLimit switch, all objects will be returned. no limit"
+				$Search.PageSize = 10000
+			}
   			
 				
 			FOREACH ($Object IN $($Search.FindAll()))

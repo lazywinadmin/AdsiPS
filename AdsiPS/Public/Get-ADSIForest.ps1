@@ -1,6 +1,6 @@
 ﻿function Get-ADSIForest
 {
-    <#
+	<#
 .SYNOPSIS
 	Function to retrieve the current or specified forest
 
@@ -37,46 +37,46 @@
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest(v=vs.110).aspx
 #>
 	
-    [CmdletBinding()]
-    [OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
-    param
-    (
-        [Alias("RunAs")]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+	[CmdletBinding()]
+	[OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
+	param
+	(
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-        $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-    )
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
 	
-    BEGIN
-    {
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-    }
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
 
-    PROCESS
-    {
-        TRY
-        {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
-            {
-                Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
-                $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+	PROCESS
+	{
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
 				
-                $ForestContext = New-ADSIDirectoryContext @splatting
-                [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
-            }
-            ELSE
-            {
-                [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
-            }
+				$ForestContext = New-ADSIDirectoryContext @splatting
+				[System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
+			}
+			ELSE
+			{
+				[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
+			}
 			
-        }
-        CATCH
-        {
-            $pscmdlet.ThrowTerminatingError($_)
-        }
-    }
+		}
+		CATCH
+		{
+			$pscmdlet.ThrowTerminatingError($_)
+		}
+	}
 }

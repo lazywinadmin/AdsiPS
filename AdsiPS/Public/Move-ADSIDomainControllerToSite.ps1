@@ -1,6 +1,6 @@
 ﻿function Move-ADSIDomainControllerToSite
 {
-    <#
+	<#
 .SYNOPSIS
 	Move-ADSIDomainControllerToSite moves the current DC to another site.
 
@@ -44,42 +44,42 @@
 				Other minor modifications	
 #>
 	
-    [CmdletBinding()]
-    PARAM
-    (
-        [Parameter(Mandatory)]
-        [string]$ComputerName,
+	[CmdletBinding()]
+	PARAM
+	(
+		[Parameter(Mandatory)]
+		[string]$ComputerName,
 		
-        [Alias("RunAs")]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-        [Parameter(Mandatory = $true)]
-        [string]$Site
-    )
-    BEGIN
-    {
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-    }
-    PROCESS
-    {
-        TRY
-        {
-            # DirectoryContext Splatting
-            $Splatting = $PSBoundParameters.Remove("Site")
-            # Create the Context
-            $Context = New-ADSIDirectoryContext -ContextType 'DirectoryServer' @Splatting
+		[Parameter(Mandatory = $true)]
+		[string]$Site
+	)
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
+	PROCESS
+	{
+		TRY
+		{
+			# DirectoryContext Splatting
+			$Splatting = $PSBoundParameters.Remove("Site")
+			# Create the Context
+			$Context = New-ADSIDirectoryContext -ContextType 'DirectoryServer' @Splatting
 			
-            $DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+			$DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 			
-            Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) to site $Site"
-            $DomainController.MoveToAnotherSite($Site)
-        }
-        CATCH
-        {
-            $pscmdlet.ThrowTerminatingError($_)
-        }
-    }
-    END {}
+			Write-Verbose -Message "[$FunctionName][PROCESS] $($DomainController.name) to site $Site"
+			$DomainController.MoveToAnotherSite($Site)
+		}
+		CATCH
+		{
+			$pscmdlet.ThrowTerminatingError($_)
+		}
+	}
+	END {}
 }

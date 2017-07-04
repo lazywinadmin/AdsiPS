@@ -1,6 +1,6 @@
 ﻿function Get-ADSIForestTrustRelationship
 {
-    <#
+	<#
 .SYNOPSIS
 	Function to retrieve the Forest Trust Relationship(s)
 
@@ -41,31 +41,31 @@
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.foresttrustrelationshipinformation(v=vs.110).aspx
 #>
 	
-    [CmdletBinding()]
-    [OutputType('System.DirectoryServices.ActiveDirectory.ForestTrustRelationshipInformation')]
-    param
-    (
-        [Alias("RunAs")]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+	[CmdletBinding()]
+	[OutputType('System.DirectoryServices.ActiveDirectory.ForestTrustRelationshipInformation')]
+	param
+	(
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 		
-        $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-    )
-    BEGIN
-    {
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-    }
-    PROCESS
-    {
-        TRY
-        {
-            Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
-            (Get-ADSIForest @PSBoundParameters).GetAllTrustRelationships()
-        }
-        CATCH
-        {
-            $pscmdlet.ThrowTerminatingError($_)
-        }
-    }
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
+	PROCESS
+	{
+		TRY
+		{
+			Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
+			(Get-ADSIForest @PSBoundParameters).GetAllTrustRelationships()
+		}
+		CATCH
+		{
+			$pscmdlet.ThrowTerminatingError($_)
+		}
+	}
 }

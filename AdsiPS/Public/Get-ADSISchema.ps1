@@ -1,6 +1,6 @@
 ﻿function Get-ADSISchema
 {
-    <#
+	<#
 .SYNOPSIS
 	The Get-ADSISchema function gather information about the current Active Directory Schema
 
@@ -31,88 +31,88 @@
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS 
 #>
-    [CmdletBinding(DefaultParameterSetName = 'Default')]
-    param
-    (
-        [Parameter(ParameterSetName = 'Default',
-            Mandatory = $true)]
-        [ValidateSet("mandatory", "optional")]
-        [String]$PropertyType,
+	[CmdletBinding(DefaultParameterSetName = 'Default')]
+	param
+	(
+		[Parameter(ParameterSetName = 'Default',
+			Mandatory = $true)]
+		[ValidateSet("mandatory", "optional")]
+		[String]$PropertyType,
 		
-        [Parameter(ParameterSetName = 'Default',
-            Mandatory = $true)]
-        [String]$ClassName,
+		[Parameter(ParameterSetName = 'Default',
+			Mandatory = $true)]
+		[String]$ClassName,
 		
-        [Parameter(ParameterSetName = 'AllClasses',
-            Mandatory = $true)]
-        [Switch]$AllClasses,
+		[Parameter(ParameterSetName = 'AllClasses',
+			Mandatory = $true)]
+		[Switch]$AllClasses,
 		
-        [Parameter(ParameterSetName = 'FindClasses',
-            Mandatory = $true)]
-        [String]$FindClassName,
+		[Parameter(ParameterSetName = 'FindClasses',
+			Mandatory = $true)]
+		[String]$FindClassName,
 		
-        [Alias("RunAs")]
-        [System.Management.Automation.PSCredential]
-        [System.Management.Automation.Credential()]
-        $Credential = [System.Management.Automation.PSCredential]::Empty,
+		[Alias("RunAs")]
+		[System.Management.Automation.PSCredential]
+		[System.Management.Automation.Credential()]
+		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
-        $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-    )
+		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
+	)
 	
-    BEGIN
-    {
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	BEGIN
+	{
+		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
-        TRY
-        {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
-            {
-                Write-Verbose -Message "[$FunctionName][PROCESS] Credential or ForestName specified"
-                $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
+		TRY
+		{
+			IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+			{
+				Write-Verbose -Message "[$FunctionName][PROCESS] Credential or ForestName specified"
+				$Splatting = @{ }
+				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
+				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
 				
-                $SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
-                $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
-            }
-            ELSE
-            {
-                $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
-            }			
-        }
-        CATCH
-        { 
-            $pscmdlet.ThrowTerminatingError($_)
-        }
-    }
+				$SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
+				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
+			}
+			ELSE
+			{
+				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
+			}			
+		}
+		CATCH
+		{ 
+			$pscmdlet.ThrowTerminatingError($_)
+		}
+	}
 	
-    PROCESS
-    {
-        IF ($PSBoundParameters['AllClasses'])
-        {
-            $schema.FindAllClasses().Name
-        }
-        IF ($PSBoundParameters['FindClassName'])
-        {
-            $schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
-        }
+	PROCESS
+	{
+		IF ($PSBoundParameters['AllClasses'])
+		{
+			$schema.FindAllClasses().Name
+		}
+		IF ($PSBoundParameters['FindClassName'])
+		{
+			$schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
+		}
 		
-        ELSE
-        {
+		ELSE
+		{
 			
-            Switch ($PropertyType)
-            {
-                "mandatory"
-                {
-                    ($schema.FindClass("$ClassName")).MandatoryProperties
-                }
-                "optional"
-                {
-                    ($schema.FindClass("$ClassName")).OptionalProperties
-                }
-            }#Switch
-        }#ELSE
+			Switch ($PropertyType)
+			{
+				"mandatory"
+				{
+					($schema.FindClass("$ClassName")).MandatoryProperties
+				}
+				"optional"
+				{
+					($schema.FindClass("$ClassName")).OptionalProperties
+				}
+			}#Switch
+		}#ELSE
 		
-    }#PROCESS
-    END {}
+	}#PROCESS
+	END {}
 }

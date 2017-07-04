@@ -2,79 +2,79 @@
 {
 <#  
 .SYNOPSIS  
-    Get-ADSIReplicaInfo retrieves Active Directory replication information
+	Get-ADSIReplicaInfo retrieves Active Directory replication information
 
 .DESCRIPTION  
 
-      Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
-      such as latency of replication and replication status.
-      If no switches are used, latency information is returned.
-      
+	  Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
+	  such as latency of replication and replication status.
+	  If no switches are used, latency information is returned.
+	  
 .PARAMETER ComputerName
-    Defines the remote computer to connect to.
-    If ComputerName and Domain are not used, Get-ADSIReplicaInfo will attempt at connecting to the Active Directory using information
-    stored in environment variables.
+	Defines the remote computer to connect to.
+	If ComputerName and Domain are not used, Get-ADSIReplicaInfo will attempt at connecting to the Active Directory using information
+	stored in environment variables.
 
 .PARAMETER Domain
-    Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to. 
-    This parameter is ignored if ComputerName is used.
+	Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to. 
+	This parameter is ignored if ComputerName is used.
 
 .PARAMETER Credential
-    Defines alternate credentials to use. Use Get-Credential to create proper credentials.
+	Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
 .PARAMETER NamingContext
-    Defines for which naming context replication information is to be displayed: All, Configuration, Schema, Domain. The default is Domain.
+	Defines for which naming context replication information is to be displayed: All, Configuration, Schema, Domain. The default is Domain.
 
 .PARAMETER Neighbors
-    Displays replication partners for the current Domain Controller.
+	Displays replication partners for the current Domain Controller.
 
 .PARAMETER Latency
-    Organizes replication latency information by groups, such as Hour, Day, Week, Month, TooLong, Other
+	Organizes replication latency information by groups, such as Hour, Day, Week, Month, TooLong, Other
 
 .PARAMETER Cursors
-    Displays replication cursors for the current Domain Controller.
+	Displays replication cursors for the current Domain Controller.
 
 .PARAMETER DisplayDC
-    Displays additional information about the currently connected Domain Controller.
+	Displays additional information about the currently connected Domain Controller.
 
 .PARAMETER DisplayDC
-    Displays additional information about the errors
+	Displays additional information about the errors
 
 .PARAMETER errors
 	Display additional information on the replication errors
 
 .PARAMETER FormatTable
-    Formats the output as a auto-sized table and rearranges elements according to relevance.
+	Formats the output as a auto-sized table and rearranges elements according to relevance.
 
-    Get-ADSIReplicaInfo -Latency -FormatTable
+	Get-ADSIReplicaInfo -Latency -FormatTable
 
-    Hour                         Day Week Month TooLong Other
-    ----                         --- ---- ----- ------- -----
-    {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}   
-
-.EXAMPLE
-      Get-ADSIReplicaInfo 
-
-      Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
+	Hour                         Day Week Month TooLong Other
+	----                         --- ---- ----- ------- -----
+	{DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}   
 
 .EXAMPLE
-      Get-ADSIReplicaInfo -ComputerName dc1.ad.local -Credential $Credential
+	  Get-ADSIReplicaInfo 
 
-      Connects to remote domain controller dc1.ad.local using alternate credentials.
-
-.EXAMPLE
-      Get-ADSIReplicaInfo -Domain ad.local
-
-      Connects to remote domain controller dc1.ad.local using current credentials.
+	  Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
 
 .EXAMPLE
-      Get-ADSIReplicaInfo -Domain ad.local
+	  Get-ADSIReplicaInfo -ComputerName dc1.ad.local -Credential $Credential
 
-      Connects to remote domain controller dc1.ad.local using current credentials.
+	  Connects to remote domain controller dc1.ad.local using alternate credentials.
+
+.EXAMPLE
+	  Get-ADSIReplicaInfo -Domain ad.local
+
+	  Connects to remote domain controller dc1.ad.local using current credentials.
+
+.EXAMPLE
+	  Get-ADSIReplicaInfo -Domain ad.local
+
+	  Connects to remote domain controller dc1.ad.local using current credentials.
 
 
 .NOTES  
-    Micky Balladelli
+	Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
 	
