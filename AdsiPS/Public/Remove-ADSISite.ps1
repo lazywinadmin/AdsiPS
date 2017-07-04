@@ -27,7 +27,7 @@
     @lazywinadm
     github.com/lazywinadmin/AdsiPS
 #>
-[CmdletBinding()]
+[CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(
     [parameter(Mandatory=$true)]
     [String]$SiteName,
@@ -53,15 +53,16 @@ PARAM(
     {
         TRY
         {
-            (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
+            IF ($PSCmdlet.ShouldProcess($SiteName, "Delete"))
+			{
+                # Delete Site
+                (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
+            }
         }
         CATCH{
             $pscmdlet.ThrowTerminatingError($_)
             break
         }
     }
-    END
-    {
-    }	
 }
 

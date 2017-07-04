@@ -82,7 +82,7 @@
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 	
-	[CmdletBinding(DefaultParameterSetName = 'Server')]
+	[CmdletBinding(DefaultParameterSetName = 'Server',SupportsShouldProcess = $true)]
 	param
 	(
 		[Alias("RunAs")]
@@ -123,9 +123,11 @@
 				$ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 			}
 			
+			IF ($PSCmdlet.ShouldProcess("Create Directory Entry"))
+			{	
 				# Query the specified domain or current if not entered, with the current credentials
 				New-Object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList $ArgumentList
-			
+			}
 		} #TRY
 		CATCH
 		{

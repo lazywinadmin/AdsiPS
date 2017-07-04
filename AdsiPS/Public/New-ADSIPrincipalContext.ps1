@@ -45,7 +45,7 @@
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
 #>
 	
-	[CmdletBinding()]
+	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType('System.DirectoryServices.AccountManagement.PrincipalContext')]
 	PARAM
 	(
@@ -97,9 +97,11 @@
 				$ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 			}
 			
-			# Query 
-			New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $ArgumentList
-			
+			IF ($PSCmdlet.ShouldProcess($DomainName, "Create Principal Context"))
+			{
+				# Query 
+				New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $ArgumentList
+			}
 		} #TRY
 		CATCH
 		{

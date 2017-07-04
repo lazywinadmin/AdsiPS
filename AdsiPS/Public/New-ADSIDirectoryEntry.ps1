@@ -54,7 +54,7 @@
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
 #>
-	[CmdletBinding()]
+	[CmdletBinding(SupportsShouldProcess = $true)]
 	PARAM (
 		$Path = $(([adsisearcher]"").Searchroot.path),
 
@@ -65,17 +65,26 @@
 		
 		[System.DirectoryServices.AuthenticationTypes[]]$AuthenticationType
 	)
-	#Building Argument
-	IF ($PSBoundParameters['Credential'])
-	{
-		$ArgumentList = $Path, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+	TRY{
+		#Building Argument
+		IF ($PSBoundParameters['Credential'])
+		{
+			$ArgumentList = $Path, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
+		}
+		
+		IF ($PSBoundParameters['AuthenticationType'])
+		{
+			$ArgumentList += $AuthenticationType
+		}
+		
+		IF ($PSCmdlet.ShouldProcess($Path, "Create Directory Entry"))
+		{
+			# Create object
+			New-Object -TypeName DirectoryServices.DirectoryEntry -ArgumentList $ArgumentList
+		}
 	}
-	
-	IF ($PSBoundParameters['AuthenticationType'])
-	{
-		$ArgumentList += $AuthenticationType
+	CATCH{
+		$PSCmdlet.ThrowTerminatingError($_)
+
 	}
-	
-	# Create object
-	New-Object -TypeName DirectoryServices.DirectoryEntry -ArgumentList $ArgumentList
 }
