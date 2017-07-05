@@ -25,6 +25,45 @@ Function Search-ADSIAccount
     Warning : can take time! it depends on the number of objects in your domain
     NoResultLimit parameter override SizeLimit parameter 
 
+.PARAMETER Users
+    Users accounts only
+
+.PARAMETER Computers
+    Computer accounts only
+
+.PARAMETER AccountNeverLogged
+    Accounts that never logged on
+
+.PARAMETER ChangePassword
+    Specify that you want to see the account that need to change password
+
+.PARAMETER PasswordNeverExpire
+    Accounts where the password never expire
+
+.PARAMETER AccountDisabled
+    Accounts disabled
+
+.PARAMETER PasswordNeverExpires
+    Accounts where the password never expire
+
+.PARAMETER AccountExpired
+    Expired Accounts
+
+.PARAMETER AccountExpiring
+    Accounts Expiring (By default 30 days, see -Days parameter)
+
+.PARAMETER AccountInactive
+    Inactive accounts (By default 30 days, see -Days parameter)
+
+.PARAMETER Days
+    Used with inactive and Expiring parameters. 30 days by default
+
+.PARAMETER PasswordExpired
+    Expired Accounts
+
+.PARAMETER AccountNeverExpire
+    Accounts where the password never expire
+    
 .EXAMPLE
     Search-ADSIAccount -Users -AccountNeverLogged
 

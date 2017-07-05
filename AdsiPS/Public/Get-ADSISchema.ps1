@@ -19,6 +19,9 @@
 .PARAMETER FindClassName
 	Specify the exact or partial name of the class to search
 
+.PARAMETER ForestName
+	Specifies the Forest name
+
 .PARAMETER Credential
 	Specifies alternative credential to use
 

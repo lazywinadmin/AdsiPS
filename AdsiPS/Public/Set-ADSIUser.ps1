@@ -4,6 +4,8 @@
 .SYNOPSIS
 	This function modifies an account identified by its display name, sam account name or distinguished name.
 
+.DESCRIPTION
+	This function modifies an account identified by its display name, sam account name or distinguished name.
 	
 .PARAMETER Identity
 	Specify the Identity of the accounts to modify.
@@ -40,7 +42,12 @@
 
 .PARAMETER UserPrincipalName
 	Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
-	
+.PARAMETER TelephoneNumber
+    Specify the Telephone number
+.PARAMETER DomainDN
+    Specify the Domain Distinguished name
+.PARAMETER Credential
+    Specify alternative Credential
 .EXAMPLE
     Set-ADSIUSer -Identity micky -UserPrincipalName micky@contoso.com -confirm:$false -SamAccountName mickyballadelli
 
@@ -54,6 +61,7 @@
 	
 .NOTES
 	Micky Balladelli
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = 'High')]
 	PARAM (
