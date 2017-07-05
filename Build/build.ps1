@@ -18,10 +18,7 @@ Install-Module Psake, PSDeploy, Pester, BuildHelpers -force -verbose
 Import-Module Psake, BuildHelpers -verbose
 
 Write-Host 'Set Build Environment'
-Set-BuildEnvironment
-
-#Invoke-psake .\psake.ps1
-#exit ( [int]( -not $psake.build_success ) )
+Set-BuildEnvironment -force
 
 Write-host "Get BuildVariables" -ForegroundColor Yellow
 Get-BuildVariables 
@@ -31,3 +28,7 @@ Get-ProjectName
 
 Write-host "ENV:" -ForegroundColor Yellow
 gci env:
+
+Invoke-psake $PSScriptRoot\psake.ps1 -tasklist 'Deploy' -nologo
+exit ( [int]( -not $psake.build_success ) )
+
