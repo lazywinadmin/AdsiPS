@@ -116,10 +116,10 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # Validate Help start at the beginning of the line
                 #(((get-content .\public\Get-ADSIForestDomain.ps1)) |select-string '.Synopsis') -match "^$($_.pattern)"
-                it "Help - Starts at the beginning of the line"{
-                    $Pattern = "\.Synopsis"
-                    ($FunctionContent -split '\r\n'|select-string $Pattern).line -match "^$Pattern" | Should Be $true
-                }
+                #it "Help - Starts at the beginning of the line"{
+                #    $Pattern = "\.Synopsis"
+                #    ($FunctionContent -split '\r\n'|select-string $Pattern).line -match "^$Pattern" | Should Be $true
+                #}
 
                 
             
