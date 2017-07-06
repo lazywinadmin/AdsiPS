@@ -52,6 +52,9 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 * Implement appropriate WhatIf/Confirm support if you function is changing something
 
 ## TODO (not in a specific order)
+- [ ] Add Pester test
+- [ ] Integrate with CI/CD (Appveyor) for auto publish to gallery
+- [ ] Update documentation, possibly add support for [ReadTheDocs](http://docs.readthedocs.io/en/latest/index.html) to help Adoption
 - [ ] Set-ADSIComputer
 - [ ] Set-ADSIGroup
 - [ ] Set-ADSIObject
