@@ -56,8 +56,9 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 - [ ] Integrate with CI/CD (Appveyor) for auto publish to gallery
 - [ ] Update documentation, possibly add support for [ReadTheDocs](http://docs.readthedocs.io/en/latest/index.html) to help Adoption
 - [ ] Set-ADSIComputer
-- [ ] Set-ADSIGroup
+- [ ] Set-ADSIGroup (also with -ManagedBy, and -ManagerCanUpdateMembership [example](https://blogs.technet.microsoft.com/blur-lines_-powershell_-author_shirleym/2013/10/07/manager-can-update-membership-list-part-1/))
 - [ ] Set-ADSIObject
+- [ ] New-User -CopyFrom <account/DN/GUID>
 - [ ] Set-ADSIOrganizationalUnit
 - [ ] Restore-ADSIAccount
 - [ ] Unlock-ADSIAccount
@@ -80,7 +81,6 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 - [ ] Clear-ADSIAccountExpiration
 - [ ] Find expensive queries
 - [ ] Improve Get TokenSize
-- [ ] Pester tests
 
 
 ## More Information
