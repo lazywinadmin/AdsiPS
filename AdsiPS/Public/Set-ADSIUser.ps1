@@ -6,15 +6,15 @@
 
 .DESCRIPTION
 	This function modifies an account identified by its display name, sam account name or distinguished name.
-	
+
 .PARAMETER Identity
 	Specify the Identity of the accounts to modify.
 
     The Identity can either be (in order of resolution attempt):
         A SAM account name
         An object SID
-        A distinguished name 
-    
+        A distinguished name
+
 .PARAMETER Country
 	Specify the country name. This parameter sets the co property of a user.
 
@@ -58,7 +58,7 @@
 
     Changes the Country value of the account micky
 
-	
+
 .NOTES
 	Micky Balladelli
 	github.com/lazywinadmin/AdsiPS
@@ -67,7 +67,7 @@
 	PARAM (
 		[Parameter(Mandatory = $true)]
 		[String]$Identity,
-		
+
 		[Parameter(Mandatory = $false)]
 		[string]$Country,
 
@@ -91,60 +91,66 @@
 
 		[Parameter(Mandatory = $false)]
 		[String]$SamAccountName,
-		
+
 		[Parameter(Mandatory = $false)]
 		[String]$TelephoneNumber,
-		
+
 		[Parameter(Mandatory = $false)]
 		[string]$UserPrincipalName,
-		
-		[Alias("Domain")]
-		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
-		
+
+        [Alias("Domain", "DomainDN")]
+		[String]$DomainName = $(([adsisearcher]"").Searchroot.path),
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
-	BEGIN { }
+    BEGIN
+    {
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+
+        # Create Context splatting
+        $ContextSplatting = @{ ContextType = "Domain" }
+
+        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
+        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+
+        $Context = New-ADSIPrincipalContext @ContextSplatting
+    }
 	PROCESS
 	{
 		TRY
 		{
-			# Building the basic search object with some parameters
-			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher
-			$Search.SizeLimit = 2
-			$Search.SearchRoot = $DomainDN
-			
-			IF ($PSBoundParameters['DomainDN'])
-			{
-				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
-				Write-Verbose -Message "Different Domain specified: $DomainDN"
-				$Search.SearchRoot = $DomainDN
-			}
-			
-			IF ($PSBoundParameters['Credential'])
-			{
-				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
-				$Search.SearchRoot = $DomainDN
-			}
-			
+            $DirectoryEntryParams = $ContextSplatting
+            $DirectoryEntryParams.remove('ContextType')
+            $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
+
+            # Principal Searcher
+            $Search = new-object -TypeName System.DirectoryServices.DirectorySearcher
+            $Search.SizeLimit = 2
+            $Search.SearchRoot = $DirectoryEntry
+
 			# Resolve the Object
-			
 		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
 			$user = $Search.FindAll()
-			IF ($user.Count -eq 0) 
+			IF ($user.Count -eq 0)
 			{
     		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
 	    		$user = $Search.FindAll()
             }
-			IF ($user.Count -eq 0) 
+			IF ($user.Count -eq 0)
 			{
     		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
     			$user = $Search.FindAll()
-            }			
+            }
+            IF ($user.Count -eq 0)
+			{
+                $Search.filter = "(&(objectCategory=person)(objectClass=User)(UserPrincipalName=$Identity))"
+    			$user = $Search.FindAll()
+            }
 
-			IF ($user.Count -eq 1) 
+			IF ($user.Count -eq 1)
 			{
 				$Account = $user.Properties.samaccountname -as [string]
 				$adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
@@ -166,7 +172,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # Description
                 if ($Description -ne '')
@@ -185,7 +191,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # DisplayName
                 if ($DisplayName -ne '')
@@ -204,7 +210,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # Location
                 if ($Location -ne '')
@@ -223,7 +229,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # Mail
                 if ($Mail -ne '')
@@ -242,7 +248,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # Manager
                 if ($Manager -ne '')
@@ -264,7 +270,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # PostalCode
                 if ($PostalCode -ne '')
@@ -283,7 +289,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # TelephoneNumber
                 if ($TelephoneNumber -ne '')
@@ -302,7 +308,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
                 # SAM Account Name
                 if ($SamAccountName -ne '')
                 {
@@ -320,7 +326,7 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
                 # UserPrincipalName
                 if ($UserPrincipalName -ne '')
@@ -339,18 +345,18 @@
                             $Adspath.SetInfo()
                         }
                     }
-                }			
+                }
 
 			}
 			ELSEIF ($user.Count -gt 1)
 			{
-                Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique" 
+                Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique"
             }
-            ELSEIF ($Search.FindAll().Count -eq 0) 
-            { 
-                Write-Warning -Message "[Set-ADSIUser] Account $identity not found" 
+            ELSEIF ($Search.FindAll().Count -eq 0)
+            {
+                Write-Warning -Message "[Set-ADSIUser] Account $identity not found"
             }
-			
+
 		}#TRY
 		CATCH
 		{
