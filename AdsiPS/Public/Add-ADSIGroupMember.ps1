@@ -17,7 +17,7 @@ function Add-ADSIGroupMember
         SamAccountName
         Sid
         UserPrincipalName
-    
+
     Those properties come from the following enumeration:
         System.DirectoryServices.AccountManagement.IdentityType
 
@@ -34,7 +34,7 @@ function Add-ADSIGroupMember
     Specifies the alternative Domain where the user should be created
     By default it will use the current domain.
 
-.EXAMPLE 
+.EXAMPLE
     Add-ADSIGroupMember -Identity TestADSIGroup -Member 'UserTestAccount1'
 
     Adding the User account 'UserTestAccount1' to the group 'TestADSIGroup'
@@ -59,7 +59,7 @@ function Add-ADSIGroupMember
 PARAM(
     [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
     $Identity,
-    
+
     [Alias("RunAs")]
     [System.Management.Automation.PSCredential]
     [System.Management.Automation.Credential()]
@@ -76,13 +76,13 @@ PARAM(
 
         Write-Verbose -Message "[$FunctionName] Loading assembly System.DirectoryServices.AccountManagement"
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement -ErrorAction Stop
-		
+
         # Create Context splatting
         Write-Verbose -Message "[$FunctionName] Create context splatting"
 		$ContextSplatting = @{
 			Contexttype = "Domain"
 		}
-		
+
 		IF ($PSBoundParameters['Credential']){
             Write-Verbose -Message "[$FunctionName] Context splatting - Add Credential"
             $ContextSplatting.Credential = $Credential
@@ -91,7 +91,7 @@ PARAM(
             Write-Verbose -Message "[$FunctionName] Context splatting - Add DomainName"
             $ContextSplatting.DomainName = $DomainName
         }
-        
+
         Write-Verbose -Message "[$FunctionName] Create New Principal Context using Context Splatting"
         $Context = New-ADSIPrincipalContext @ContextSplatting -ErrorAction Stop
     }
@@ -101,20 +101,21 @@ PARAM(
             # Resolving member
             # Directory Entry object
             Write-Verbose -Message "[$FunctionName] Copy Context splatting and remove ContextType property"
-			$DirectoryEntryParams = $ContextSplatting.remove('ContextType')
+            $DirectoryEntryParams = $ContextSplatting
+			$DirectoryEntryParams.remove('ContextType')
             Write-Verbose -Message "[$FunctionName] Create New Directory Entry using using the copied context"
 			$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
-			
+
 			# Principal Searcher
             Write-Verbose -Message "[$FunctionName] Create a System.DirectoryServices.DirectorySearcher"
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
             Write-Verbose -Message "[$FunctionName] Append DirectoryEntry to in the property SearchRoot of DirectorySearcher"
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
-            
+
             # Adding an Ambiguous Name Resolution (ANR) LDAP Filter
             Write-Verbose -Message "[$FunctionName] Append LDAP Filter '(anr=$member)' to the property Filter of DirectorySearcher"
 			$DirectorySearcher.Filter = "(anr=$member)"
-            
+
             # Retrieve a single object
             Write-Verbose -Message "[$FunctionName] Retrieve the account"
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
@@ -132,7 +133,7 @@ PARAM(
             else{
                 Write-Error -Message "[$FunctionName] Can't retrieve the identity '$identity'"
             }
-            
+
 
             if ($pscmdlet.ShouldProcess("$Identity", "Add Account member $member")){
                 Write-Verbose -Message "[$FunctionName] Retrieve group with the identity '$identity' using Get-ADSIGroup using the Context Splatting"
