@@ -17,7 +17,7 @@ function Remove-ADSIGroupMember
         SamAccountName
         Sid
         UserPrincipalName
-    
+
     Those properties come from the following enumeration:
         System.DirectoryServices.AccountManagement.IdentityType
 
@@ -34,7 +34,7 @@ function Remove-ADSIGroupMember
     Specifies the alternative Domain where the user should be created
     By default it will use the current domain.
 
-.EXAMPLE 
+.EXAMPLE
     Remove-ADSIGroupMember -Identity TestADSIGroup -Member 'UserTestAccount1'
 
     Removing the User account 'UserTestAccount1' to the group 'TestADSIGroup'
@@ -43,7 +43,7 @@ function Remove-ADSIGroupMember
     Remove-ADSIGroupMember -Identity TestADSIGroup -Member 'GroupTestAccount1'
 
     Removing the Group account 'GroupTestAccount1' to the group 'TestADSIGroup'
-    
+
 .EXAMPLE
     Remove-ADSIGroupMember -Identity TestADSIGroup -Member 'ComputerTestAccount1'
 
@@ -73,15 +73,15 @@ PARAM(
     BEGIN
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
         # Create Context splatting
 		$ContextSplatting = @{
 			Contexttype = "Domain"
 		}
-		
+
 		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
-        
+
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
     PROCESS
@@ -89,16 +89,17 @@ PARAM(
         TRY{
             # Resolving member
             # Directory Entry object
-			$DirectoryEntryParams = $ContextSplatting.remove('ContextType')
-			$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
-			
+            $DirectoryEntryParams = $ContextSplatting
+            $DirectoryEntryParams.remove('ContextType')
+            $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
+
 			# Principal Searcher
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
-            
+
             # Adding an Ambiguous Name Resolution LDAP Filter
 			$DirectorySearcher.Filter = "(anr=$member)"
-            
+
             # Retrieve a single object
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
 
@@ -111,7 +112,7 @@ PARAM(
                 'computer' {$member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
                 }
             }
-            
+
 
             if ($pscmdlet.ShouldProcess("$Identity", "Remove Account member $member")){
                 $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting)

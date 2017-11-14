@@ -9,7 +9,7 @@ function Get-ADSIGroup
 
 .PARAMETER Identity
 	Specifies the Identity of the group
-	
+
 	You can provide one of the following properties
 	DistinguishedName
 	Guid
@@ -17,7 +17,7 @@ function Get-ADSIGroup
 	SamAccountName
 	Sid
 	UserPrincipalName
-	
+
 	Those properties come from the following enumeration:
 	System.DirectoryServices.AccountManagement.IdentityType
 
@@ -76,7 +76,7 @@ function Get-ADSIGroup
 .EXAMPLE
 	$Comp = Get-ADSIGroup -Identity 'Finance'
 	$Comp.GetUnderlyingObject()| select-object *
-	
+
 	Help you find all the extra properties of the Finance group object
 
 .EXAMPLE
@@ -101,7 +101,7 @@ function Get-ADSIGroup
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(DefaultParameterSetName = 'All')]
 	[OutputType('System.DirectoryServices.AccountManagement.GroupPrincipal')]
 	param
@@ -137,22 +137,22 @@ function Get-ADSIGroup
 
 		[Parameter(ParameterSetName = 'Filter')]
 		$SID,
-		
+
         [Parameter(ParameterSetName = 'LDAPFilter')]
         $LDAPFilter
-        
+
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 	}
 	PROCESS
@@ -167,17 +167,18 @@ function Get-ADSIGroup
             ELSEIF ($PSBoundParameters['LDAPFilter'])
             {
                 Write-Verbose "LDAPFilter"
-			
+
 	            # Directory Entry object
-	            $DirectoryEntryParams = $ContextSplatting.remove('ContextType')
-	            $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
-			
+                $DirectoryEntryParams = $ContextSplatting
+                $DirectoryEntryParams.remove('ContextType')
+                $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
+
 	            # Principal Searcher
 	            $DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
 	            $DirectorySearcher.SearchRoot = $DirectoryEntry
 	            $DirectorySearcher.Filter = "(&(objectCategory=group)$LDAPFilter)"
 
-            
+
                 $DirectorySearcher.FindAll() | ForEach-Object {
 		            [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
 	            }
@@ -198,7 +199,7 @@ function Get-ADSIGroup
 				#if($PSBoundParameters['DistinguishedName']){$searcher.QueryFilter.DistinguishedName = $DistinguishedName}
 				if ($PSBoundParameters['Sid']) { $searcher.QueryFilter.Sid.Value = $SID }
 				if ($PSBoundParameters['Name']) { $searcher.QueryFilter.Name = $Name }
-				
+
 				$searcher.FindAll()
 			}
 		}

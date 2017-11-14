@@ -39,40 +39,40 @@ function Get-ADSIUser
 
 .EXAMPLE
 	Get-ADSIUser
-	
+
 	This example will retrieve all accounts in the current domain using
 	the current user credential. There is a limit of 1000 objects returned.
 
 .EXAMPLE
 	Get-ADSIUser -NoResultLimit
-	
+
 	This example will retrieve all accounts in the current domain using
 	the current user credential. Using the parameter -NoResultLimit will remove the Sizelimit on the Result.
 
 .EXAMPLE
 	Get-ADSIUser -Identity 'testaccount'
-	
-	This example will retrieve the account 'testaccount' in the current domain using 
+
+	This example will retrieve the account 'testaccount' in the current domain using
 	the current user credential
 
 .EXAMPLE
 	Get-ADSIUser -Identity 'testaccount' -Credential (Get-Credential)
-	
-	This example will retrieve the account 'testaccount' in the current domain using 
+
+	This example will retrieve the account 'testaccount' in the current domain using
 	the specified credential
-	
+
 .EXAMPLE
 	Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab'
-	
+
 	This example will retrieve the user account that contains fx inside the samaccountname
 	property for the domain fx.lab. There is a limit of 1000 objects returned.
 
 .EXAMPLE
 	Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab' -NoResultLimit
-	
+
 	This example will retrieve the user account that contains fx inside the samaccountname
 	property for the domain fx.lab. There is NO limit of 1000 objects returned.
-	
+
 .EXAMPLE
 	$user = Get-ADSIUser -Identity 'testaccount'
 	$user.GetUnderlyingObject()| select-object *
@@ -88,7 +88,7 @@ function Get-ADSIUser
 .LINK
 	https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(DefaultParameterSetName = "All")]
 	[OutputType('System.DirectoryServices.AccountManagement.UserPrincipal')]
 	param
@@ -109,19 +109,19 @@ function Get-ADSIUser
         [Parameter(ParameterSetName = "LDAPFilter")]
         [Parameter(ParameterSetName = "All")]
         [Switch]$NoResultLimit
-		
+
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 	}
 	PROCESS
@@ -134,11 +134,12 @@ function Get-ADSIUser
 		}
 		ELSEIF ($PSBoundParameters['LDAPFilter'])
 		{
-			
+
 			# Directory Entry object
-			$DirectoryEntryParams = $ContextSplatting.remove('ContextType')
+            $DirectoryEntryParams = $ContextSplatting
+			$DirectoryEntryParams.remove('ContextType')
 			$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
-			
+
 			# Principal Searcher
 			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
 			$DirectorySearcher.SearchRoot = $DirectoryEntry
@@ -152,7 +153,7 @@ function Get-ADSIUser
                 # the server limit is kept
                 $DirectorySearcher.PageSize = 10000
             }
-            
+
             $DirectorySearcher.FindAll() | ForEach-Object {
 				[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
 			}# Return UserPrincipale object
@@ -160,7 +161,7 @@ function Get-ADSIUser
 		ELSE
 		{
 			Write-Verbose "Searcher"
-			
+
 			$UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $Context
 			$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
 			$Searcher.QueryFilter = $UserPrincipal
@@ -170,7 +171,7 @@ function Get-ADSIUser
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
                 $Searcher.GetUnderlyingSearcher().pagesize=10000
-                
+
                 }
            #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 			$Searcher.FindAll() # Return UserPrincipale
