@@ -44,7 +44,7 @@
 	Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
 .PARAMETER TelephoneNumber
     Specify the Telephone number
-.PARAMETER DomainDN
+.PARAMETER DomainName
     Specify the Domain Distinguished name
 .PARAMETER Credential
     Specify alternative Credential
