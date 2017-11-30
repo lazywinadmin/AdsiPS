@@ -12,7 +12,7 @@
 RootModule = 'AdsiPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.2'
+ModuleVersion = '1.0.0.3'
 
 # ID used to uniquely identify this module
 GUID = 'ac6e7b94-de62-49aa-abb3-5f50bd174022'
