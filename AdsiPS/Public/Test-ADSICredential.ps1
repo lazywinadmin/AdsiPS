@@ -13,6 +13,14 @@ function Test-ADSICredential
 .PARAMETER AccountPassword
 	Specifies the AccountName's password
 
+.PARAMETER Credential
+	Specifies the alternative credential to use.
+	By default it will use the current user windows credentials.
+
+.PARAMETER DomainName
+	Specifies the alternative Domain where the user should be created
+	By default it will use the current domain.
+
 .EXAMPLE
 	Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
 
