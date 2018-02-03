@@ -67,6 +67,15 @@
 		[System.DirectoryServices.AuthenticationTypes[]]$AuthenticationType
 	)
 	TRY{
+		#If path isn't prefixed with LDAP://, add it
+		If ($PSBoundParameters['Path'])
+		{
+			if($Path -notlike "^LDAP")
+			{
+				$Path = "LDAP://$Path"
+			}
+		}
+		
 		#Building Argument
 		If ($PSBoundParameters['Credential'])
 		{
