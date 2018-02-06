@@ -147,7 +147,7 @@
 				IF ($PSBoundParameters['HomeDrive']) { $user.HomeDrive = $HomeDrive }
 				IF ($PSBoundParameters['MiddleName']) { $user.MiddleName = $MiddleName }
 				IF ($PSBoundParameters['VoiceTelephoneNumber']) { $user.VoiceTelephoneNumber }
-				IF ($PSBoundParameters['AccountPassword']){$User.SetPassword($AccountPassword)}
+				IF ($PSBoundParameters['AccountPassword']){$User.SetPassword((New-Object PSCredential "user",$AccountPassword).GetNetworkCredential().Password)}
 				
 				Write-Verbose -message "Create the Account in Active Directory"
 				$User.Save($Context)

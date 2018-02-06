@@ -155,7 +155,7 @@ function Get-ADSIUser
             }
 
             $DirectorySearcher.FindAll() | ForEach-Object {
-				[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
+				[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $_.Properties["distinguishedname"])
 			}# Return UserPrincipale object
 		}
 		ELSE
