@@ -70,7 +70,7 @@
 		#If path isn't prefixed with LDAP://, add it
 		If ($PSBoundParameters['Path'])
 		{
-			if($Path -notlike "^LDAP")
+			if($Path -notlike "LDAP://*")
 			{
 				$Path = "LDAP://$Path"
 			}
