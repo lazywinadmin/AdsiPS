@@ -29,6 +29,6 @@ Get-ProjectName
 Write-host "ENV:" -ForegroundColor Yellow
 gci env:
 
-Invoke-psake $PSScriptRoot\psake.ps1 -tasklist 'Deploy' -nologo
+Invoke-psake -BuildFile $PSScriptRoot\psake.ps1 -tasklist 'Deploy' -nologo
 exit ( [int]( -not $psake.build_success ) )
 
