@@ -1,11 +1,11 @@
 ﻿function Get-ADSIReplicaDomainInfo
 {
-	<#
+    <#
 .SYNOPSIS
     Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
 .DESCRIPTION
-	Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
+    Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
@@ -34,48 +34,48 @@
 
 .NOTES
     Micky Balladelli
-	micky@balladelli.com
-	https://balladelli.com
+    micky@balladelli.com
+    https://balladelli.com
 
-	github.com/lazywinadmin/AdsiPS
+    github.com/lazywinadmin/AdsiPS
 #>
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-		[Switch]$Recurse
-	)
+        [Switch]$Recurse
+    )
 
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+    if ($ComputerName)
+    {
+        if ($Credential)
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+        }
+        else
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+        }
+    }
 
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
+    if ($context)
+    {
+        Write-Verbose -Message "Connecting to $ComputerName"
+        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+    }
 
-	if ($dc)
-	{
-		$dc.domain
-		if ($Recurse.IsPresent)
-		{
-			$dc.domain.children | ForEach-Object { $_ }
-		}
+    if ($dc)
+    {
+        $dc.domain
+        if ($Recurse.IsPresent)
+        {
+            $dc.domain.children | ForEach-Object { $_ }
+        }
 
-	}
+    }
 }

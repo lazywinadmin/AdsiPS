@@ -46,7 +46,7 @@ PARAM(
         # Create Context splatting
         $ContextSplatting=@{}
 
-		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
+        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['ForestName']){$ContextSplatting.ForestName = $ForestName}
     }
     PROCESS
@@ -54,7 +54,7 @@ PARAM(
         TRY
         {
             IF ($PSCmdlet.ShouldProcess($SiteName, "Delete"))
-			{
+            {
                 # Delete Site
                 (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
             }

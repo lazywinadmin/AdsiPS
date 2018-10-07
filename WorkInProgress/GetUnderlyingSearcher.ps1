@@ -58,7 +58,7 @@ $searcher.QueryFilter.AdvancedSearchFilter.
 $searcher.GetUnderlyingSearcher().set_Filter("(&(objectCategory=user)(objectClass=user)(samaccountname=fxt)(userAccountControl:1.2.840.113556.1.4.803:=2))")
 $searcher
 
-$searcher.FindAll()|select name
+$searcher.FindAll()|Select-Object -Propertyname
 
 
 $Context = New-ADSIPrincipalContext -ContextType Domain

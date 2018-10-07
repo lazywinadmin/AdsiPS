@@ -2,44 +2,44 @@
 {
 <#
 .SYNOPSIS
-	function to remove a group
+    function to remove a group
 
 .DESCRIPTION
-	function to remove a group
+    function to remove a group
 
 .PARAMETER Identity
-	Specifies the Identity
+    Specifies the Identity
 
-	You can provide one of the following properties
-		DistinguishedName
-		Guid
-		Name
-		SamAccountName
-		Sid
-		UserPrincipalName
+    You can provide one of the following properties
+        DistinguishedName
+        Guid
+        Name
+        SamAccountName
+        Sid
+        UserPrincipalName
 
-	Those properties come from the following enumeration:
-		System.DirectoryServices.AccountManagement.IdentityType
+    Those properties come from the following enumeration:
+        System.DirectoryServices.AccountManagement.IdentityType
 
 .PARAMETER Credential
-	Specifies the alternative credential to use.
-	By default it will use the current user windows credentials.
+    Specifies the alternative credential to use.
+    By default it will use the current user windows credentials.
 
 .PARAMETER DomainName
-	Specifies the alternative Domain where the user should be created
-	By default it will use the current domain.
+    Specifies the alternative Domain where the user should be created
+    By default it will use the current domain.
 
 .EXAMPLE
-	Remove-ADSIGroup FXTESTGROUP
+    Remove-ADSIGroup FXTESTGROUP
 
 .EXAMPLE
-	Remove-ADSIGroup FXTESTGROUP -whatif
+    Remove-ADSIGroup FXTESTGROUP -whatif
 
 .NOTES
-	Francois-Xavier.Cat
-	LazyWinAdmin.com
-	@lazywinadm
-	github.com/lazywinadmin/AdsiPS
+    Francois-Xavier.Cat
+    LazyWinAdmin.com
+    @lazywinadm
+    github.com/lazywinadmin/AdsiPS
 #>
 [CmdletBinding(SupportsShouldProcess=$true)]
 PARAM(
@@ -47,9 +47,9 @@ PARAM(
     $Identity,
 
     [Alias("RunAs")]
-	[System.Management.Automation.PSCredential]
-	[System.Management.Automation.Credential()]
-	$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [System.Management.Automation.PSCredential]
+    [System.Management.Automation.Credential()]
+    $Credential = [System.Management.Automation.PSCredential]::Empty,
 
     [String]$DomainName)
 
@@ -58,11 +58,11 @@ PARAM(
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
-		$ContextSplatting = @{
-			Contexttype = "Domain"
-		}
+        $ContextSplatting = @{
+            Contexttype = "Domain"
+        }
 
-		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
+        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
 
     }

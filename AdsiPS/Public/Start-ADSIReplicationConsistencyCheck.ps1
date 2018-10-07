@@ -20,46 +20,46 @@
 
 
 .NOTES
-	Micky Balladelli
-	micky@balladelli.com
-	https://balladelli.com
+    Micky Balladelli
+    micky@balladelli.com
+    https://balladelli.com
 
-	github.com/lazywinadmin/AdsiPS
+    github.com/lazywinadmin/AdsiPS
 #>
-	[CmdletBinding(SupportsShouldProcess=$true)]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName,
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName,
 
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
 
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+    if ($ComputerName)
+    {
+        if ($Credential)
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+        }
+        else
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+        }
+    }
 
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
+    if ($context)
+    {
+        Write-Verbose -Message "Connecting to $ComputerName"
+        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+    }
 
-	IF ($PSCmdlet.ShouldProcess($dc, "Check Replication Consistency (KCC Check)"))
-	{
-		if ($dc)
-		{
-			$dc.CheckReplicationConsistency()
-			Write-Verbose -Message "KCC Check started on $($dc.name)"
-		}
-	}
+    IF ($PSCmdlet.ShouldProcess($dc, "Check Replication Consistency (KCC Check)"))
+    {
+        if ($dc)
+        {
+            $dc.CheckReplicationConsistency()
+            Write-Verbose -Message "KCC Check started on $($dc.name)"
+        }
+    }
 }
