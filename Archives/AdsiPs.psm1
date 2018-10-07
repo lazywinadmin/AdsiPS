@@ -605,7 +605,7 @@ function New-ADSIPrincipalContext
             ELSE
             {
                 Write-Verbose -Message "[New-ADSIPrincipalContext][PROCESS] Creating a $PrincipalContextType Principal Context WITHOUT Credential"
-                New-Object System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $PrincipalContextType
+                New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $PrincipalContextType
             }
         }
         CATCH
@@ -669,7 +669,7 @@ Function Get-ADSIDomain
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
-                Write-Verbose '[PROCESS] Credential or DomainName specified'
+                Write-Verbose -Message '[PROCESS] Credential or DomainName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
@@ -707,7 +707,7 @@ Function Get-ADSIDomainMode
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
-                Write-Verbose '[PROCESS] Credential or DomainName specified'
+                Write-Verbose -Message '[PROCESS] Credential or DomainName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
@@ -763,7 +763,7 @@ Function Get-ADSIDomainTrustRelationship
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
@@ -926,7 +926,7 @@ Function Get-ADSIDomainDomainControllers
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
@@ -1105,7 +1105,7 @@ Function Get-ADSIForest
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose "[PROCESS] Credential or FirstName specified"
+                Write-Verbose -Message "[PROCESS] Credential or FirstName specified"
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
@@ -1143,7 +1143,7 @@ Function Get-ADSIForestMode
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
@@ -1181,7 +1181,7 @@ Function Get-ADSIForestDomain
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
@@ -1219,7 +1219,7 @@ Function Get-ADSIForestTrustRelationship
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
@@ -1363,7 +1363,7 @@ Function Get-ADSIGlobalCatalogs
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
@@ -1453,7 +1453,7 @@ function Get-ADSISchema
         }
         IF ($PSBoundParameters['FindClassName'])
         {
-            $schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
+            $schema.FindAllClasses() | Where-Object -FilterScript { $_.name -match $FindClassName } | Select-Object -Property Name
         }
 
         ELSE
@@ -2110,13 +2110,13 @@ function Remove-ADSIGroupMember
 
     IF (Test-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
     {
-        Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
+        Write-Verbose -Message "Removing $UserSamAccountName from $GroupSamAccountName"
         $GroupInfo.Remove($UserInfo.ADsPath)
     }
     ELSE
     {
 
-        Write-Verbose "$UserSamAccountName is not member of $GroupSamAccountName"
+        Write-Verbose -Message "$UserSamAccountName is not member of $GroupSamAccountName"
     }
 }
 
@@ -2297,7 +2297,7 @@ function Get-ADSITokenGroup
                 FOREACH ($Token in $($AccountGetDirectory.Get("tokenGroups")))
                 {
                     # Create SecurityIdentifier to translate into group name
-                    $Principal = New-Object System.Security.Principal.SecurityIdentifier($token, 0)
+                    $Principal = New-Object -TypeName System.Security.Principal.SecurityIdentifier($token, 0)
 
                     # Prepare Output
                     $Properties = @{
@@ -2366,7 +2366,7 @@ function Test-ADSICredential
     {
         TRY
         {
-            $DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
+            $DomainPrincipalContext = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext('domain')
 
             Write-Verbose -Message "[Test-ADCredential][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
             $DomainPrincipalContext.ValidateCredentials($AccountName, $Password)
@@ -2823,7 +2823,7 @@ function Get-ADSIReplicaDomainInfo
         $dc.domain
         if ($Recurse.IsPresent)
         {
-            $dc.domain.children | ForEach-Object { $_ }
+            $dc.domain.children | Foreach-Object -Process { $_ }
         }
 
     }
@@ -3231,7 +3231,7 @@ function Get-ADSIReplicaInfo
         }
         $domainDN = ""
         $obj = $domain.Replace(',', '\,').Split('/')
-        $obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_ }
+        $obj[0].split(".") | Foreach-Object -Process { $domainDN += ",DC=" + $_ }
         $domainDN = $domainDN.Substring(1)
 
         if ($Cursors.IsPresent)
@@ -3246,7 +3246,7 @@ function Get-ADSIReplicaInfo
                 {
                     Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
 
-                    $dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
+                    $dc.GetReplicationCursors($partition) | Foreach-Object -Process { $_ }
 
                 }
             }
@@ -3345,7 +3345,7 @@ function Get-ADSIReplicaInfo
                     {
                         if ($FormatTable.IsPresent)
                         {
-                            $neighbor | Select-Object SourceServer, LastSyncMessage, LastAttemptedSync, LastSuccessfulSync, PartitionName | Format-Table -AutoSize
+                            $neighbor | Select-Object -Property SourceServer, LastSyncMessage, LastAttemptedSync, LastSuccessfulSync, PartitionName | Format-Table -AutoSize
                         }
                         else
                         {
@@ -3684,7 +3684,7 @@ function Get-ADSISitesInfo
     if ($dc)
     {
         Write-Verbose -Message "Information about forest $($dc.forest.name)"
-        $dc.forest.sites | ForEach-Object { $_ }
+        $dc.forest.sites | Foreach-Object -Process { $_ }
     }
 }
 
@@ -3888,7 +3888,7 @@ function Get-ADSISiteConnection
     )
     $DomainName = $Domain.Name
     $ADEntry = [system.directoryservices.directoryentry]([ADSI]"LDAP://$DomainName")
-    $source = New-Object System.DirectoryServices.DirectorySearcher
+    $source = New-Object -TypeName System.DirectoryServices.DirectorySearcher
     $source.SearchRoot = "LDAP://CN=$Site,CN=Sites,CN=Configuration,$DomainName"
     $source.SearchScope = 'Subtree'
     $source.PageSize = 100000

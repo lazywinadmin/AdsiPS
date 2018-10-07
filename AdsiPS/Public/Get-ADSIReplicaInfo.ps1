@@ -189,7 +189,7 @@
         }
         $domainDN = ""
         $obj = $domain.Replace(',', '\,').Split('/')
-        $obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_ }
+        $obj[0].split(".") | Foreach-Object -Process { $domainDN += ",DC=" + $_ }
         $domainDN = $domainDN.Substring(1)
 
         if ($Cursors.IsPresent)
@@ -204,7 +204,7 @@
                 {
                     Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
 
-                    $dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
+                    $dc.GetReplicationCursors($partition) | Foreach-Object -Process { $_ }
 
                 }
             }

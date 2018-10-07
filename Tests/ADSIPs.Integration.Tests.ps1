@@ -85,7 +85,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                     $HelpParameters.name.count -eq $ASTParameters.count | Should Be $true}
 
                 # Parameters Description
-                $HelpParameters| ForEach-Object {
+                $HelpParameters| Foreach-Object -Process {
                     It "Parameter $($_.Name) - Should contains description"{
                         $_.description | Should not BeNullOrEmpty
                     }

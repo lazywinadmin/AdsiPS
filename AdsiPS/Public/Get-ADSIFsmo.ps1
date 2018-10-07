@@ -101,7 +101,7 @@
                 PdcRoleOwner = $Domain.PdcRoleOwner
             }
 
-            New-Object -Type PSObject -property $Properties
+            New-Object -TypeName PSObject -property $Properties
 
         }
         CATCH

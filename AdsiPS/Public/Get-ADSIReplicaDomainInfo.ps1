@@ -74,7 +74,7 @@
         $dc.domain
         if ($Recurse.IsPresent)
         {
-            $dc.domain.children | ForEach-Object { $_ }
+            $dc.domain.children | Foreach-Object -Process { $_ }
         }
 
     }

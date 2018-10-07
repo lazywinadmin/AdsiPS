@@ -76,6 +76,6 @@
     if ($dc)
     {
         Write-Verbose -Message "Information about forest $($dc.forest.name)"
-        $dc.forest.sites | ForEach-Object { $_ }
+        $dc.forest.sites | Foreach-Object -Process { $_ }
     }
 }

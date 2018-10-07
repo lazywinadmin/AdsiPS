@@ -68,7 +68,7 @@
         {
             if ($pscmdlet.ShouldProcess("$Identity", "Change Account Password"))
             {
-                (Get-ADSIUser -Identity $Identity @ContextSplatting).SetPassword((New-Object PSCredential "user",$AccountPassword).GetNetworkCredential().Password)
+                (Get-ADSIUser -Identity $Identity @ContextSplatting).SetPassword((New-Object -TypeName PSCredential -ArgumentList "user",$AccountPassword).GetNetworkCredential().Password)
             }
         }
         CATCH

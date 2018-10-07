@@ -91,7 +91,7 @@
                 FOREACH ($Token in $($AccountGetDirectory.Get("tokenGroups")))
                 {
                     # Create SecurityIdentifier to translate into group name
-                    $Principal = New-Object System.Security.Principal.SecurityIdentifier($token, 0)
+                    $Principal = New-Object -TypeName System.Security.Principal.SecurityIdentifier($token, 0)
 
                     # Prepare Output
                     $Properties = @{

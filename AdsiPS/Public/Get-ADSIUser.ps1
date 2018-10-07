@@ -75,7 +75,7 @@ function Get-ADSIUser
 
 .EXAMPLE
     $user = Get-ADSIUser -Identity 'testaccount'
-    $user.GetUnderlyingObject()| select-object *
+    $user.GetUnderlyingObject()| Select-Object -Property *
 
     Help you find all the extra properties and methods available
 
@@ -128,7 +128,7 @@ function Get-ADSIUser
     {
         IF ($Identity)
         {
-            Write-Verbose "Identity"
+            Write-Verbose -Message "Identity"
             [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
 
         }
@@ -147,26 +147,26 @@ function Get-ADSIUser
             $DirectorySearcher.Filter = "(&(objectCategory=user)$LDAPFilter)"
             #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
             else{
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
                 $DirectorySearcher.PageSize = 10000
             }
 
-            $DirectorySearcher.FindAll() | ForEach-Object {
+            $DirectorySearcher.FindAll() | Foreach-Object -Process {
                 [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $_.Properties["distinguishedname"])
             }# Return UserPrincipale object
         }
         ELSE
         {
-            Write-Verbose "Searcher"
+            Write-Verbose -Message "Searcher"
 
             $UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $Context
-            $Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+            $Searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
             $Searcher.QueryFilter = $UserPrincipal
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-warning "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
+            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
             else {
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept

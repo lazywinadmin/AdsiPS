@@ -68,7 +68,7 @@
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose '[PROCESS] Credential or ForestName specified'
+                Write-Verbose -Message '[PROCESS] Credential or ForestName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
@@ -94,7 +94,7 @@
         }
         IF ($PSBoundParameters['FindClassName'])
         {
-            $schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
+            $schema.FindAllClasses() | Where-Object -FilterScript { $_.name -match $FindClassName } | Select-Object -Property Name
         }
 
         ELSE

@@ -45,7 +45,7 @@ function Get-ADSIComputer
 
 .EXAMPLE
     $Comp = Get-ADSIComputer -Identity 'SERVER01'
-    $Comp.GetUnderlyingObject()| select-object *
+    $Comp.GetUnderlyingObject()| Select-Object -Property *
 
     Help you find all the extra properties
 
@@ -91,7 +91,7 @@ function Get-ADSIComputer
             }
             ELSE{
                 $ComputerPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
-                $Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+                $Searcher = new-object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
                 $Searcher.QueryFilter = $ComputerPrincipal
 
                 $Searcher.FindAll()

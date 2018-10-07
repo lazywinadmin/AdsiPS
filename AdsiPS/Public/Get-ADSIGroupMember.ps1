@@ -61,7 +61,7 @@ function Get-ADSIGroupMember
 
 .EXAMPLE
     $Comp = Get-ADSIGroupMember -Identity 'SERVER01'
-    $Comp.GetUnderlyingObject()| select-object *
+    $Comp.GetUnderlyingObject()| Select-Object -Property *
 
     Help you find all the extra properties
 

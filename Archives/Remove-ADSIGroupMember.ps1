@@ -22,12 +22,12 @@
 
     IF (Test-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
     {
-        Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
+        Write-Verbose -Message "Removing $UserSamAccountName from $GroupSamAccountName"
         $GroupInfo.Remove($UserInfo.ADsPath)
     }
     ELSE
     {
 
-        Write-Verbose "$UserSamAccountName is not member of $GroupSamAccountName"
+        Write-Verbose -Message "$UserSamAccountName is not member of $GroupSamAccountName"
     }
 }

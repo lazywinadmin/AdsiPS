@@ -59,7 +59,7 @@
         {
             IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
-                Write-Verbose '[PROCESS] Credential or FirstName specified'
+                Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
                 IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
                 IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }

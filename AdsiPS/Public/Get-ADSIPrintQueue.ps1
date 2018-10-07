@@ -168,7 +168,7 @@
             IF (-not$PSBoundParameters['NoResultLimit'])
             {
                 $Search.SizeLimit = $SizeLimit
-                Write-warning "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
+                Write-Warning -Message "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
             }
             ELSE
             {

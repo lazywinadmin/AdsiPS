@@ -57,7 +57,7 @@
     {
         TRY
         {
-            Write-Verbose '[Get-ADSIForestTrustRelationship][PROCESS] Credential or FirstName specified'
+            Write-Verbose -Message '[Get-ADSIForestTrustRelationship][PROCESS] Credential or FirstName specified'
             (Get-ADSIForest @PSBoundParameters).GetAllTrustRelationships()
         }
         CATCH

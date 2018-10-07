@@ -10,7 +10,7 @@
     )
     $DomainName = $Domain.Name
     $ADEntry = [system.directoryservices.directoryentry]([ADSI]"LDAP://$DomainName")
-    $source = New-Object System.DirectoryServices.DirectorySearcher
+    $source = New-Object -TypeName System.DirectoryServices.DirectorySearcher
     $source.SearchRoot = "LDAP://CN=$Site,CN=Sites,CN=Configuration,$DomainName"
     $source.SearchScope = 'Subtree'
     $source.PageSize = 100000

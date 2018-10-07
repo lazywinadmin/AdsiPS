@@ -73,7 +73,7 @@ function Test-ADSICredential
         TRY
         {
             Write-Verbose -Message "[Test-ADSICredential][PROCESS] Validating $AccountName Credential against $($Context.ConnectedServer)"
-            $Context.ValidateCredentials($AccountName, (New-Object PSCredential "user",$AccountPassword).GetNetworkCredential().Password)
+            $Context.ValidateCredentials($AccountName, (New-Object -TypeName PSCredential -ArgumentList "user",$AccountPassword).GetNetworkCredential().Password)
         }
         CATCH
         {

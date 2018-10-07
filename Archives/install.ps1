@@ -11,7 +11,7 @@ if ('' -eq $InstallDirectory)
     $personalModules = Join-Path -Path ([Environment]::GetFolderPath('MyDocuments')) -ChildPath WindowsPowerShell\Modules
 
     if (($env:PSModulePath -split ';') -notcontains $personalModules) {
-        Write-Warning "$personalModules is not in `$env:PSModulePath"
+        Write-Warning -Message "$personalModules is not in `$env:PSModulePath"
     }
 
     if (-not(Test-Path $personalModules)) {
@@ -27,6 +27,6 @@ if (-not(Test-Path $InstallDirectory)) {
 
 $WebClient = New-Object -typename System.Net.WebClient
 $fileList |
-    ForEach-Object {
+    Foreach-Object -Process {
         $WebClient.DownloadFile("https://raw.github.com/LazyWinAdmin/$ModuleName/master/$_","$installDirectory\$_")
     }

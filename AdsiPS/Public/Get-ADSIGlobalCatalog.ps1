@@ -46,7 +46,7 @@
     {
         TRY
         {
-            Write-Verbose '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
+            Write-Verbose -Message '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
             (Get-ADSIForest @PSBoundParameters).GlobalCatalogs
         }
         CATCH

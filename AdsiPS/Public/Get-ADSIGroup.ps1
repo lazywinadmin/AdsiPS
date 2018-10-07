@@ -75,7 +75,7 @@ function Get-ADSIGroup
 
 .EXAMPLE
     $Comp = Get-ADSIGroup -Identity 'Finance'
-    $Comp.GetUnderlyingObject()| select-object *
+    $Comp.GetUnderlyingObject()| Select-Object -Property *
 
     Help you find all the extra properties of the Finance group object
 
@@ -161,12 +161,12 @@ function Get-ADSIGroup
         {
             IF ($Identity)
             {
-                Write-Verbose "Identity"
+                Write-Verbose -Message "Identity"
                 [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
             }
             ELSEIF ($PSBoundParameters['LDAPFilter'])
             {
-                Write-Verbose "LDAPFilter"
+                Write-Verbose -Message "LDAPFilter"
 
                 # Directory Entry object
                 $DirectoryEntryParams = $ContextSplatting
@@ -179,17 +179,17 @@ function Get-ADSIGroup
                 $DirectorySearcher.Filter = "(&(objectCategory=group)$LDAPFilter)"
 
 
-                $DirectorySearcher.FindAll() | ForEach-Object {
+                $DirectorySearcher.FindAll() | Foreach-Object -Process {
                     [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
                 }
             }
             ELSE
             {
-                Write-Verbose "Other Filters"
+                Write-Verbose -Message "Other Filters"
 
                 $GroupPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.GroupPrincipal -ArgumentList $Context
                 #$GroupPrincipal.Name = $Identity
-                $searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+                $searcher = new-object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
                 $searcher.QueryFilter = $GroupPrincipal
                 if ($PSBoundParameters['IsSecurityGroup']) { $searcher.QueryFilter.IsSecurityGroup = $IsSecurityGroup}
                 if ($PSBoundParameters['GroupScope']) { $searcher.QueryFilter.GroupScope = $GroupScope }

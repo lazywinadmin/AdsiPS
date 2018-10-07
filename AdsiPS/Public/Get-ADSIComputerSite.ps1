@@ -85,7 +85,7 @@ public static class NetApi32 {
                     SiteName = [NetApi32]::DsGetSiteName($Computer)
                 }
 
-                New-Object -Type PSObject -property $Properties
+                New-Object -TypeName PSObject -property $Properties
             }
             CATCH
             {
