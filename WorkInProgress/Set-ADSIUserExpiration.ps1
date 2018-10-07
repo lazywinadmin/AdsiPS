@@ -38,7 +38,7 @@ PARAM(
             (Get-ADSIUser -Identity $Identity @ContextSplatting).Save($Context)
         }
         CATCH{
-            Write-Error $Error[0]
+            $pscmdlet.ThrowTerminatingError($_)
         }
     }
 }
