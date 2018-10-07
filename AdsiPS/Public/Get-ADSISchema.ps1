@@ -32,7 +32,7 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
-	github.com/lazywinadmin/AdsiPS 
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding(DefaultParameterSetName = 'Default')]
 	param
@@ -41,19 +41,19 @@
 				   Mandatory = $true)]
 		[ValidateSet("mandatory", "optional")]
 		[String]$PropertyType,
-		
+
 		[Parameter(ParameterSetName = 'Default',
 				   Mandatory = $true)]
 		[String]$ClassName,
-		
+
 		[Parameter(ParameterSetName = 'AllClasses',
 				   Mandatory = $true)]
 		[Switch]$AllClasses,
-		
+
 		[Parameter(ParameterSetName = 'FindClasses',
 				   Mandatory = $true)]
 		[String]$FindClassName,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
@@ -61,7 +61,7 @@
 
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+
 	BEGIN
 	{
 		TRY
@@ -72,20 +72,20 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
-				
+
 				$SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
 				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
 			}
 			ELSE
 			{
 				$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
-			}			
+			}
 		}
-		CATCH { 
+		CATCH {
 			$pscmdlet.ThrowTerminatingError($_)
 		 }
 	}
-	
+
 	PROCESS
 	{
 		IF ($PSBoundParameters['AllClasses'])
@@ -96,10 +96,10 @@
 		{
 			$schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
 		}
-		
+
 		ELSE
 		{
-			
+
 			Switch ($PropertyType)
 			{
 				"mandatory"
@@ -112,6 +112,6 @@
 				}
 			}#Switch
 		}#ELSE
-		
+
 	}#PROCESS
 }

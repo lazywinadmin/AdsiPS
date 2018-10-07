@@ -20,7 +20,7 @@ function Set-ADSIUserExpirationDate
 .PARAMETER DomainName
 	Specifies the DomainName to query
 	By default it will take the current domain.
-	
+
 .EXAMPLE
 	Set-ADSIUserExpirationDate -Identity 'testaccount' -AccountExpirationDate $((Get-Date).AddDays(10))
 
@@ -51,11 +51,11 @@ function Set-ADSIUserExpirationDate
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[String]$DomainName)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }

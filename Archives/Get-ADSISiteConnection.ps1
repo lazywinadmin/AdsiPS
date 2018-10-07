@@ -4,7 +4,7 @@
 	param (
 		[parameter(mandatory = $true, position = 0, ValueFromPipeline = $true)]
 		$Domain,
-		
+
 		[parameter(mandatory = $true)]
 		$Site
 	)

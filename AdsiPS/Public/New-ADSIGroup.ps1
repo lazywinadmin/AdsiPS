@@ -47,7 +47,7 @@
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param
 	(
@@ -73,24 +73,24 @@
 
 		[String]$DomainName
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 	}
 	PROCESS
 	{
 		TRY
 		{
-			
+
 			if ($PSCmdlet.ShouldProcess($Name, "Create Group"))
 			{
 				$newGroup = [System.DirectoryServices.AccountManagement.GroupPrincipal]::new($Context, $Name)
@@ -98,15 +98,15 @@
 				$newGroup.GroupScope = $GroupScope
 				$newGroup.IsSecurityGroup = $IsSecurityGroup
 				$newGroup.DisplayName
-				#$newGroup.DistinguishedName = 
+				#$newGroup.DistinguishedName =
 				#$newGroup.Members
 				$newGroup.SamAccountName = $Name
-				
+
 				IF ($PSBoundParameters['UserPrincipalName']) { $newGroup.UserPrincipalName = $UserPrincipalName }
-				
+
 				# Push to ActiveDirectory
 				$newGroup.Save($Context)
-				
+
 				IF ($PSBoundParameters['Passthru'])
 				{
 					$ContextSplatting.Remove('ContextType')
@@ -118,10 +118,10 @@
 		{
 			$pscmdlet.ThrowTerminatingError($_)
 		}
-		
+
 	}
 	END
 	{
-		
+
 	}
 }

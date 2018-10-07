@@ -5,28 +5,28 @@
 	This function will add a AD object inside a AD Group.
 .DESCRIPTION
     This function will add a AD object inside a AD Group.
-	
+
 .PARAMETER GroupSamAccountName
 	Specify the Group SamAccountName of the group
-	
+
 .PARAMETER GroupName
 	Specify the Name of the group
-	
+
 .PARAMETER GroupDistinguishedName
 	Specify the DistinguishedName path of the group
-	
+
 .PARAMETER MemberSamAccountName
     Specify the member SamAccountName to add
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDN
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
     Add-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName fxcat -Credential (Get-Credential -Credential SuperAdmin)
 
@@ -40,23 +40,23 @@
 	PARAM (
 		[Parameter(Mandatory = $true, ParameterSetName = "Name")]
 		[String]$GroupName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "GroupSamAccountName")]
 		[String]$GroupSamAccountName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "DistinguishedName")]
 		[String]$GroupDistinguishedName,
-		
+
 		[Parameter(Mandatory = $true)]
 		[string]$MemberSamAccountName,
-		
+
 		[Alias("Domain")]
 		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -69,20 +69,20 @@
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDN
-			
+
 			IF ($PSBoundParameters['DomainDN'])
 			{
 				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" }#IF
 				Write-Verbose -Message "Different Domain specified: $DomainDN"
 				$Search.SearchRoot = $DomainDN
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $DomainDN
 			}
-			
+
 			# Resolve the Object
 			Write-Verbose -Message "[PROCESS] Looking for Object: $MemberSamAccountName"
 			$ObjectSearch = $Search
@@ -90,7 +90,7 @@
 			$ObjectSearchADSPath = $ObjectSearch.FindOne().Properties.adspath -as [string]
 			$ObjectSearchADSPathADSI = $ObjectSearchADSPath -as [ADSI]
 			$objectResult = $ObjectSearch.FindOne()
-			
+
 			If ($PSBoundParameters['GroupName'])
 			{
 				Write-Verbose -Message "[PROCESS] Parameter GROUPNAME: $GroupName"
@@ -106,21 +106,21 @@
 				Write-Verbose -Message "[PROCESS] Parameter GROUP DISTINGUISHEDNAME: $GroupDistinguishedName"
 				$Search.filter = "(&(objectCategory=group)(distinguishedname=$GroupDistinguishedName))"
 			}
-			
+
 			$Group = $Search.FindOne()
 			$Member = $objectResult
-			
+
 			# Verify Member and Object exist
 			IF (($Group.Count -gt 0) -and $Member.count -gt 0)
 			{
-				
+
 				# Get the SamAccountName and ADSPATH of the Group
 				$GroupAccount = $Group.Properties.samaccountname -as [string]
 				$GroupAdspath = $($Group.Properties.adspath -as [string]) -as [ADSI]
-				
+
 				# Member
 				$MemberAdsPath = [ADSI]"$($member.Properties.adspath)"
-				
+
 				# Check if the Object is member of the group
 				$IsMember = $GroupAdspath.IsMember($MemberAdsPath.AdsPath)
 				IF (-not ($IsMember))

@@ -22,7 +22,7 @@
 	Get-ADSIDomainTrustRelationship -DomainName FX.lab
 
 	Retrieve the Trust relationship(s) of domain fx.lab
-	
+
 .EXAMPLE
 	Get-ADSIDomainTrustRelationship -DomainName FX.lab -Credential (Get-Credential)
 
@@ -40,7 +40,7 @@
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.trustrelationshipinformation(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.TrustRelationshipInformation')]
 	param
@@ -49,10 +49,10 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -63,15 +63,15 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).GetAllTrustRelationships()
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).GetAllTrustRelationships()
 			}
-			
+
 		}
 		CATCH
 		{

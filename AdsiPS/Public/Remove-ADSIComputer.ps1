@@ -78,11 +78,11 @@ function Remove-ADSIComputer
 
 		[Switch]$Recursive
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
@@ -102,7 +102,7 @@ function Remove-ADSIComputer
 					$Account.delete()
 				}
 			}
-			
+
 			# Recursive (if the computer is the parent of one leaf or more)
 			if ($PSBoundParameters['Recursive'])
 			{
@@ -112,7 +112,7 @@ function Remove-ADSIComputer
 					$Account.GetUnderlyingObject().deletetree()
 				}
 			}
-			
+
 		}
 		CATCH
 		{

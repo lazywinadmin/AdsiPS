@@ -6,7 +6,7 @@ function Get-ADSIComputerSite
 
 .DESCRIPTION
 	Function to retrieve the AD Site of a Computer
-	
+
 	This function does not rely on the .NET Framework to retrieve the information
 	http://www.pinvoke.net/default.aspx/netapi32.dsgetsitename
 
@@ -31,12 +31,12 @@ function Get-ADSIComputerSite
 	lazywinadmin.com
 	@lazywinadm
 	github.com/lazywinadmin/ADSIPS
-	
+
 	Thanks to the Reddit folks for their help! :-)
 	https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
 
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.Management.Automation.PSCustomObject')]
 	param
@@ -44,7 +44,7 @@ function Get-ADSIComputerSite
         [parameter()]
 		[String[]]$ComputerName=$env:computername
 	)
-	
+
 	BEGIN
 	{
 		$code = @"
@@ -71,7 +71,7 @@ public static class NetApi32 {
     }
 }
 "@
-		
+
 		Add-Type -TypeDefinition $code
 	}
 	PROCESS

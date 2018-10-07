@@ -9,25 +9,25 @@
 
 .PARAMETER Name
 	Specify the Name of the OU
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the OU
-	
+
 .PARAMETER All
 	Will show all the OU in the domain
-	
+
 .PARAMETER GroupPolicyInheritanceBlocked
 	Will show only the OU that have Group Policy Inheritance Blocked enabled.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
 	Get-ADSIOrganizationalUnit
 
@@ -53,24 +53,24 @@
 	PARAM (
 		[Parameter(ParameterSetName = "Name")]
 		[String]$Name,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ParameterSetName = "All")]
 		[String]$All,
-		
+
 		[Switch]$GroupPolicyInheritanceBlocked,
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -83,8 +83,8 @@
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-			
-			
+
+
 			If ($Name)
 			{
 				$Search.filter = "(&(objectCategory=organizationalunit)(name=$Name))"
@@ -124,7 +124,7 @@
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($ou in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -143,7 +143,7 @@
 					"dscorepropagationdata" = $ou.properties.dscorepropagationdata
 					"instancetype" = $ou.properties.instancetype -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}

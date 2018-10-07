@@ -21,7 +21,7 @@
 .PARAMETER DomainName
 	Specifies the DomainName to query
 	By default it will take the current domain.
-	
+
 .EXAMPLE
 	Set-ADSIUserPassword -Identity 'testaccount' -AccountPassword (read-host -AsSecureString -Prompt "AccountPassword")
 
@@ -52,11 +52,11 @@
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[String]$DomainName)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }

@@ -33,7 +33,7 @@
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysite(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param
 	(
@@ -50,17 +50,17 @@
 
 		[String]$ForestName
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Forest" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['ForestName']) { $ContextSplatting.ForestName = $ForestName }
-		
+
 		$Context = New-ADSIDirectoryContext @ContextSplatting
 	}
 	PROCESS
@@ -72,7 +72,7 @@
 				$Site = New-Object -TypeName System.DirectoryServices.ActiveDirectory.ActiveDirectorySite -ArgumentList $Context, $SiteName
 				$Site.Location = $Location
 				$Site.Save()
-				
+
 				#$site.GetDirectoryEntry()
 			}
 		}
@@ -83,6 +83,6 @@
 	}
 	END
 	{
-		
+
 	}
 }

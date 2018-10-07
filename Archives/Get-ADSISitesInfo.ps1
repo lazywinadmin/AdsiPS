@@ -1,15 +1,15 @@
 ﻿function Get-ADSISitesInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSISitesInfo returns information about the connected DC's Sites.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSISitesInfo returns information about the Sites as seen by the connected DC.
       It returns information such as subnets, sites, sitelinks, ISTG, BH servers etc.
 
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -31,7 +31,7 @@
         SiteLinks                      : {DEFAULTIPSITELINK}
         InterSiteTopologyGenerator     : DC1.ad.local
         Options                        : None
-        Location                       : 
+        Location                       :
         BridgeheadServers              : {}
         PreferredSmtpBridgeheadServers : {}
         PreferredRpcBridgeheadServers  : {}
@@ -40,21 +40,21 @@
       Connects to remote domain controller dc1.ad.local using current credentials retrieves site information.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSISitesInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]
 		$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -66,13 +66,13 @@
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		Write-Verbose -Message "Information about forest $($dc.forest.name)"

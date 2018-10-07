@@ -1,13 +1,13 @@
 ﻿function Get-ADSIReplicaGCInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaGCInfo finds out if a given DC holds the GC role.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIReplicaGCInfo finds out if a given DC holds the Global Catalog role.
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -24,23 +24,23 @@
       Connects to remote domain controller dc1.ad.local using current credentials retrieves GC info.
 
 
-.NOTES  
+.NOTES
     Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
-	
-	github.com/lazywinadmin/AdsiPS 
+
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -52,13 +52,13 @@
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$IsGC = $dc.IsGlobalCatalog()

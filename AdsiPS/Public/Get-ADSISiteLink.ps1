@@ -38,9 +38,9 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
-	github.com/lazywinadmin/AdsiPS 
+	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySiteLink')]
 	PARAM
@@ -49,13 +49,13 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
-		
+
 		[Parameter(ValueFromPipelineByPropertyName=$true)]
 		[String]$Name
 	)
-	
+
 	PROCESS
 	{
 		TRY

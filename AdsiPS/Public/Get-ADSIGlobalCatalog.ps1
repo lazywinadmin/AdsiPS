@@ -15,12 +15,12 @@
 
 .EXAMPLE
 	Get-ADSIGlobalCatalog
-	
+
 	Retrieve the Global Catalog in the current Forest
 
 .EXAMPLE
 	Get-ADSIGlobalCatalog -forestname 'lazywinadmin.com'
-	
+
 	Retrieve the Global Catalog in the forest 'lazywinadmin.com'
 
 .NOTES
@@ -29,7 +29,7 @@
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.GlobalCatalog')]
 	param
@@ -38,10 +38,10 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+
 	PROCESS
 	{
 		TRY

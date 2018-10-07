@@ -47,7 +47,7 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -60,15 +60,15 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				(Get-ADSIForest @splatting).ForestMode
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIForest).ForestMode
 			}
-			
+
 		}
 		CATCH
 		{

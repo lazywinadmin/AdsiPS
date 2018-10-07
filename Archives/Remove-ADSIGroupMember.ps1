@@ -7,7 +7,7 @@
     Remove-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will remove the domain user fxcat from the group TestGroup
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -15,11 +15,11 @@
 #>
 	[CmdletBinding()]
 	PARAM ($GroupSamAccountName,
-		
+
 		$UserSamAccountName)
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
 	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
-	
+
 	IF (Test-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
 	{
 		Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
@@ -27,7 +27,7 @@
 	}
 	ELSE
 	{
-		
+
 		Write-Verbose "$UserSamAccountName is not member of $GroupSamAccountName"
 	}
 }

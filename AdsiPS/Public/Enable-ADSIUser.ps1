@@ -17,7 +17,7 @@ function Enable-ADSIUser
 		SamAccountName
 		Sid
 		UserPrincipalName
-	
+
 	Those properties come from the following enumeration:
 		System.DirectoryServices.AccountManagement.IdentityType
 
@@ -68,16 +68,16 @@ function Enable-ADSIUser
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[String]$DomainName)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 	}
 	PROCESS
 	{

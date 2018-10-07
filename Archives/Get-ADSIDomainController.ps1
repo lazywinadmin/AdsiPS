@@ -3,17 +3,17 @@
 <#
 .SYNOPSIS
 	This function will query Active Directory for all Domain Controllers.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -24,11 +24,11 @@
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -42,7 +42,7 @@
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			$Search.Filter = "(&(objectClass=computer)(userAccountControl:1.2.840.113556.1.4.803:=8192))"
-			
+
 			IF ($DomainDistinguishedName)
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
@@ -59,15 +59,15 @@
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
-			
-			
+
+
+
 			foreach ($DC in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$DC.properties
-				
+
                 <#
                 accountexpires
 adspath
@@ -102,11 +102,11 @@ usnchanged
 usncreated
 whenchanged
 whencreated
-                
+
                 #>
-				
-				
-				
+
+
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}

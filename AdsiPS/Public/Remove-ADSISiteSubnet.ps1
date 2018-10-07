@@ -27,7 +27,7 @@
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param
 	(
@@ -41,14 +41,14 @@
 
 		[String]$ForestName
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['ForestName']) { $ContextSplatting.ForestName = $ForestName }
 	}

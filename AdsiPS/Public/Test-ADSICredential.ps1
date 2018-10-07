@@ -37,7 +37,7 @@ function Test-ADSICredential
 	Francois-Xavier.Cat
 	LazyWinAdmin.com
 	@lazywinadm
-	github.com/lazywinadmin/AdsiPS 
+	github.com/lazywinadmin/AdsiPS
 #>
 	[OutputType('System.Boolean')]
 	[CmdletBinding()]
@@ -46,7 +46,7 @@ function Test-ADSICredential
 		[Parameter(Mandatory)]
 		[Alias("UserName")]
 		[string]$AccountName,
-		
+
 		[Parameter(Mandatory)]
 		[System.Security.SecureString]$AccountPassword,
 

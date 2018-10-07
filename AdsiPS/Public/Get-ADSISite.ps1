@@ -38,9 +38,9 @@
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
-	github.com/lazywinadmin/AdsiPS 
+	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySite')]
 	PARAM
@@ -49,13 +49,13 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
-		
+
         [Alias("Name")]
 		[String]$SiteName
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -64,10 +64,10 @@
 			{
 				# Remove Name from the PSBoundParameters Splatting
 				[Void]$PSBoundParameters.Remove('Name')
-				
+
 				# Create a Forest Context
 				$Context = New-ADSIDirectoryContext -ContextType Forest @PSBoundParameters
-				
+
 				# Get the site name specified
 				[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::FindByName($Context, $Name)
 			}

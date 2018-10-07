@@ -12,20 +12,20 @@
 
 .PARAMETER All
 	Default Parameter. This will list all the contact(s) in the Domain
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the OU
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .EXAMPLE
 	Get-ADSIOrganizationalUnit
 
@@ -50,24 +50,24 @@
 	PARAM (
 		[Parameter(ParameterSetName = "Name")]
 		[String]$Name,
-		
+
 		[Parameter(ParameterSetName = "SamAccountName")]
 		$SamAccountName,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ParameterSetName = "All")]
 		[String]$All,
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -80,8 +80,8 @@
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-			
-			
+
+
 			If ($Name)
 			{
 				Write-Verbose -Message "[PROCESS] Name Parameter"
@@ -118,7 +118,7 @@
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($contact in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -154,7 +154,7 @@
 					"UserAccountControl" = $contact.properties.useraccountcontrol
 					"cn" = $contact.properties.cn -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}

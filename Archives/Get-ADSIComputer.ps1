@@ -61,26 +61,26 @@
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ValueFromPipelineByPropertyName = $true,
 				   ValueFromPipeline = $true)]
 		[Alias("Computer")]
 		[String[]]$ComputerName,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain")]
 		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)#PARAM
-	
+
 	PROCESS
 	{
 		IF ($ComputerName)
@@ -96,7 +96,7 @@
 					$Searcher.Filter = "(&(objectCategory=Computer)(name=$item))"
 					$Searcher.SizeLimit = $SizeLimit
 					$Searcher.SearchRoot = $DomainDN
-					
+
 					# Specify a different domain to query
 					IF ($PSBoundParameters['DomainDN'])
 					{
@@ -104,7 +104,7 @@
 						Write-Verbose -Message "Different Domain specified: $DomainDN"
 						$Searcher.SearchRoot = $DomainDN
 					}#IF ($PSBoundParameters['DomainDN'])
-					
+
 					# Alternate Credentials
 					IF ($PSBoundParameters['Credential'])
 					{
@@ -112,7 +112,7 @@
 						$Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password) -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCred
 						$Searcher.SearchRoot = $Domain
 					}#IF ($PSBoundParameters['Credential'])
-					
+
 					# Querying the Active Directory
 					Write-Verbose -Message "Starting the ADSI Search..."
 					FOREACH ($Computer in $($Searcher.FindAll()))
@@ -127,7 +127,7 @@
 							"DistinguishedName" = $($Computer.properties.distinguishedname)
 						}#New-Object
 					}#FOREACH $Computer
-					
+
 					Write-Verbose -Message "ADSI Search completed"
 				}#TRY
 				CATCH
@@ -138,10 +138,10 @@
 					IF ($ErrProcessNewObjectOutput) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 				}#CATCH
 			}#FOREACH $item
-			
-			
+
+
 		}#IF $ComputerName
-		
+
 		ELSE
 		{
 			Write-Verbose -Message "No ComputerName specified"
@@ -152,7 +152,7 @@
 				$Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectSearcherALL
 				$Searcher.Filter = "(objectCategory=Computer)"
 				$Searcher.SizeLimit = $SizeLimit
-				
+
 				# Specify a different domain to query
 				IF ($PSBoundParameters['DomainDN'])
 				{
@@ -160,7 +160,7 @@
 					Write-Verbose -Message "Different Domain specified: $DomainDN"
 					$Searcher.SearchRoot = $DomainDN
 				}#IF ($PSBoundParameters['DomainDN'])
-				
+
 				# Alternate Credentials
 				IF ($PSBoundParameters['Credential'])
 				{
@@ -168,7 +168,7 @@
 					$DomainDN = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $Credential.UserName, $Credential.GetNetworkCredential().password -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCredALL
 					$Searcher.SearchRoot = $DomainDN
 				}#IF ($PSBoundParameters['Credential'])
-				
+
 				# Querying the Active Directory
 				Write-Verbose -Message "Starting the ADSI Search..."
 				FOREACH ($Computer in $($Searcher.FindAll()))
@@ -191,17 +191,17 @@
 						IF ($ErrProcessNewObjectOutputALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 					}
 				}#FOREACH $Computer
-				
+
 				Write-Verbose -Message "ADSI Search completed"
-				
+
 			}#TRY
-			
+
 			CATCH
 			{
 				Write-Warning -Message "Something Wrong happened"
 				IF ($ErrProcessNewObjectSearcherALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
 				IF ($ErrProcessNewObjectCredALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
-				
+
 			}#CATCH
 		}#ELSE
 	}#PROCESS

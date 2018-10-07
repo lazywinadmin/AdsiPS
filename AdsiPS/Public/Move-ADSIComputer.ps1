@@ -9,7 +9,7 @@ function Move-ADSIComputer
 
 .PARAMETER Identity
 	Specifies the Identity of the computer
-		
+
 	You can provide one of the following:
 		DistinguishedName
 		Guid
@@ -46,7 +46,7 @@ function Move-ADSIComputer
 	[CmdletBinding()]
 	param ([Parameter(Mandatory=$true)]
 		[string]$Identity,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
@@ -59,13 +59,13 @@ function Move-ADSIComputer
 	BEGIN
 	{
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
-		
+
         IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
         IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
         $Context = New-ADSIPrincipalContext @ContextSplatting
 
 	}
@@ -73,13 +73,13 @@ function Move-ADSIComputer
 	{
         TRY{
 			$Computer = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
-			
+
 			# Retrieve DirectoryEntry
 			#$Computer.GetUnderlyingObject()
-			
+
 			# Create DirectoryEntry object
 			$NewDirectoryEntry = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList "LDAP://$Destination"
-			
+
 			# Move the computer
 			$Computer.GetUnderlyingObject().psbase.moveto($NewDirectoryEntry)
 			$Computer.Save()

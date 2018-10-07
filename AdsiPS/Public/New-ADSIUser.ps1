@@ -71,7 +71,7 @@
 .LINK
 		https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param
 	(
@@ -103,22 +103,22 @@
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
 
 		[String]$DomainName,
-		
+
 		[Switch]$Passthru
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
-		
+
 	}
 	PROCESS
 	{
@@ -128,14 +128,14 @@
 			{
 				Write-Verbose -message "Build the user object"
 				$User = New-Object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $context
-				
+
 				Write-Verbose -message "set the properties"
 				$User.SamAccountName = $SamAccountName
 				$User.Enabled = $Enabled
 				$user.PasswordNeverExpires = $PasswordNeverExpires
 				$user.UserCannotChangePassword = $UserCannotChangePassword
 				$User.PasswordNotRequired = $PasswordNotRequired
-				
+
 				IF ($PSBoundParameters['Name']) { $User.Name = $Name }
 				IF ($PSBoundParameters['DisplayName']) { $User.DisplayName = $DisplayName }
 				IF ($PSBoundParameters['GivenName']) { $User.GivenName = $GivenName }
@@ -148,7 +148,7 @@
 				IF ($PSBoundParameters['MiddleName']) { $user.MiddleName = $MiddleName }
 				IF ($PSBoundParameters['VoiceTelephoneNumber']) { $user.VoiceTelephoneNumber }
 				IF ($PSBoundParameters['AccountPassword']){$User.SetPassword((New-Object PSCredential "user",$AccountPassword).GetNetworkCredential().Password)}
-				
+
 				Write-Verbose -message "Create the Account in Active Directory"
 				$User.Save($Context)
 			}

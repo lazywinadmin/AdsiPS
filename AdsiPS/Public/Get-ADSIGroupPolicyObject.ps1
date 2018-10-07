@@ -6,13 +6,13 @@ function Get-ADSIGroupPolicyObject
 
 .DESCRIPTION
 	This function will query Active Directory Group Policy Objects
-	
+
 .PARAMETER Credential
     Specifies alternative Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query.
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
@@ -20,7 +20,7 @@ function Get-ADSIGroupPolicyObject
 .EXAMPLE
 	Get-ADSIGroupPolicyObject
 
-	Retrieve all the group policy in the current domain	
+	Retrieve all the group policy in the current domain
 
 .NOTES
 	github.com/lazywinadmin/AdsiPS
@@ -32,12 +32,12 @@ function Get-ADSIGroupPolicyObject
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -55,7 +55,7 @@ function Get-ADSIGroupPolicyObject
 			$Search.SizeLimit = $SizeLimit
 			Write-Verbose -message "[$ScriptName] Set Filter '(objectCategory=groupPolicyContainer)'"
 			$Search.Filter = "(objectCategory=groupPolicyContainer)"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				Write-Verbose -message "[$ScriptName] DomainDistinguishedName specified = '$DomainDistinguishedName'"
@@ -109,7 +109,7 @@ function Get-ADSIGroupPolicyObject
 
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
-				
+
 			}
 		}#TRY
 		CATCH

@@ -17,7 +17,7 @@
 		SamAccountName
 		Sid
 		UserPrincipalName
-	
+
 	Those properties come from the following enumeration:
 		System.DirectoryServices.AccountManagement.IdentityType
 
@@ -56,15 +56,15 @@ PARAM(
     BEGIN
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
         # Create Context splatting
 		$ContextSplatting = @{
 			Contexttype = "Domain"
 		}
-		
+
 		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
-        
+
     }
     PROCESS
     {

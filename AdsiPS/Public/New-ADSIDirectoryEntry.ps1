@@ -75,7 +75,7 @@
 				$Path = "LDAP://$Path"
 			}
 		}
-		
+
 		#Building Argument
 		If ($PSBoundParameters['Credential'])
 		{

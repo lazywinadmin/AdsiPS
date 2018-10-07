@@ -14,7 +14,7 @@ Function Search-ADSIAccount
     Specifies the Domain Name where the function should look
 
 .PARAMETER DomainDistinguishedName
-    Specifies the DistinguishedName of the Domain to query   
+    Specifies the DistinguishedName of the Domain to query
 
 .PARAMETER SizeLimit
     Specify the number of item(s) to output (1 to 1000)
@@ -23,7 +23,7 @@ Function Search-ADSIAccount
 .PARAMETER NoResultLimit
     Remove the SizeLimit of 1000
     Warning : can take time! it depends on the number of objects in your domain
-    NoResultLimit parameter override SizeLimit parameter 
+    NoResultLimit parameter override SizeLimit parameter
 
 .PARAMETER Users
     Users accounts only
@@ -63,7 +63,7 @@ Function Search-ADSIAccount
 
 .PARAMETER AccountNeverExpire
     Accounts where the password never expire
-    
+
 .EXAMPLE
     Search-ADSIAccount -Users -AccountNeverLogged
 
@@ -111,25 +111,25 @@ Function Search-ADSIAccount
     Search-ADSIAccount -Users -AccountNeverExpire
 
     Get all not disabled user accounts that never expire
-    
+
 
 .EXAMPLE
     Search-ADSIAccount -Users -AccountDisabled -SizeLimit 10
-    
+
     Get only 10 user accounts disabled
-    
+
     Default AD limit :1000
 
 .EXAMPLE
     Search-ADSIAccount -Users -AccountDisabled -NoResultLimit
-    
+
     Remove the default AD limit of 1000 objects returned, in example the search is about disabled user accounts
-    
+
 .EXAMPLE
     Search-ADSIAccount -Users -AccountDisabled -Credential (Get-Credential)
-    
+
     Use a different credential to perform the search, in example the search is about disabled user accounts
-    
+
 .EXAMPLE
     Search-ADSIAccount -Users -AccountDisabled -DomainName "CONTOSO.local"
 
@@ -142,11 +142,11 @@ Function Search-ADSIAccount
 
 .NOTES
     Christophe Kumor
-    https://christophekumor.github.io 
+    https://christophekumor.github.io
 
     github.com/lazywinadmin/ADSIPS
 #>
-    
+
     [CmdletBinding()]
     param
     (
@@ -157,11 +157,11 @@ Function Search-ADSIAccount
         [Parameter(ParameterSetName = 'uAccountExpired', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uPasswordNeverExpires', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountDisabled', Mandatory = $true)]
-        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)] 
+        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountNeverLoggedPasswordNeverExpire', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountNeverLogged', Mandatory = $true)]
         [switch]$Users,
-        
+
         [Parameter(ParameterSetName = 'cAccountInactive', Mandatory = $true)]
         [Parameter(ParameterSetName = 'cAccountNeverExpire', Mandatory = $true)]
         [Parameter(ParameterSetName = 'cPasswordExpired', Mandatory = $true)]
@@ -171,20 +171,20 @@ Function Search-ADSIAccount
         [Parameter(ParameterSetName = 'cAccountDisabled', Mandatory = $true)]
         [Parameter(ParameterSetName = 'cAccountNeverLogged', Mandatory = $true)]
         [switch]$Computers,
-        
+
         [Parameter(ParameterSetName = 'cAccountNeverLogged', Mandatory = $true)]
-        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)] 
+        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountNeverLoggedPasswordNeverExpire', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountNeverLogged', Mandatory = $true)]
         [switch]$AccountNeverLogged,
 
-        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)] 
+        [Parameter(ParameterSetName = 'uAccountNeverLoggedChangePassword', Mandatory = $true)]
         [switch]$ChangePassword,
 
         [Parameter(ParameterSetName = 'uAccountNeverLoggedPasswordNeverExpire', Mandatory = $true)]
         [switch]$PasswordNeverExpire,
 
-        [Parameter(ParameterSetName = 'cAccountDisabled', Mandatory = $true)]        
+        [Parameter(ParameterSetName = 'cAccountDisabled', Mandatory = $true)]
         [Parameter(ParameterSetName = 'uAccountDisabled', Mandatory = $true)]
         [switch]$AccountDisabled,
 
@@ -222,7 +222,7 @@ Function Search-ADSIAccount
         [Alias('ResultLimit', 'Limit')]
         [ValidateRange(1, 1000)]
         [int]$SizeLimit = 100,
-        
+
         [Alias('RunAs')]
         [pscredential]
         [System.Management.Automation.Credential()]
@@ -231,30 +231,30 @@ Function Search-ADSIAccount
         [Alias('Domain')]
         [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$') {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
         [String]$DomainName,
-        
+
         [Alias('DomainDN', 'SearchRoot', 'SearchBase')]
         [String]$DomainDistinguishedName = $(([adsisearcher]'').Searchroot.path),
-        
+
         [Switch]$NoResultLimit
 
-        
+
     )
 
     $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
-   
+
 
     IF ($PSBoundParameters['DomainName'])
     {
         $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace('.', ',DC='))"
-             
+
         Write-Verbose -Message "Current Domain: $DomainDistinguishedName"
 
     }
     ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
     {
-        IF ($DomainDistinguishedName -notlike 'LDAP://*') 
-        { 
-            $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
+        IF ($DomainDistinguishedName -notlike 'LDAP://*')
+        {
+            $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
         }
         Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 
@@ -270,8 +270,8 @@ Function Search-ADSIAccount
 
 
     write-verbose -Message ('ParameterSetName : {0}' -f $PSCmdlet.ParameterSetName)
-     
-    IF ($PSBoundParameters['Computers']) 
+
+    IF ($PSBoundParameters['Computers'])
     {
         $type = 'computer'
     }
@@ -279,11 +279,11 @@ Function Search-ADSIAccount
     {
         $type = 'user'
     }
-                 
-    SWITCH -wildcard ($PSCmdlet.ParameterSetName) 
+
+    SWITCH -wildcard ($PSCmdlet.ParameterSetName)
     {
-    
-        '?AccountNeverLogged' 
+
+        '?AccountNeverLogged'
         {
             #Never logged and must change password and not disabled
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogon=0)(!lastLogonTimestamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
@@ -291,7 +291,7 @@ Function Search-ADSIAccount
 
         }
 
-        '?AccountNeverLoggedChangePassword' 
+        '?AccountNeverLoggedChangePassword'
         {
             #Never logged and must change password and not disabled
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(lastLogon=0)(!lastlogontime‌​stamp=*)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
@@ -299,7 +299,7 @@ Function Search-ADSIAccount
 
         }
 
-        '?AccountNeverLoggedPasswordNeverExpire' 
+        '?AccountNeverLoggedPasswordNeverExpire'
         {
 
             #Never loged and password never expire and not disabled
@@ -307,24 +307,24 @@ Function Search-ADSIAccount
             break
 
         }
-        
-        '?AccountDisabled' 
+
+        '?AccountDisabled'
         {
             #Disabled
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
 
         }
-        
-        '?PasswordNeverExpires' 
+
+        '?PasswordNeverExpires'
         {
             #Password never expire and not disabled
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
 
         }
-        
-        '?AccountExpired' 
+
+        '?AccountExpired'
         {
             #Account expired and not disabled
             $date = (Get-Date).ToFileTime()
@@ -332,24 +332,24 @@ Function Search-ADSIAccount
             break
 
         }
-        
-        '?AccountExpiring' 
+
+        '?AccountExpiring'
         {
             #Account expiring in x days and not disabled
-            #Attention : Account set to expire on 22/05/2017, attribute is set to 23/05/2017 00:00 or 22:00 
+            #Attention : Account set to expire on 22/05/2017, attribute is set to 23/05/2017 00:00 or 22:00
 
             write-verbose -Message "Show accounts expiring between now and $Days day(s)"
 
             $Now = Get-Date
             $start = $Now.ToFileTime()
-            $end = ($Now.Adddays($Days)).ToFileTime() 
+            $end = ($Now.Adddays($Days)).ToFileTime()
 
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires>=$start)(accountExpires<=$end)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
 
         }
-        
-        '?AccountInactive' 
+
+        '?AccountInactive'
         {
             #Account Inactive and not disabled
             #Returns all accounts that have been inactive for more than X days.
@@ -357,32 +357,32 @@ Function Search-ADSIAccount
             write-verbose -Message "Show inactive accounts for more than $Days day(s)"
 
             $Now = Get-Date
-            $start = ($Now.Adddays( - $Days)).ToFileTime() 
+            $start = ($Now.Adddays( - $Days)).ToFileTime()
 
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(lastLogonTimestamp<=$start)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
 
         }
-        
-        '?PasswordExpired' 
+
+        '?PasswordExpired'
         {
-            #PASSWORD Expired and account not disabled 
+            #PASSWORD Expired and account not disabled
             #Rule : User must be connected at least one time to be in the result
 
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(pwdLastSet=0)(!(userAccountControl:1.2.840.113556.1.4.803:=65536)(!userAccountControl:1.2.840.113556.1.4.803:=2))(|(lastLogon>=1)(lastLogonTimestamp>=1)))"
             break
 
         }
-        
-        '?AccountNeverExpire' 
+
+        '?AccountNeverExpire'
         {
             #Account never expire and account not disabled
             $Search.Filter = "(&(objectCategory=$type)(objectClass=$type)(accountExpires=0)(!userAccountControl:1.2.840.113556.1.4.803:=2))"
             break
 
         }
-        
-        Default 
+
+        Default
         {
             write-verbose -Message 'unknown ParameterSetName'
             return
@@ -391,19 +391,19 @@ Function Search-ADSIAccount
     }
 
 
-    IF (-not$PSBoundParameters['NoResultLimit']) 
+    IF (-not$PSBoundParameters['NoResultLimit'])
     {
         Write-warning -Message "Result is limited to $SizeLimit entries, specify a specific number (1-1000) on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
-        
+
         $Search.SizeLimit = $SizeLimit
     }
-    ELSE 
+    ELSE
     {
         Write-Verbose -Message 'Use NoResultLimit switch, all objects will be returned. no limit'
-        
+
         $Search.PageSize = 10000
     }
- 
+
     $Search.FindAll()
 
 }

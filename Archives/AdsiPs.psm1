@@ -63,26 +63,26 @@ Function Get-ADSIComputer
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ValueFromPipelineByPropertyName = $true,
 				   ValueFromPipeline = $true)]
 		[Alias("Computer")]
 		[String[]]$ComputerName,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain")]
 		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	) #PARAM
-	
+
 	PROCESS
 	{
 		IF ($ComputerName)
@@ -98,7 +98,7 @@ Function Get-ADSIComputer
 					$Searcher.Filter = "(&(objectCategory=Computer)(name=$item))"
 					$Searcher.SizeLimit = $SizeLimit
 					$Searcher.SearchRoot = $DomainDN
-					
+
 					# Specify a different domain to query
 					IF ($PSBoundParameters['DomainDN'])
 					{
@@ -106,7 +106,7 @@ Function Get-ADSIComputer
 						Write-Verbose -Message "Different Domain specified: $DomainDN"
 						$Searcher.SearchRoot = $DomainDN
 					} #IF ($PSBoundParameters['DomainDN'])
-					
+
 					# Alternate Credentials
 					IF ($PSBoundParameters['Credential'])
 					{
@@ -114,7 +114,7 @@ Function Get-ADSIComputer
 						$Domain = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password) -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCred
 						$Searcher.SearchRoot = $Domain
 					} #IF ($PSBoundParameters['Credential'])
-					
+
 					# Querying the Active Directory
 					Write-Verbose -Message "Starting the ADSI Search..."
 					FOREACH ($Computer in $($Searcher.FindAll()))
@@ -129,7 +129,7 @@ Function Get-ADSIComputer
 							"DistinguishedName" = $($Computer.properties.distinguishedname)
 						} #New-Object
 					} #FOREACH $Computer
-					
+
 					Write-Verbose -Message "ADSI Search completed"
 				} #TRY
 				CATCH
@@ -140,10 +140,10 @@ Function Get-ADSIComputer
 					IF ($ErrProcessNewObjectOutput) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 				} #CATCH
 			} #FOREACH $item
-			
-			
+
+
 		} #IF $ComputerName
-		
+
 		ELSE
 		{
 			Write-Verbose -Message "No ComputerName specified"
@@ -154,7 +154,7 @@ Function Get-ADSIComputer
 				$Searcher = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectSearcherALL
 				$Searcher.Filter = "(objectCategory=Computer)"
 				$Searcher.SizeLimit = $SizeLimit
-				
+
 				# Specify a different domain to query
 				IF ($PSBoundParameters['DomainDN'])
 				{
@@ -162,7 +162,7 @@ Function Get-ADSIComputer
 					Write-Verbose -Message "Different Domain specified: $DomainDN"
 					$Searcher.SearchRoot = $DomainDN
 				} #IF ($PSBoundParameters['DomainDN'])
-				
+
 				# Alternate Credentials
 				IF ($PSBoundParameters['Credential'])
 				{
@@ -170,7 +170,7 @@ Function Get-ADSIComputer
 					$DomainDN = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $Credential.UserName, $Credential.GetNetworkCredential().password -ErrorAction 'Stop' -ErrorVariable ErrProcessNewObjectCredALL
 					$Searcher.SearchRoot = $DomainDN
 				} #IF ($PSBoundParameters['Credential'])
-				
+
 				# Querying the Active Directory
 				Write-Verbose -Message "Starting the ADSI Search..."
 				FOREACH ($Computer in $($Searcher.FindAll()))
@@ -193,17 +193,17 @@ Function Get-ADSIComputer
 						IF ($ErrProcessNewObjectOutputALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the output object" }
 					}
 				} #FOREACH $Computer
-				
+
 				Write-Verbose -Message "ADSI Search completed"
-				
+
 			} #TRY
-			
+
 			CATCH
 			{
 				Write-Warning -Message "Something Wrong happened"
 				IF ($ErrProcessNewObjectSearcherALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the searcher object" }
 				IF ($ErrProcessNewObjectCredALL) { Write-Warning -Message "PROCESS BLOCK - Error during the creation of the alternate credential object" }
-				
+
 			} #CATCH
 		} #ELSE
 	} #PROCESS
@@ -232,20 +232,20 @@ function Get-ADSIContact
 
 .PARAMETER All
 	Default Parameter. This will list all the contact(s) in the Domain
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the OU
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .EXAMPLE
 	Get-ADSIOrganizationalUnit
 
@@ -270,24 +270,24 @@ function Get-ADSIContact
 	PARAM (
 		[Parameter(ParameterSetName = "Name")]
 		[String]$Name,
-		
+
 		[Parameter(ParameterSetName = "SamAccountName")]
 		$SamAccountName,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ParameterSetName = "All")]
 		[String]$All,
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -300,8 +300,8 @@ function Get-ADSIContact
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-			
-			
+
+
 			If ($Name)
 			{
 				Write-Verbose -Message "[PROCESS] Name Parameter"
@@ -338,7 +338,7 @@ function Get-ADSIContact
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($contact in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -374,7 +374,7 @@ function Get-ADSIContact
 					"UserAccountControl" = $contact.properties.useraccountcontrol
 					"cn" = $contact.properties.cn -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
@@ -399,37 +399,37 @@ Function New-ADSIDirectoryContextDomain
 <#
 	.SYNOPSIS
 		Function to create an Active Directory Domain DirectoryContext object
-	
+
 	.DESCRIPTION
 		Function to create an Active Directory Domain DirectoryContext object
-	
+
 	.PARAMETER Credential
 		Specifies the alternative credentials to use.
 		It will use the current credential if not specified.
-	
+
 	.PARAMETER DomainName
 		Specifies the domain to query.
 		Default is the current domain.
-	
+
 	.EXAMPLE
 		New-ADSIDirectoryContextDomain
-	
+
 	.EXAMPLE
 		New-ADSIDirectoryContextDomain -DomainName "Contoso.com" -Cred (Get-Credential)
-	
+
 	.EXAMPLE
 		$Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($(New-ADSIDirectoryContextDomain -Credential LazyWinAdmin\francois-xavier.cat))
 		$Domain.DomainControllers
 		$Domain.InfrastructureRoleOwner
-	
+
 	.OUTPUTS
 		System.DirectoryServices.ActiveDirectory.DirectoryContext
-	
+
 	.NOTES
 		Francois-Xavier.Cat
 		LazyWinAdmin.com
 		@lazywinadm
-		
+
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 	[OutputType('System.DirectoryServices.ActiveDirectory.DirectoryContext')]
@@ -438,15 +438,15 @@ Function New-ADSIDirectoryContextDomain
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
-		
+
 	)
 	PROCESS
 	{
 		# ContextType = Domain
 		$ContextType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
-		
+
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'])
@@ -462,7 +462,7 @@ Function New-ADSIDirectoryContextDomain
 		} #TRY
 		CATCH
 		{
-			
+
 		}
 	} #PROCESS
 }
@@ -472,36 +472,36 @@ Function New-ADSIDirectoryContextForest
 <#
 	.SYNOPSIS
 		Function to create an Active Directory Forest DirectoryContext object
-	
+
 	.DESCRIPTION
 		Function to create an Active Directory Forest DirectoryContext object
-	
+
 	.PARAMETER Credential
 		Specifies the alternative credentials to use.
 		It will use the current credential if not specified.
-	
+
 	.PARAMETER ForestName
 		Specifies the forest to query.
 		Default is the current forest.
-	
+
 	.EXAMPLE
 		New-ADSIDirectoryContextForest
-	
+
 	.EXAMPLE
 		New-ADSIDirectoryContextForest -ForestName "Contoso.com" -Cred (Get-Credential)
-	
+
 	.EXAMPLE
 		$Forest = [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($(New-ADSIDirectoryContextForest -Credential LazyWinAdmin\francois-xavier.cat)))
 		$Forest.FindGlobalCatalog()
-	
+
 	.OUTPUTS
 		System.DirectoryServices.ActiveDirectory.DirectoryContext
-	
+
 	.NOTES
 		Francois-Xavier.Cat
 		LazyWinAdmin.com
 		@lazywinadm
-		
+
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 	[OutputType('System.DirectoryServices.ActiveDirectory.DirectoryContext')]
@@ -510,15 +510,15 @@ Function New-ADSIDirectoryContextForest
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-		
+
 	)
 	PROCESS
 	{
 		# ContextType = Domain
 		$ContextType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Forest
-		
+
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'])
@@ -534,7 +534,7 @@ Function New-ADSIDirectoryContextForest
 		} #TRY
 		CATCH
 		{
-			
+
 		}
 	} #PROCESS
 }
@@ -544,29 +544,29 @@ function New-ADSIPrincipalContext
 <#
 	.SYNOPSIS
 		Function to create a Principal Context
-	
+
 	.DESCRIPTION
 		Function to create a Principal Context
-	
+
 	.PARAMETER PrincipalContextType
 		Specifies the PrincipalContextType to use. Domain, Machine or ApplicationDirectory
-	
+
 	.PARAMETER Credential
 		Specifies alternative credential
-	
+
 	.EXAMPLE
 		New-ADSIPrincipalContext -PrincipalContextType "Domain"
-	
+
 	.EXAMPLE
 		New-ADSIPrincipalContext -PrincipalContextType "Domain" -Credential (Get-Credential SuperAdmin)
-	
+
 	.NOTES
 		Francois-Xavier.Cat
 		LazyWinAdmin.com
 		@lazywinadm
-	
+
 		Additional information on MSDN
-	
+
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
 #>
 	[OutputType('System.DirectoryServices.AccountManagement.PrincipalContext')]
@@ -575,7 +575,7 @@ function New-ADSIPrincipalContext
 		[Parameter(Mandatory)]
 		[ValidateSet("Domain", "Machine", "ApplicationDirectory")]
 		$PrincipalContextType,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
@@ -624,43 +624,43 @@ Function Get-ADSIDomain
 <#
 	.SYNOPSIS
 		Function to retrieve the current or specified domain
-	
+
 	.DESCRIPTION
 		Function to retrieve the current or specified domain
-	
+
 	.PARAMETER Credential
 		Specifies alternative credential to use
-	
+
 	.PARAMETER ForestName
 		Specifies the DomainName to query
-	
+
 	.EXAMPLE
 		Get-ADSIForest
-	
+
 	.EXAMPLE
 		Get-ADSIForest -DomainName lazywinadmin.com
-	
+
 	.EXAMPLE
 		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
-	
+
 	.EXAMPLE
 		Get-ADSIForest -DomainName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
-	
+
 	.OUTPUTS
 		System.DirectoryServices.ActiveDirectory.Domain
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-#>	
+#>
 	[OutputType('System.DirectoryServices.ActiveDirectory.Domain')]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 	)
 	PROCESS
@@ -673,7 +673,7 @@ Function Get-ADSIDomain
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				$DomainContext = New-ADSIDirectoryContextDomain @splatting
 				[System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DomainContext)
 			}
@@ -681,7 +681,7 @@ Function Get-ADSIDomain
 			{
 				[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 			}
-			
+
 		}
 		CATCH
 		{
@@ -698,7 +698,7 @@ Function Get-ADSIDomainMode
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
 	)
 	PROCESS
@@ -711,15 +711,15 @@ Function Get-ADSIDomainMode
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).DomainMode
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).DomainMode
 			}
-			
+
 		}
 		CATCH
 		{
@@ -734,15 +734,15 @@ Function Get-ADSIDomainRoot
 <#
 	.SYNOPSIS
 		Retrieve the Root Domain
-	
+
 	.DESCRIPTION
 		Retrieve the Root Domain
-	
+
 	.EXAMPLE
 		PS C:\> Get-ADSIDomainRoot
-	
+
 	.NOTES
-		
+
 #>
 	[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest().RootDomain
 }
@@ -754,7 +754,7 @@ Function Get-ADSIDomainTrustRelationship
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
 	)
 	PROCESS
@@ -767,15 +767,15 @@ Function Get-ADSIDomainTrustRelationship
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).GetAllTrustRelationships()
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).GetAllTrustRelationships()
 			}
-			
+
 		}
 		CATCH
 		{
@@ -790,17 +790,17 @@ function Get-ADSIDomainController
 <#
 .SYNOPSIS
 	This function will query Active Directory for all Domain Controllers.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -811,11 +811,11 @@ function Get-ADSIDomainController
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -829,7 +829,7 @@ function Get-ADSIDomainController
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			$Search.Filter = "(&(objectClass=computer)(userAccountControl:1.2.840.113556.1.4.803:=8192))"
-			
+
 			IF ($DomainDistinguishedName)
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -846,15 +846,15 @@ function Get-ADSIDomainController
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
-			
-			
+
+
+
 			foreach ($DC in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$DC.properties
-				
+
                 <#
                 accountexpires
 adspath
@@ -889,11 +889,11 @@ usnchanged
 usncreated
 whenchanged
 whencreated
-                
+
                 #>
-				
-				
-				
+
+
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
@@ -917,7 +917,7 @@ Function Get-ADSIDomainDomainControllers
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
 	)
 	PROCESS
@@ -930,15 +930,15 @@ Function Get-ADSIDomainDomainControllers
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).domaincontrollers
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).domaincontrollers
 			}
-			
+
 		}
 		CATCH
 		{
@@ -950,15 +950,15 @@ Function Get-ADSIDomainDomainControllers
 
 function Move-ADSIDomainControllerRoles
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Move-ADSIDomainControllerRoles transfers or seizes Active Directory roles to the current DC.
 
-.DESCRIPTION  
+.DESCRIPTION
 
     Move-ADSIDomainControllerRoles transfers or seizes Active Directory roles to the current DC.
     By default the cmdlet transfers the role, using the -Force parameter makes it seize the role
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -967,12 +967,12 @@ function Move-ADSIDomainControllerRoles
 
     Names of the roles to transfer or seize.
     Can be one or more of the following values:
-        
+
         InfrastructureRole, PDCRole, RidRole, NamingRole, SchemaRole
 
 .PARAMETER Force
 
-    Forces the roles to be seized 
+    Forces the roles to be seized
 
 .PARAMETER Credential
 
@@ -994,26 +994,26 @@ function Move-ADSIDomainControllerRoles
     Connects to remote domain controller dc1.ad.local using alternate credentials and seizes all the roles.
 
 
-.NOTES  
+.NOTES
     Filename    : Move-ADSIDomainControllerRoles.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
 #>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null,
-		
+
 		[Parameter(Mandatory = $true)]
 		[ValidateSet("PdcRole", "SchemaRole", "NamingRole", "RidRole", "InfrastructureRole")]
 		[String[]]$Roles = $null,
-		
+
 		[Switch]$Force
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -1025,13 +1025,13 @@ function Move-ADSIDomainControllerRoles
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		if ($Force.IsPresent)
@@ -1060,43 +1060,43 @@ Function Get-ADSIForest
 <#
 	.SYNOPSIS
 		Function to retrieve the current or specified forest
-	
+
 	.DESCRIPTION
 		Function to retrieve the current or specified forest
-	
+
 	.PARAMETER Credential
 		Specifies alternative credential to use
-	
+
 	.PARAMETER ForestName
 		Specifies the ForestName to query
-	
+
 	.EXAMPLE
 		Get-ADSIForest
-	
+
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com
-	
+
 	.EXAMPLE
 		Get-ADSIForest -Credential (Get-Credential superAdmin) -Verbose
-	
+
 	.EXAMPLE
 		Get-ADSIForest -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
-	
+
 	.OUTPUTS
 		System.DirectoryServices.ActiveDirectory.Forest
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
 		@lazywinadm
-#>	
+#>
 	[OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
 	[cmdletbinding()]
 	PARAM (
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -1109,7 +1109,7 @@ Function Get-ADSIForest
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				$ForestContext = New-ADSIDirectoryContextForest @splatting
 				[System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
 			}
@@ -1117,7 +1117,7 @@ Function Get-ADSIForest
 			{
 				[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
 			}
-			
+
 		}
 		CATCH
 		{
@@ -1134,7 +1134,7 @@ Function Get-ADSIForestMode
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -1147,15 +1147,15 @@ Function Get-ADSIForestMode
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				(Get-ADSIForest @splatting).ForestMode
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIForest).ForestMode
 			}
-			
+
 		}
 		CATCH
 		{
@@ -1172,7 +1172,7 @@ Function Get-ADSIForestDomain
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -1185,15 +1185,15 @@ Function Get-ADSIForestDomain
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				(Get-ADSIForest @splatting).Domains
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIForest).Domains
 			}
-			
+
 		}
 		CATCH
 		{
@@ -1210,7 +1210,7 @@ Function Get-ADSIForestTrustRelationship
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -1223,15 +1223,15 @@ Function Get-ADSIForestTrustRelationship
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				(Get-ADSIForest @splatting).GetAllTrustRelationships()
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIForest).GetAllTrustRelationships()
 			}
-			
+
 		}
 		CATCH
 		{
@@ -1246,17 +1246,17 @@ function Get-ADSIFsmo
 <#
 .SYNOPSIS
 	This function will query Active Directory for all the Flexible Single Master Operation (FSMO) role owner.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -1267,11 +1267,11 @@ function Get-ADSIFsmo
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -1284,7 +1284,7 @@ function Get-ADSIFsmo
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.Filter = "((fSMORoleOwner=*))"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -1301,13 +1301,13 @@ function Get-ADSIFsmo
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($FSMO in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$FSMO.properties
-				
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 <#
@@ -1331,8 +1331,8 @@ OR [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
 (&(objectClass=crossRefContainer)(fSMORoleOwner=*))
 
 #>
-				
-				
+
+
 			}
 		} #TRY
 		CATCH
@@ -1354,7 +1354,7 @@ Function Get-ADSIGlobalCatalogs
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
 	PROCESS
@@ -1367,15 +1367,15 @@ Function Get-ADSIGlobalCatalogs
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				(Get-ADSIForest @splatting).GlobalCatalogs
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIForest).GlobalCatalogs
 			}
-			
+
 		}
 		CATCH
 		{
@@ -1390,25 +1390,25 @@ function Get-ADSISchema
 	<#
 	.SYNOPSIS
 		The Get-ADSISchema function gather information about the current Active Directory Schema
-	
+
 	.DESCRIPTION
 		The Get-ADSISchema function gather information about the current Active Directory Schema
-	
+
 	.PARAMETER PropertyType
 		Specify the type of property to return
-	
+
 	.PARAMETER ClassName
 		Specify the name of the Class to retrieve
-	
+
 	.PARAMETER AllClasses
 		This will list all the property present in the domain
-	
+
 	.PARAMETER FindClassName
 		Specify the exact or partial name of the class to search
-	
+
 	.EXAMPLE
 		Get-ADSISchema -PropertyType Mandatory -ClassName user
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
@@ -1421,30 +1421,30 @@ function Get-ADSISchema
 				   Mandatory = $true)]
 		[ValidateSet("mandatory", "optional")]
 		[String]$PropertyType,
-		
+
 		[Parameter(ParameterSetName = 'Default',
 				   Mandatory = $true)]
 		[String]$ClassName,
-		
+
 		[Parameter(ParameterSetName = 'AllClasses',
 				   Mandatory = $true)]
 		[Switch]$AllClasses,
-		
+
 		[Parameter(ParameterSetName = 'FindClasses',
 				   Mandatory = $true)]
 		[String]$FindClassName
 	)
-	
+
 	BEGIN
 	{
 		TRY
 		{
 			$schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
-			
+
 		}
 		CATCH { }
 	}
-	
+
 	PROCESS
 	{
 		IF ($PSBoundParameters['AllClasses'])
@@ -1455,10 +1455,10 @@ function Get-ADSISchema
 		{
 			$schema.FindAllClasses() | Where-Object { $_.name -match $FindClassName } | Select-Object -Property Name
 		}
-		
+
 		ELSE
 		{
-			
+
 			Switch ($PropertyType)
 			{
 				"mandatory"
@@ -1471,7 +1471,7 @@ function Get-ADSISchema
 				}
 			} #Switch
 		} #ELSE
-		
+
 	} #PROCESS
 }
 
@@ -1484,54 +1484,54 @@ function Get-ADSIGroup
 <#
 .SYNOPSIS
 	This function will query Active Directory for group information. You can either specify the DisplayName, SamAccountName or DistinguishedName of the group
-	
+
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the group
-	
+
 .PARAMETER Name
 	Specify the Name of the group
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the group
 
 .PARAMETER Empty
 	This parameter returns all the empty groups
-	
+
 .PARAMETER SystemGroups
 	This parameter returns all the System Groups
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .PARAMETER SearchScope
 	Specify the scope of the search (One, OneLevel, Subtree). Default is Subtree.
-	
+
 .EXAMPLE
 	Get-ADSIGroup -SamAccountName TestGroup
-	
+
 	This will return the information about the TestGroup
-	
+
 .EXAMPLE
 	Get-ADSIGroup -Name TestGroup
 
 	This will return the information about the TestGroup
 .EXAMPLE
 	Get-ADSIGroup -Empty
-	
+
 	This will find all the empty groups
 
 .EXAMPLE
 	Get-ADSIGroup -DistinguishedName "CN=TestGroup,OU=Groups,DC=FX,DC=local"
-	
+
 .EXAMPLE
     Get-ADSIGroup -Name TestGroup -Credential (Get-Credential -Credential 'FX\enduser') -SearchScope Subtree
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -1541,30 +1541,30 @@ function Get-ADSIGroup
 	PARAM (
 		[Parameter(Mandatory = $true, ParameterSetName = "Name")]
 		[String]$Name,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "SamAccountName")]
 		[String]$SamAccountName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "Empty")]
 		[Switch]$Empty,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "SystemGroups")]
 		[Switch]$SystemGroups,
-		
+
 		[ValidateSet("One", "OneLevel", "Subtree")]
 		$SearchScope = "SubTree",
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -1578,14 +1578,14 @@ function Get-ADSIGroup
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
 			$Search.SearchScope = $SearchScope
-			
+
 			IF ($PSboundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
@@ -1616,7 +1616,7 @@ function Get-ADSIGroup
 			{
 				Write-Warning -Message "Note: Default Ouput is 100 results. Use the SizeLimit Paremeter to change it. Value 0 will remove the limit"
 			}
-			
+
 			foreach ($group in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -1643,7 +1643,7 @@ function Get-ADSIGroup
 					"usnchanged" = $group.properties.usnchanged
 					"usncreated" = $group.properties.usncreated
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
@@ -1666,7 +1666,7 @@ function Get-ADSIGroupManagedBy
 .SYNOPSIS
 	This function retrieve the group that the current user manage in the ActiveDirectory.
 	Typically the function will search for group(s) and look at the 'ManagedBy' property where it matches the current user.
-	
+
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Manager of the group
     You can also use the alias: ManagerSamAccountName.
@@ -1679,10 +1679,10 @@ function Get-ADSIGroupManagedBy
 
 .PARAMETER Credential
     Specify the Credential to use for the query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item maximum to retrieve
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the Domain or Domain DN path to use
 
@@ -1705,7 +1705,7 @@ function Get-ADSIGroupManagedBy
 	Get-ADSIGroupManagedBy -AllManagedGroup
 
 	This will list all the group(s) without Manager
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -1716,24 +1716,24 @@ function Get-ADSIGroupManagedBy
 		[Parameter(ParameterSetName = "One")]
 		[Alias("ManagerSamAccountName")]
 		[String]$SamAccountName = $env:USERNAME,
-		
+
 		[Parameter(ParameterSetName = "All")]
 		[Switch]$AllManagedGroups,
-		
+
 		[Parameter(ParameterSetName = "No")]
 		[Switch]$NoManager,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("DomainDN", "Domain", "SearchBase", "SearchRoot")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
-	
+
 	BEGIN { }
 	PROCESS
 	{
@@ -1743,23 +1743,23 @@ function Get-ADSIGroupManagedBy
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDN
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				# Fixing the path if needed
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
-				
+
 				Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
+
 			IF ($PSBoundParameters['SamAccountName'])
 			{
 				Write-Verbose -Message "SamAccountName"
@@ -1767,23 +1767,23 @@ function Get-ADSIGroupManagedBy
 				$UserSearch = $search
 				$UserSearch.Filter = "(&(SamAccountName=$SamAccountName))"
 				$UserDN = $UserSearch.FindOne().Properties.distinguishedname -as [string]
-				
+
 				# Define the query to find the Groups managed by this user
 				$Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN))"
 			}
-			
+
 			IF ($PSBoundParameters['AllManagedGroups'])
 			{
 				Write-Verbose -Message "All Managed Groups Param"
 				$Search.Filter = "(&(objectCategory=group)(managedBy=*))"
 			}
-			
+
 			IF ($PSBoundParameters['NoManager'])
 			{
 				Write-Verbose -Message "No Manager param"
 				$Search.Filter = "(&(objectCategory=group)(!(!managedBy=*)))"
 			}
-			
+
 			IF (-not ($PSBoundParameters['SamAccountName']) -and -not ($PSBoundParameters['AllManagedGroups']) -and -not ($PSBoundParameters['NoManager']))
 			{
 				Write-Verbose -Message "No parameters used"
@@ -1791,11 +1791,11 @@ function Get-ADSIGroupManagedBy
 				$UserSearch = $search
 				$UserSearch.Filter = "(&(SamAccountName=$SamAccountName))"
 				$UserDN = $UserSearch.FindOne().Properties.distinguishedname -as [string]
-				
+
 				# Define the query to find the Groups managed by this user
 				$Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN))"
 			}
-			
+
 			Foreach ($group in $Search.FindAll())
 			{
 				$Properties = @{
@@ -1821,31 +1821,31 @@ function Add-ADSIGroupMember
 <#
 .SYNOPSIS
 	This function will add a AD object inside a AD Group.
-	
+
 .PARAMETER GroupSamAccountName
 	Specify the Group SamAccountName of the group
-	
+
 .PARAMETER GroupName
 	Specify the Name of the group
-	
+
 .PARAMETER GroupDistinguishedName
 	Specify the DistinguishedName path of the group
-	
+
 .PARAMETER MemberSamAccountName
     Specify the member SamAccountName to add
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDN
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
     Add-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName fxcat -Credential (Get-Credential -Credential SuperAdmin)
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -1855,23 +1855,23 @@ function Add-ADSIGroupMember
 	PARAM (
 		[Parameter(Mandatory = $true, ParameterSetName = "Name")]
 		[String]$GroupName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "GroupSamAccountName")]
 		[String]$GroupSamAccountName,
-		
+
 		[Parameter(Mandatory = $true, ParameterSetName = "DistinguishedName")]
 		[String]$GroupDistinguishedName,
-		
+
 		[Parameter(Mandatory = $true)]
 		[string]$MemberSamAccountName,
-		
+
 		[Alias("Domain")]
 		[String]$DomainDN = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -1884,20 +1884,20 @@ function Add-ADSIGroupMember
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDN
-			
+
 			IF ($PSBoundParameters['DomainDN'])
 			{
 				IF ($DomainDN -notlike "LDAP://*") { $DomainDN = "LDAP://$DomainDN" } #IF
 				Write-Verbose -Message "Different Domain specified: $DomainDN"
 				$Search.SearchRoot = $DomainDN
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDN, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $DomainDN
 			}
-			
+
 			# Resolve the Object
 			Write-Verbose -Message "[PROCESS] Looking for Object: $MemberSamAccountName"
 			$ObjectSearch = $Search
@@ -1905,7 +1905,7 @@ function Add-ADSIGroupMember
 			$ObjectSearchADSPath = $ObjectSearch.FindOne().Properties.adspath -as [string]
 			$ObjectSearchADSPathADSI = $ObjectSearchADSPath -as [ADSI]
 			$objectResult = $ObjectSearch.FindOne()
-			
+
 			If ($PSBoundParameters['GroupName'])
 			{
 				Write-Verbose -Message "[PROCESS] Parameter GROUPNAME: $GroupName"
@@ -1921,21 +1921,21 @@ function Add-ADSIGroupMember
 				Write-Verbose -Message "[PROCESS] Parameter GROUP DISTINGUISHEDNAME: $GroupDistinguishedName"
 				$Search.filter = "(&(objectCategory=group)(distinguishedname=$GroupDistinguishedName))"
 			}
-			
+
 			$Group = $Search.FindOne()
 			$Member = $objectResult
-			
+
 			# Verify Member and Object exist
 			IF (($Group.Count -gt 0) -and $Member.count -gt 0)
 			{
-				
+
 				# Get the SamAccountName and ADSPATH of the Group
 				$GroupAccount = $Group.Properties.samaccountname -as [string]
 				$GroupAdspath = $($Group.Properties.adspath -as [string]) -as [ADSI]
-				
+
 				# Member
 				$MemberAdsPath = [ADSI]"$($member.Properties.adspath)"
-				
+
 				# Check if the Object is member of the group
 				$IsMember = $GroupAdspath.IsMember($MemberAdsPath.AdsPath)
 				IF (-not ($IsMember))
@@ -1974,38 +1974,38 @@ function Get-ADSIGroupMembership
 <#
 	.SYNOPSIS
 		This function will list all the member of the specified group
-	
+
 	.DESCRIPTION
 		This function will list all the member of the specified group
-	
+
 	.PARAMETER Identity
 		Specifies the Identity of the group
-	
+
 	.PARAMETER Recurse
 		Specifies that you want the recursive members of that group.
-	
+
 	.PARAMETER Context
 		Specifies the Context
-	
+
 	.PARAMETER Credential
 		A description of the Credential parameter.
-	
+
 	.PARAMETER SamAccountName
 		Specify the SamAccountName of the Group
-	
+
 	.EXAMPLE
 		Get-ADSIGroupMembership -Identity "Domain Admins"
 
 	.EXAMPLE
 		Get-ADSIGroupMembership -Identity "CN=Domain Users,CN=Users,DC=FX,DC=LAB"
-	
+
 	.EXAMPLE
 		$TestContext = New-ADSIPrincipalContext -PrincipalContextType Domain -Credential $Cred
 		Get-ADSIGroupMembership -Identity "Domain Admins" -ContextObject $TestContext
-	
+
 	.OUTPUTS
 		System.Object
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		LazyWinAdmin.com
@@ -2017,11 +2017,11 @@ function Get-ADSIGroupMembership
 		[Parameter(Mandatory)]
 		[Alias("SamAccountName", "DN", "DistinguishedName")]
 		[String]$Identity,
-		
+
 		[Switch]$Recurse,
-		
+
 		$ContextObject,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
@@ -2065,8 +2065,8 @@ function Get-ADSIGroupMembership
 					$ContextObject = New-ADSIPrincipalContext -PrincipalContext $ContextType
 				}
 			}
-			
-			
+
+
 			IF ($PSBoundParameters['Recurse'])
 			{
 				Write-Verbose -Message "[Get-ADSIGroupMembership][PROCESS] Query (Recursive) of the group $Identity"
@@ -2095,7 +2095,7 @@ function Remove-ADSIGroupMember
     Remove-ADSIGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will remove the domain user fxcat from the group TestGroup
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -2103,11 +2103,11 @@ function Remove-ADSIGroupMember
 #>
 	[CmdletBinding()]
 	PARAM ($GroupSamAccountName,
-		
+
 		$UserSamAccountName)
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
 	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
-	
+
 	IF (Test-ADSIUserIsGroupMember -GroupSamAccountName $GroupSamAccountName -UserSamAccountName $UserSamAccountName)
 	{
 		Write-Verbose "Removing $UserSamAccountName from $GroupSamAccountName"
@@ -2115,7 +2115,7 @@ function Remove-ADSIGroupMember
 	}
 	ELSE
 	{
-		
+
 		Write-Verbose "$UserSamAccountName is not member of $GroupSamAccountName"
 	}
 }
@@ -2128,17 +2128,17 @@ function Get-ADSIGroupPolicyObject
 <#
 .SYNOPSIS
 	This function will query Active Directory Group Policy Objects
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -2149,11 +2149,11 @@ function Get-ADSIGroupPolicyObject
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -2166,7 +2166,7 @@ function Get-ADSIGroupPolicyObject
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.Filter = "(objectCategory=groupPolicyContainer)"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -2183,13 +2183,13 @@ function Get-ADSIGroupPolicyObject
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($GPO in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$GPO.properties
-				
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
@@ -2214,25 +2214,25 @@ function Get-ADSITokenGroup
 	<#
 	.SYNOPSIS
 		Retrieve the list of group present in the tokengroups of a user or computer object.
-	
+
 	.DESCRIPTION
 		Retrieve the list of group present in the tokengroups of a user or computer object.
 
 		TokenGroups attribute
 		https://msdn.microsoft.com/en-us/library/ms680275%28v=vs.85%29.aspx?f=255&MSPPError=-2147217396
-	
+
 	.PARAMETER SamAccountName
 		Specifies the SamAccountName to retrieve
-	
+
 	.PARAMETER Credential
 		Specifies Credential to use
-	
+
 	.PARAMETER DomainDistinguishedName
 		Specify the Domain or Domain DN path to use
-	
+
 	.PARAMETER SizeLimit
 		Specify the number of item maximum to retrieve
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		www.lazywinadmin.com
@@ -2247,18 +2247,18 @@ function Get-ADSITokenGroup
 		[Parameter(ValueFromPipeline = $true)]
 		[Alias('UserName', 'Identity')]
 		[String]$SamAccountName,
-		
+
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias('DomainDN', 'Domain')]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias('ResultLimit', 'Limit')]
 		[int]$SizeLimit = '100'
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -2269,14 +2269,14 @@ function Get-ADSITokenGroup
 			$Search.SearchRoot = $DomainDN
 			#$Search.Filter = "(&(anr=$SamAccountName))"
 			$Search.Filter = "(&((objectclass=user)(samaccountname=$SamAccountName)))"
-			
+
 			# Credential
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
+
 			# Different Domain
 			IF ($DomainDistinguishedName)
 			{
@@ -2284,34 +2284,34 @@ function Get-ADSITokenGroup
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-			
+
 			FOREACH ($Account in $Search.FindAll())
 			{
-				
+
 				$AccountGetDirectory = $Account.GetDirectoryEntry();
-				
+
 				# Add the properties tokenGroups
 				$AccountGetDirectory.GetInfoEx(@("tokenGroups"), 0)
-				
-				
+
+
 				FOREACH ($Token in $($AccountGetDirectory.Get("tokenGroups")))
 				{
 					# Create SecurityIdentifier to translate into group name
 					$Principal = New-Object System.Security.Principal.SecurityIdentifier($token, 0)
-					
+
 					# Prepare Output
 					$Properties = @{
 						SamAccountName = $Account.properties.samaccountname -as [string]
 						GroupName = $principal.Translate([System.Security.Principal.NTAccount])
 					}
-					
+
 					# Output Information
 					New-Object -TypeName PSObject -Property $Properties
 				}
 			}
-			
+
 		}
-		
+
 		CATCH
 		{
 			Write-Warning -Message "[PROCESS] Something wrong happened!"
@@ -2326,22 +2326,22 @@ function Test-ADSICredential
 <#
 	.SYNOPSIS
 		Function to test credential
-	
+
 	.DESCRIPTION
 		Function to test credential
-	
+
 	.PARAMETER AccountName
 		Specifies the AccountName to check
-	
+
 	.PARAMETER Password
 		Specifies the AccountName's password
-	
+
 	.EXAMPLE
 		Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
-	
+
 	.OUTPUTS
 		System.Boolean
-	
+
 	.NOTES
 		Francois-Xavier Cat
 		www.lazywinadmin.com
@@ -2354,7 +2354,7 @@ function Test-ADSICredential
 		[Parameter(Mandatory)]
 		[Alias("UserName")]
 		[string]$AccountName,
-		
+
 		[Parameter(Mandatory)]
 		[string]$Password
 	)
@@ -2367,7 +2367,7 @@ function Test-ADSICredential
 		TRY
 		{
 			$DomainPrincipalContext = New-Object System.DirectoryServices.AccountManagement.PrincipalContext('domain')
-			
+
 			Write-Verbose -Message "[Test-ADCredential][PROCESS] Validating $AccountName Credential against $($DomainPrincipalContext.ConnectedServer)"
 			$DomainPrincipalContext.ValidateCredentials($AccountName, $Password)
 		}
@@ -2398,45 +2398,45 @@ function Get-ADSIObject
 
 .PARAMETER  DistinguishedName
 	Specify the DistinguishedName of the object your are looking for
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER $DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
 	Get-ADSIObject -SamAccountName Fxcat
 
 .EXAMPLE
 	Get-ADSIObject -Name DC*
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ParameterSetName = "SamAccountName")]
 		[Alias("Name", "DisplayName")]
 		[String]$SamAccountName,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -2449,7 +2449,7 @@ function Get-ADSIObject
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-			
+
 			IF ($PSBoundParameters['SamAccountName'])
 			{
 				$Search.filter = "(|(name=$SamAccountName)(samaccountname=$SamAccountName)(displayname=$samaccountname))"
@@ -2469,7 +2469,7 @@ function Get-ADSIObject
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
+
 			foreach ($Object in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -2487,7 +2487,7 @@ function Get-ADSIObject
 					"WhenCreated" = $Object.properties.whencreated -as [string]
 					"WhenChanged" = $Object.properties.whenchanged -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
@@ -2517,25 +2517,25 @@ function Get-ADSIOrganizationalUnit
 
 .PARAMETER Name
 	Specify the Name of the OU
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the OU
-	
+
 .PARAMETER All
 	Will show all the OU in the domain
-	
+
 .PARAMETER GroupPolicyInheritanceBlocked
 	Will show only the OU that have Group Policy Inheritance Blocked enabled.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER $DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
 	Get-ADSIOrganizationalUnit
 
@@ -2560,23 +2560,23 @@ function Get-ADSIOrganizationalUnit
 	PARAM (
 		[Parameter(ParameterSetName = "Name")]
 		[String]$Name,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName")]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ParameterSetName = "All")]
 		[String]$All,
-		
+
 		[Switch]$GroupPolicyInheritanceBlocked,
-		
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -2589,8 +2589,8 @@ function Get-ADSIOrganizationalUnit
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDistinguishedName
-			
-			
+
+
 			If ($Name)
 			{
 				$Search.filter = "(&(objectCategory=organizationalunit)(name=$Name))"
@@ -2630,7 +2630,7 @@ function Get-ADSIOrganizationalUnit
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			foreach ($ou in $($Search.FindAll()))
 			{
 				# Define the properties
@@ -2649,7 +2649,7 @@ function Get-ADSIOrganizationalUnit
 					"dscorepropagationdata" = $ou.properties.dscorepropagationdata
 					"instancetype" = $ou.properties.instancetype -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}
@@ -2672,14 +2672,14 @@ function Get-ADSIOrganizationalUnit
 
 function Enable-ADSIReplicaGC
 {
-<#  
-.SYNOPSIS  
+<#
+.SYNOPSIS
     Enable-ADSIReplicaGC enables the GC role on the current DC.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Enable-ADSIReplicaGC enables the GC role on the current DC.
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -2696,20 +2696,20 @@ function Enable-ADSIReplicaGC
       Connects to remote domain controller dc1.ad.local using current credentials and enable the GC role.
 
 
-.NOTES  
+.NOTES
     Filename    : Enable-ADSIReplicaGC.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -2721,13 +2721,13 @@ function Enable-ADSIReplicaGC
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$IsGC = $dc.IsGlobalCatalog()
@@ -2745,15 +2745,15 @@ function Enable-ADSIReplicaGC
 
 function Get-ADSIReplicaDomainInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -2775,7 +2775,7 @@ function Get-ADSIReplicaDomainInfo
         Children                : {}
         DomainMode              : Windows2012R2Domain
         DomainModeLevel         : 6
-        Parent                  : 
+        Parent                  :
         PdcRoleOwner            : DC1.ad.local
         RidRoleOwner            : DC1.ad.local
         InfrastructureRoleOwner : DC1.ad.local
@@ -2784,22 +2784,22 @@ function Get-ADSIReplicaDomainInfo
       Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSIReplicaDomainInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null,
-		
+
 		[Switch]$Recurse
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -2811,13 +2811,13 @@ function Get-ADSIReplicaDomainInfo
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$dc.domain
@@ -2825,21 +2825,21 @@ function Get-ADSIReplicaDomainInfo
 		{
 			$dc.domain.children | ForEach-Object { $_ }
 		}
-		
+
 	}
 }
 
 function Get-ADSIReplicaForestInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaForestInfo returns information about the connected DC's Forest.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIForestInfo returns information about the connected DC's Forest.
 
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -2869,20 +2869,20 @@ function Get-ADSIReplicaForestInfo
 
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSIReplicaForestInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -2894,13 +2894,13 @@ function Get-ADSIReplicaForestInfo
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		Write-Verbose -Message "Information about forest $($dc.forest.name)"
@@ -2910,15 +2910,15 @@ function Get-ADSIReplicaForestInfo
 
 function Get-ADSIReplicaCurrentTime
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
 
-.DESCRIPTION  
+.DESCRIPTION
 
-    Get-ADSIReplicaCurrentTime retrieves the current time of a given DC. 
+    Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
     When using the verbose switch, this cmdlet will display the time difference with the current system.
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -2935,20 +2935,20 @@ function Get-ADSIReplicaCurrentTime
       Connects to remote domain controller dc1.ad.local using current credentials and retrieves the current time.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSIReplicaGCInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -2960,13 +2960,13 @@ function Get-ADSIReplicaCurrentTime
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$now = Get-Date
@@ -2978,14 +2978,14 @@ function Get-ADSIReplicaCurrentTime
 
 function Get-ADSIReplicaGCInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaGCInfo finds out if a given DC holds the GC role.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIReplicaGCInfo finds out if a given DC holds the Global Catalog role.
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -3002,20 +3002,20 @@ function Get-ADSIReplicaGCInfo
       Connects to remote domain controller dc1.ad.local using current credentials retrieves GC info.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSIReplicaGCInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
 #>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -3027,13 +3027,13 @@ function Get-ADSIReplicaGCInfo
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$IsGC = $dc.IsGlobalCatalog()
@@ -3051,23 +3051,23 @@ function Get-ADSIReplicaGCInfo
 
 function Get-ADSIReplicaInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaInfo retrieves Active Directory replication information
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
       such as latency of replication and replication status.
       If no switches are used, latency information is returned.
-      
+
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
     If ComputerName and Domain are not used, Get-ADSIReplicaInfo will attempt at connecting to the Active Directory using information
     stored in environment variables.
 
 .PARAMETER Domain
-    Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to. 
+    Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to.
     This parameter is ignored if ComputerName is used.
 
 .PARAMETER Credential
@@ -3095,10 +3095,10 @@ function Get-ADSIReplicaInfo
 
     Hour                         Day Week Month TooLong Other
     ----                         --- ---- ----- ------- -----
-    {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}   
+    {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}
 
 .EXAMPLE
-      Get-ADSIReplicaInfo 
+      Get-ADSIReplicaInfo
 
       Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
 
@@ -3118,38 +3118,38 @@ function Get-ADSIReplicaInfo
       Connects to remote domain controller dc1.ad.local using current credentials.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSIReplicaInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
 #>
 	[CmdletBinding()]
 	param ([string]$ComputerName = $null,
-		
+
 		[string]$Domain = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null,
-		
+
 		[ValidateSet("Schema", "Configuration", "Domain", "All")]
 		[String]$NamingContext = "Domain",
-		
+
 		[Switch]$Neighbors,
-		
+
 		[Switch]$Latency,
-		
+
 		[Switch]$Cursors,
-		
+
 		[Switch]$Errors,
-		
+
 		[Switch]$DisplayDC,
-		
+
 		[Switch]$FormatTable
 	)
-	
-	
-	# Try to determine how to connect to the remote DC. 
+
+
+	# Try to determine how to connect to the remote DC.
 	# A few possibilities:
 	#      A computername was provided
 	#      A domain name was provided
@@ -3205,14 +3205,14 @@ function Get-ADSIReplicaInfo
 		Write-Error -Message "Could not determine where to connect to"
 		return
 	}
-	
+
 	# If none of switches are present, default to at least one, so we have something to show
 	if (!$Latency.IsPresent -and !$Neighbors.IsPresent -and !$Errors.IsPresent -and !$Cursors.IsPresent)
 	{
 		[switch]$Latency = $true
 	}
-	
-	# Determine which DC to use depending on the context type. 
+
+	# Determine which DC to use depending on the context type.
 	# If the context is Directory Server, simply get the provided domain controller,
 	# if the context is a domain, then find a DC.
 	switch ($context.ContextType)
@@ -3221,7 +3221,7 @@ function Get-ADSIReplicaInfo
 		"Domain" { $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::FindOne($context) }
 		default { return }
 	}
-	
+
 	if ($dc)
 	{
 		if ($DisplayDC.IsPresent)
@@ -3233,7 +3233,7 @@ function Get-ADSIReplicaInfo
 		$obj = $domain.Replace(',', '\,').Split('/')
 		$obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_ }
 		$domainDN = $domainDN.Substring(1)
-		
+
 		if ($Cursors.IsPresent)
 		{
 			foreach ($partition in $dc.Partitions)
@@ -3245,9 +3245,9 @@ function Get-ADSIReplicaInfo
 				)
 				{
 					Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
-					
+
 					$dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
-					
+
 				}
 			}
 		}
@@ -3262,21 +3262,21 @@ function Get-ADSIReplicaInfo
 				)
 				{
 					Write-Verbose -Message "Replication latency for partition $partition on $($dc.Name)"
-					
+
 					$cursorsArray = $dc.GetReplicationCursors($partition)
 					$sortedCursors = $cursorsArray | Sort-Object -Descending -Property LastSuccessfulSyncTime
-					
+
 					$hour = @()
 					$day = @()
 					$week = @()
 					$month = @()
 					$tooLong = @()
 					$other = @()
-					
+
 					foreach ($cursor in $sortedCursors)
 					{
 						$timespan = New-TimeSpan -Start $cursor.LastSuccessfulSyncTime -End $(Get-Date)
-						
+
 						if ($timespan)
 						{
 							if ($timespan.Days -eq 0 -and $timespan.Hours -eq 0)
@@ -3306,7 +3306,7 @@ function Get-ADSIReplicaInfo
 							$other += $cursor.SourceServer
 						}
 					}
-					
+
 					$latencyObject = New-Object -TypeName PsCustomObject -Property @{
 						Hour = $hour;
 						Day = $day;
@@ -3326,11 +3326,11 @@ function Get-ADSIReplicaInfo
 				}
 			}
 		}
-		
+
 		if ($Neighbors.IsPresent -or $Errors.IsPresent)
 		{
 			$replicationNeighbors = $dc.GetAllReplicationNeighbors()
-			
+
 			foreach ($neighbor in $replicationNeighbors)
 			{
 				if ($NamingContext -eq "All" -or
@@ -3340,7 +3340,7 @@ function Get-ADSIReplicaInfo
 				)
 				{
 					Write-Verbose -Message "Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
-					
+
 					if (($Errors.IsPresent -and $neighbor.LastSyncResult -ne 0) -or $Neighbors.IsPresent)
 					{
 						if ($FormatTable.IsPresent)
@@ -3360,15 +3360,15 @@ function Get-ADSIReplicaInfo
 
 function Move-ADSIReplicaToSite
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Move-ADSIReplicaToSite moves the current DC to another site.
 
-.DESCRIPTION  
+.DESCRIPTION
 
     Move-ADSIReplicaToSite moves the current DC to another site.
 
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -3390,23 +3390,23 @@ function Move-ADSIReplicaToSite
       moves it to the site "Paris".
 
 
-.NOTES  
+.NOTES
     Filename    : Move-ADSIReplicaToSite.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
 #>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null,
-		
+
 		[Parameter(Mandatory = $true)]
 		[string]$Site = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -3418,13 +3418,13 @@ function Move-ADSIReplicaToSite
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		Write-Verbose -Message "Moving $($dc.name) to site $Site"
@@ -3434,15 +3434,15 @@ function Move-ADSIReplicaToSite
 
 function Start-ADSIReplicationConsistencyCheck
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Start-ADSIReplicationConsistencyCheck starts the knowledge consistency checker on a given DC.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Start-ADSIReplicationConsistencyCheck connects to an Active Directory Domain Controller and starts the KCC to verify if the replication
       topology needs to be optimized.
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -3459,20 +3459,20 @@ function Start-ADSIReplicationConsistencyCheck
       Connects to remote domain controller dc1.ad.local using current credentials and starts a KCC check.
 
 
-.NOTES  
+.NOTES
     Filename    : Start-ADSIReplicationConsistencyCheck.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -3484,13 +3484,13 @@ function Start-ADSIReplicationConsistencyCheck
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$dc.CheckReplicationConsistency()
@@ -3506,17 +3506,17 @@ function Get-ADSISite
 <#
 .SYNOPSIS
 	This function will query Active Directory for all Sites.
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -3527,11 +3527,11 @@ function Get-ADSISite
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -3544,7 +3544,7 @@ function Get-ADSISite
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.Filter = "(objectclass=site)"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -3561,15 +3561,15 @@ function Get-ADSISite
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			$Search.SearchRoot = $DomainDistinguishedName -replace "LDAP://", "LDAP://CN=Sites,CN=Configuration,"
-			
+
 			foreach ($Site in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Site.properties
-				
+
                 <#
      adspath
 cn
@@ -3588,9 +3588,9 @@ usncreated
 whenchanged
 whencreated
                 #>
-				
-				
-				
+
+
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
@@ -3609,16 +3609,16 @@ whencreated
 
 function Get-ADSISitesInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSISitesInfo returns information about the connected DC's Sites.
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSISitesInfo returns information about the Sites as seen by the connected DC.
       It returns information such as subnets, sites, sitelinks, ISTG, BH servers etc.
 
-      
+
 .PARAMETER ComputerName
 
     Defines the remote computer to connect to.
@@ -3640,7 +3640,7 @@ function Get-ADSISitesInfo
         SiteLinks                      : {DEFAULTIPSITELINK}
         InterSiteTopologyGenerator     : DC1.ad.local
         Options                        : None
-        Location                       : 
+        Location                       :
         BridgeheadServers              : {}
         PreferredSmtpBridgeheadServers : {}
         PreferredRpcBridgeheadServers  : {}
@@ -3649,20 +3649,20 @@ function Get-ADSISitesInfo
       Connects to remote domain controller dc1.ad.local using current credentials retrieves site information.
 
 
-.NOTES  
+.NOTES
     Filename    : Get-ADSISitesInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com  
+    Author      : Micky Balladelli micky@balladelli.com
 
-.LINK  
+.LINK
     https://balladelli.com
-#>	
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName = $null,
-		
+
 		[Management.Automation.PSCredential]$Credential = $null
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -3674,13 +3674,13 @@ function Get-ADSISitesInfo
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		Write-Verbose -Message "Information about forest $($dc.forest.name)"
@@ -3693,17 +3693,17 @@ function Get-ADSISiteLink
 <#
 .SYNOPSIS
 	This function will query Active Directory for all Sites Links
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -3714,11 +3714,11 @@ function Get-ADSISiteLink
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -3731,7 +3731,7 @@ function Get-ADSISiteLink
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.Filter = "(objectClass=siteLink)"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -3748,15 +3748,15 @@ function Get-ADSISiteLink
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			$Search.SearchRoot = $DomainDistinguishedName -replace "LDAP://", "LDAP://CN=Sites,CN=Configuration,"
-			
+
 			foreach ($SiteLink in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$SiteLink.properties
-				
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
@@ -3778,26 +3778,26 @@ function Get-ADSISiteServer
 <#
 .SYNOPSIS
 	This function will query Active Directory for all Sites Servers
-	
+
 .PARAMETER Site
 	Specify the name of the Site
-	
+
 .PARAMETER Credential
     Specify the Credential to use
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output.
     Default is 100.
-	
+
 .EXAMPLE
 	Get-ADSISiteServer -Site "Montreal"
 
 .EXAMPLE
 	Get-ADSISiteServer -Site "Montreal" -Domain "DC=Contoso,DC=com"
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -3807,15 +3807,15 @@ function Get-ADSISiteServer
 	PARAM (
 		[Parameter(Mandatory = $true)]
 		$Site,
-		
+
 		[Parameter()]
 		[Alias("Domain", "DomainDN")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -3828,7 +3828,7 @@ function Get-ADSISiteServer
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.Filter = "(objectclass=server)"
-			
+
 			IF ($PSBoundParameters['DomainDistinguishedName'])
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
@@ -3845,21 +3845,21 @@ function Get-ADSISiteServer
 			{
 				Write-Warning -Message "Default SizeLimit: 100 Results"
 			}
-			
+
 			$Search.SearchRoot = $DomainDistinguishedName -replace "LDAP://", "LDAP://CN=Servers,CN=$Site,CN=Sites,CN=Configuration,"
-			
+
 			foreach ($Site in $($Search.FindAll()))
 			{
 				# Define the properties
 				#  The properties need to be lowercase!!
 				$Site.properties
-				
+
                 <#
 
                 #>
-				
-				
-				
+
+
+
 				# Output the info
 				#New-Object -TypeName PSObject -Property $Properties
 			}
@@ -3882,7 +3882,7 @@ function Get-ADSISiteConnection
 	param (
 		[parameter(mandatory = $true, position = 0, ValueFromPipeline = $true)]
 		$Domain,
-		
+
 		[parameter(mandatory = $true)]
 		$Site
 	)
@@ -3943,37 +3943,37 @@ function Get-ADSIUser
 
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the user
-	
+
 .PARAMETER DisplayName
 	Specify the DisplayName of the user
-	
+
 .PARAMETER DistinguishedName
 	Specify the DistinguishedName path of the user
-	
+
 .PARAMETER Credential
     Specify the Credential to use for the query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item maximum to retrieve
-	
+
 .PARAMETER DomainDistinguishedName
     Specify the Domain or Domain DN path to use
-	
+
 .PARAMETER MustChangePasswordAtNextLogon
 	Find user that must change their password at the next logon
-	
+
 .EXAMPLE
 	Get-ADSIUser -SamAccountName fxcat
-	
+
 .EXAMPLE
 	Get-ADSIUser -DisplayName "Cat, Francois-Xavier"
-	
+
 .EXAMPLE
 	Get-ADSIUser -DistinguishedName "CN=Cat\, Francois-Xavier,OU=Admins,DC=FX,DC=local"
-	
+
 .EXAMPLE
     Get-ADSIUser -SamAccountName testuser -Credential (Get-Credential -Credential Msmith)
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -3983,36 +3983,36 @@ function Get-ADSIUser
 	PARAM (
 		[Parameter(ParameterSetName = "DisplayName", Mandatory = $true)]
 		[String]$DisplayName,
-		
+
 		[Parameter(ParameterSetName = "SamAccountName", Mandatory = $true)]
 		[String]$SamAccountName,
-		
+
 		[Parameter(ParameterSetName = "DistinguishedName", Mandatory = $true)]
 		[String]$DistinguishedName,
-		
+
 		[Parameter(ParameterSetName = "MustChangePasswordAtNextLogon", Mandatory = $true)]
 		[Switch]$MustChangePasswordAtNextLogon,
-		
+
 		[Parameter(ParameterSetName = "PasswordNeverExpires", Mandatory = $true)]
 		[Switch]$PasswordNeverExpires,
-		
+
 		[Parameter(ParameterSetName = "NeverLoggedOn", Mandatory = $true)]
 		[Switch]$NeverLoggedOn,
-		
+
 		[Parameter(ParameterSetName = "DialIn", Mandatory = $true)]
 		[boolean]$DialIn,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Parameter()]
 		[Alias("DomainDN", "Domain")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
-		
+
 	)
 	BEGIN { }
 	PROCESS
@@ -4023,7 +4023,7 @@ function Get-ADSIUser
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SizeLimit = $SizeLimit
 			$Search.SearchRoot = $DomainDN
-			
+
 			If ($PSBoundParameters['DisplayName'])
 			{
 				$Search.filter = "(&(objectCategory=person)(objectClass=User)(displayname=$DisplayName))"
@@ -4036,25 +4036,25 @@ function Get-ADSIUser
 			{
 				$Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$distinguishedname))"
 			}
-			
+
 			IF ($DomainDistinguishedName)
 			{
 				IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" } #IF
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
+
 			IF ($PSBoundParameters['MustChangePasswordAtNextLogon'])
 			{
 				$Search.Filter = "(&(objectCategory=person)(objectClass=user)(pwdLastSet=0))"
 			}
-			
+
 			IF ($PSBoundParameters['PasswordNeverExpires'])
 			{
 				$Search.Filter = "(&(objectCategory=person)(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=65536))"
@@ -4063,15 +4063,15 @@ function Get-ADSIUser
 			{
 				$Search.Filter = "(&(objectCategory=person)(objectClass=user))(|(lastLogon=0)(!(lastLogon=*)))"
 			}
-			
+
 			IF ($PSBoundParameters['DialIn'])
 			{
 				$Search.Filter = "(objectCategory=user)(msNPAllowDialin=$dialin)"
 			}
-			
+
 			foreach ($user in $($Search.FindAll()))
 			{
-				
+
 				# Define the properties
 				#  The properties need to be lowercase!!!!!!!!
 				$Properties = @{
@@ -4093,7 +4093,7 @@ function Get-ADSIUser
 					"LogonCount" = $user.properties.logoncount -as [string]
 					"DirectReport" = $user.properties.l -as [string]
 					"useraccountcontrol" = $user.properties.useraccountcontrol -as [string]
-					
+
 					<#
 					lastlogoff
 					codepage
@@ -4159,10 +4159,10 @@ function Get-ADSIUser
 					msexchsafesendershash
 					mailnickname
 					l
-					
+
 					#>
 				} #Properties
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			} #FOREACH
@@ -4186,21 +4186,21 @@ function Test-ADSIUserIsGroupMember
     Test-ADSIUserIsGroupMember -GroupSamAccountName TestGroup -UserSamAccountName Fxcat
 
     This will return $true or $false depending if the user Fxcat is member of TestGroup
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
 	@lazywinadm
 #>
 	PARAM ($GroupSamAccountName,
-		
+
 		$UserSamAccountName)
 	$UserInfo = [ADSI]"$((Get-ADSIUser -SamAccountName $UserSamAccountName).AdsPath)"
 	$GroupInfo = [ADSI]"$((Get-ADSIGroup -SamAccountName $GroupSamAccountName).AdsPath)"
-	
+
 	#([ADSI]$GroupInfo.ADsPath).IsMember([ADSI]($UserInfo.AdsPath))
 	$GroupInfo.IsMember($UserInfo.ADsPath)
-	
+
 }
 
 #endregion

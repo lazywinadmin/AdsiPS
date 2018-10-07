@@ -59,7 +59,7 @@ Task Test -Depends Init  {
 
 Task Build -Depends Test {
     $lines
-    
+
     # Load the module, read the exported functions, update the psd1 FunctionsToExport
     Set-ModuleFunctions
 

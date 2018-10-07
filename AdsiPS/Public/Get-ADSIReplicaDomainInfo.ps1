@@ -1,7 +1,7 @@
 ﻿function Get-ADSIReplicaDomainInfo
 {
-	<#  
-.SYNOPSIS  
+	<#
+.SYNOPSIS
     Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
 .DESCRIPTION
@@ -24,7 +24,7 @@
         Children                : {}
         DomainMode              : Windows2012R2Domain
         DomainModeLevel         : 6
-        Parent                  : 
+        Parent                  :
         PdcRoleOwner            : DC1.ad.local
         RidRoleOwner            : DC1.ad.local
         InfrastructureRoleOwner : DC1.ad.local
@@ -32,25 +32,25 @@
 
       Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
-.NOTES  
+.NOTES
     Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
-	
-	github.com/lazywinadmin/AdsiPS 
-#>	
+
+	github.com/lazywinadmin/AdsiPS
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Switch]$Recurse
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -62,13 +62,13 @@
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$dc.domain
@@ -76,6 +76,6 @@
 		{
 			$dc.domain.children | ForEach-Object { $_ }
 		}
-		
+
 	}
 }

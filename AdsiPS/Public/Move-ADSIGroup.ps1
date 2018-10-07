@@ -9,7 +9,7 @@ function Move-ADSIGroup
 
 .PARAMETER Identity
 	Specifies the Identity of the group
-	
+
 	You can provide one of the following properties
 	DistinguishedName
 	Guid
@@ -17,7 +17,7 @@ function Move-ADSIGroup
 	SamAccountName
 	Sid
 	UserPrincipalName
-	
+
 	Those properties come from the following enumeration:
 	System.DirectoryServices.AccountManagement.IdentityType
 
@@ -30,7 +30,7 @@ function Move-ADSIGroup
 	By default it will use the current Domain.
 
 .PARAMETER Destination
-	Specifies the Distinguished Name where the object will be moved	
+	Specifies the Distinguished Name where the object will be moved
 
 .EXAMPLE
 	Move-ADSIGroup -Identity 'FXGROUPTEST01' -Destination 'OU=TEST,DC=FX,DC=lab'
@@ -44,7 +44,7 @@ function Move-ADSIGroup
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.AccountManagement.GroupPrincipal')]
 	param
@@ -59,20 +59,20 @@ function Move-ADSIGroup
 
 		[Alias('Domain', 'Server')]
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
-		
+
 		$Destination
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 	}
 	PROCESS
@@ -80,14 +80,14 @@ function Move-ADSIGroup
 		TRY
 		{
 			$Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
-			
+
 			# Create DirectoryEntry object
 			$NewDirectoryEntry = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList "LDAP://$Destination"
-			
+
 			# Move the computer
 			$Group.GetUnderlyingObject().psbase.moveto($NewDirectoryEntry)
 			$Group.Save()
-			
+
 		}
 		CATCH
 		{

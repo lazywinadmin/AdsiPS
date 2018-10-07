@@ -25,7 +25,7 @@ function Reset-ADSIUserPasswordAge
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	PARAM
 	(

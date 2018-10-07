@@ -38,7 +38,7 @@
 .OUTPUTS
 	'System.DirectoryServices.ActiveDirectory.Domain'
 .LINK
-	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.domain(v=vs.110).aspx	
+	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.domain(v=vs.110).aspx
 #>
 	[cmdletbinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.Domain')]
@@ -47,7 +47,7 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 	)
 	PROCESS
@@ -60,7 +60,7 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				$DomainContext = New-ADSIDirectoryContext @splatting -contextType Domain
 				[System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DomainContext)
 			}
@@ -68,7 +68,7 @@
 			{
 				[System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
 			}
-			
+
 		}
 		CATCH
 		{

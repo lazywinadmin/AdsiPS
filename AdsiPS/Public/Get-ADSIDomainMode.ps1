@@ -34,7 +34,7 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
 	)
 	PROCESS
@@ -47,15 +47,15 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).DomainMode
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).DomainMode
 			}
-			
+
 		}
 		CATCH
 		{

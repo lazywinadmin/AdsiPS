@@ -23,16 +23,16 @@ function Test-ADSIUserIsLockedOut
 	Francois-Xavier Cat
 	lazywinadmin.com
 	@lazywinadm
-	github.com/lazywinadmin/AdsiPS 
+	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.Boolean')]
 	param
 	(
 		[Parameter(Mandatory = $true)]
 		[string]$Identity,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]

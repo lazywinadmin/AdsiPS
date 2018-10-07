@@ -27,7 +27,7 @@ $searcher.GetUnderlyingSearcher().SearchScope = 'subtree' # "Base" "OneLevel"
 #include tombstone
 #$searcher.GetUnderlyingSearcher().Tombstone
 
-#SearchRoot 
+#SearchRoot
 #https://msdn.microsoft.com/en-us/library/system.directoryservices.directorysearcher.searchroot(v=vs.110).aspx
 $searcher.GetUnderlyingSearcher().SearchRoot =""
 

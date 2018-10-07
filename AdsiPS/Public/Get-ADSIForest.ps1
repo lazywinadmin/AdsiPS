@@ -36,7 +36,7 @@
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.Forest')]
 	param
@@ -45,10 +45,10 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -59,7 +59,7 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
-				
+
 				$ForestContext = New-ADSIDirectoryContext @splatting
 				[System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
 			}
@@ -67,7 +67,7 @@
 			{
 				[System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
 			}
-			
+
 		}
 		CATCH
 		{

@@ -40,19 +40,19 @@
 		[Parameter(ValueFromPipeline = $true)]
 		[Alias('UserName', 'Identity')]
 		[String]$SamAccountName,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias('DomainDN', 'Domain')]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias('ResultLimit', 'Limit')]
 		[int]$SizeLimit = '100'
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -63,14 +63,14 @@
 			$Search.SearchRoot = $DomainDN
 			#$Search.Filter = "(&(anr=$SamAccountName))"
 			$Search.Filter = "(&((objectclass=user)(samaccountname=$SamAccountName)))"
-			
+
 			# Credential
 			IF ($PSBoundParameters['Credential'])
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
 			}
-			
+
 			# Different Domain
 			IF ($DomainDistinguishedName)
 			{
@@ -78,34 +78,34 @@
 				Write-Verbose -Message "[PROCESS] Different Domain specified: $DomainDistinguishedName"
 				$Search.SearchRoot = $DomainDistinguishedName
 			}
-			
+
 			FOREACH ($Account in $Search.FindAll())
 			{
-				
+
 				$AccountGetDirectory = $Account.GetDirectoryEntry();
-				
+
 				# Add the properties tokenGroups
 				$AccountGetDirectory.GetInfoEx(@("tokenGroups"), 0)
-				
-				
+
+
 				FOREACH ($Token in $($AccountGetDirectory.Get("tokenGroups")))
 				{
 					# Create SecurityIdentifier to translate into group name
 					$Principal = New-Object System.Security.Principal.SecurityIdentifier($token, 0)
-					
+
 					# Prepare Output
 					$Properties = @{
 						SamAccountName = $Account.properties.samaccountname -as [string]
 						GroupName = $principal.Translate([System.Security.Principal.NTAccount])
 					}
-					
+
 					# Output Information
 					New-Object -TypeName PSObject -Property $Properties
 				}
 			}
-			
+
 		}
-		
+
 		CATCH
 		{
 			$pscmdlet.ThrowTerminatingError($_)

@@ -1,22 +1,22 @@
 ﻿function Get-ADSIReplicaInfo
 {
-<#  
-.SYNOPSIS  
+<#
+.SYNOPSIS
     Get-ADSIReplicaInfo retrieves Active Directory replication information
 
-.DESCRIPTION  
+.DESCRIPTION
 
       Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
       such as latency of replication and replication status.
       If no switches are used, latency information is returned.
-      
+
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
     If ComputerName and Domain are not used, Get-ADSIReplicaInfo will attempt at connecting to the Active Directory using information
     stored in environment variables.
 
 .PARAMETER Domain
-    Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to. 
+    Defines the domain to connect to. If Domain is used, Get-ADSIReplicaInfo will find a domain controller to connect to.
     This parameter is ignored if ComputerName is used.
 
 .PARAMETER Credential
@@ -50,10 +50,10 @@
 
     Hour                         Day Week Month TooLong Other
     ----                         --- ---- ----- ------- -----
-    {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}   
+    {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}
 
 .EXAMPLE
-      Get-ADSIReplicaInfo 
+      Get-ADSIReplicaInfo
 
       Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
 
@@ -73,41 +73,41 @@
       Connects to remote domain controller dc1.ad.local using current credentials.
 
 
-.NOTES  
+.NOTES
     Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
-	
-	github.com/lazywinadmin/AdsiPS 
+
+	github.com/lazywinadmin/AdsiPS
 #>
 	[CmdletBinding()]
 	param ([string]$ComputerName = $null,
-		
+
 		[string]$Domain = $null,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[ValidateSet("Schema", "Configuration", "Domain", "All")]
 		[String]$NamingContext = "Domain",
-		
+
 		[Switch]$Neighbors,
-		
+
 		[Switch]$Latency,
-		
+
 		[Switch]$Cursors,
-		
+
 		[Switch]$Errors,
-		
+
 		[Switch]$DisplayDC,
-		
+
 		[Switch]$FormatTable
 	)
-	
-	
-	# Try to determine how to connect to the remote DC. 
+
+
+	# Try to determine how to connect to the remote DC.
 	# A few possibilities:
 	#      A computername was provided
 	#      A domain name was provided
@@ -163,14 +163,14 @@
 		Write-Error -Message "Could not determine where to connect to"
 		return
 	}
-	
+
 	# If none of switches are present, default to at least one, so we have something to show
 	if (!$Latency.IsPresent -and !$Neighbors.IsPresent -and !$Errors.IsPresent -and !$Cursors.IsPresent)
 	{
 		[switch]$Latency = $true
 	}
-	
-	# Determine which DC to use depending on the context type. 
+
+	# Determine which DC to use depending on the context type.
 	# If the context is Directory Server, simply get the provided domain controller,
 	# if the context is a domain, then find a DC.
 	switch ($context.ContextType)
@@ -179,7 +179,7 @@
 		"Domain" { $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::FindOne($context) }
 		default { return }
 	}
-	
+
 	if ($dc)
 	{
 		if ($DisplayDC.IsPresent)
@@ -191,7 +191,7 @@
 		$obj = $domain.Replace(',', '\,').Split('/')
 		$obj[0].split(".") | ForEach-Object { $domainDN += ",DC=" + $_ }
 		$domainDN = $domainDN.Substring(1)
-		
+
 		if ($Cursors.IsPresent)
 		{
 			foreach ($partition in $dc.Partitions)
@@ -203,9 +203,9 @@
 				)
 				{
 					Write-Verbose -Message "Replication cursors for partition $partition on $($dc.Name)"
-					
+
 					$dc.GetReplicationCursors($partition) | ForEach-Object { $_ }
-					
+
 				}
 			}
 		}
@@ -220,21 +220,21 @@
 				)
 				{
 					Write-Verbose -Message "Replication latency for partition $partition on $($dc.Name)"
-					
+
 					$cursorsArray = $dc.GetReplicationCursors($partition)
 					$sortedCursors = $cursorsArray | Sort-Object -Descending -Property LastSuccessfulSyncTime
-					
+
 					$hour = @()
 					$day = @()
 					$week = @()
 					$month = @()
 					$tooLong = @()
 					$other = @()
-					
+
 					foreach ($cursor in $sortedCursors)
 					{
 						$timespan = New-TimeSpan -Start $cursor.LastSuccessfulSyncTime -End $(Get-Date)
-						
+
 						if ($timespan)
 						{
 							if ($timespan.Days -eq 0 -and $timespan.Hours -eq 0)
@@ -264,7 +264,7 @@
 							$other += $cursor.SourceServer
 						}
 					}
-					
+
 					$latencyObject = New-Object -TypeName PsCustomObject -Property @{
 						Hour = $hour;
 						Day = $day;
@@ -284,11 +284,11 @@
 				}
 			}
 		}
-		
+
 		if ($Neighbors.IsPresent -or $Errors.IsPresent)
 		{
 			$replicationNeighbors = $dc.GetAllReplicationNeighbors()
-			
+
 			foreach ($neighbor in $replicationNeighbors)
 			{
 				if ($NamingContext -eq "All" -or
@@ -298,7 +298,7 @@
 				)
 				{
 					Write-Verbose -Message "Replication neighbors for partition $($neighbor.PartitionName) on $($dc.Name)"
-					
+
 					if (($Errors.IsPresent -and $neighbor.LastSyncResult -ne 0) -or $Neighbors.IsPresent)
 					{
 						if ($FormatTable.IsPresent)

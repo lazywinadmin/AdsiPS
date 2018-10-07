@@ -17,10 +17,10 @@
 
 	.EXAMPLE
         New-ADSIDirectoryContextDomain
-	
+
     .EXAMPLE
         New-ADSIDirectoryContextDomain -DomainName "Contoso.com" -Cred (Get-Credential)
-        
+
     .EXAMPLE
         $Domain = [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($(New-ADSIDirectoryContextDomain -Credential LazyWinAdmin\francois-xavier.cat))
         $Domain.DomainControllers
@@ -30,24 +30,24 @@
         Francois-Xavier.Cat
         LazyWinAdmin.com
         @lazywinadm
-	
+
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
-		
+
 	)
 	PROCESS
 	{
 		# ContextType = Domain
 		$ContextType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
-		
+
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'])
@@ -63,7 +63,7 @@
 		}#TRY
 		CATCH
 		{
-			
+
 		}
 	}#PROCESS
 }

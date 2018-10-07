@@ -3,13 +3,13 @@
 <#
 .SYNOPSIS
 	This function will list all the member of the specified group
-	
+
 .PARAMETER SamAccountName
 	Specify the SamAccountName of the Group
-	
+
 .EXAMPLE
 	Get-ADSIGroupMembership -SamAccountName TestGroup
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -30,7 +30,7 @@
 				#User
 				#Get-ADSIUser -DistinguishedName $member
 				Get-ADSIObject -DistinguishedName $member
-				
+
 				#Group
 				# need to be done here
 			}

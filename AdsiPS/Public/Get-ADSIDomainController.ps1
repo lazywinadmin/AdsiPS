@@ -28,7 +28,7 @@
 	@lazywinadm
 	github.com/lazywinadmin/ADSIPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.DomainController')]
 	param
@@ -37,14 +37,14 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-	
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
 	)
-	
+
 	BEGIN
 	{
-		
-		
+
+
 		IF ($PSBoundParameters['Credential'])
 		{
 			$Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain

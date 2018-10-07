@@ -17,7 +17,7 @@
 		SamAccountName
 		Sid
 		UserPrincipalName
-	
+
 	Those properties come from the following enumeration:
 		System.DirectoryServices.AccountManagement.IdentityType
 
@@ -33,19 +33,19 @@
     Specifies that any child object should be deleted as well
     Typically you would use this parameter if you get the error "The directory service can perform the requested operation only on a leaf object"
     when you try to delete the object without the -recursive param
-	
+
 	Typically used when you have Exchange/ActiveSync in your domain, some users happens to have sub child items.
-	
+
 .EXAMPLE
 	Remove-ADSIUser -identity fxtest02
 
 	This command will Remove the account fxtest02 from the current domain
-	
+
 .EXAMPLE
 	Remove-ADSIUser -identity fxtest02 -whatif
-	
+
 	This command will emulate removing the account fxtest02
-	
+
 .EXAMPLE
 	Remove-ADSIUser -identity fxtest02 -credential (Get-Credential)
 
@@ -60,13 +60,13 @@
 	Remove-ADSIUser -identity fxtest02 -recursive
 
 	This command will Remove the account fxtest02 and all the child objects.
-	
+
 .NOTES
 	Francois-Xavier.Cat
 	LazyWinAdmin.com
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
-	
+
 .LINK
 	https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
@@ -84,16 +84,16 @@
 
 		[Switch]$Recursive
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ }
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 	}
 	PROCESS
 	{
@@ -107,7 +107,7 @@
 					(Get-ADSIUser -Identity $Identity @ContextSplatting).Delete()
 				}
 			}
-			
+
 			# Recursive
 			if ($PSBoundParameters['Recursive'])
 			{

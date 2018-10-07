@@ -58,7 +58,7 @@ function New-ADSIComputer
 .LINK
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param
 	(
@@ -77,48 +77,48 @@ function New-ADSIComputer
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[String]$DomainName
 	)
-	
+
 	BEGIN
 	{
 		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
 		# Create Context splatting
 		$ContextSplatting = @{ ContextType = "Domain" }
-		
+
 		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
 		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
 		$Context = New-ADSIPrincipalContext @ContextSplatting
 	}
 	PROCESS
 	{
 		TRY
 		{
-			
+
 			if ($PSCmdlet.ShouldProcess($Name, "Create Computer"))
 			{
 				$newObject = New-Object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
 				$newObject.SamAccountName = $Name
-				
+
 				IF ($PSBoundParameters['Enable'])
 				{
 					$newObject.Enabled = $true
 				}
-				
+
 				IF ($PSBoundParameters['Description'])
 				{
 					$newObject.Description = $Description
 				}
-				
+
 				IF ($PSBoundParameters['DisplayName'])
 				{ $newObject.DisplayName }
-				
+
 				# Push to ActiveDirectory
 				$newObject.Save($Context)
-				
+
 				IF ($PSBoundParameters['Passthru'])
 				{
 					$ContextSplatting.Remove('ContextType')
@@ -130,10 +130,10 @@ function New-ADSIComputer
 		{
 			$pscmdlet.ThrowTerminatingError($_)
 		}
-		
+
 	}
 	END
 	{
-		
+
 	}
 }

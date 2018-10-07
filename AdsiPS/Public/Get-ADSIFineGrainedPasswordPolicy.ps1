@@ -6,7 +6,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 
 .DESCRIPTION
 	This function will query and list Fine-Grained Password Policies in Active Directory
-	it return 
+	it return
 	name : the Name of the Policy
 	MinimumPasswordLength  : Minimum PassWord Size int
 	passwordreversibleencryptionenabled : Encryption Type reversible (not secure) or not
@@ -17,22 +17,22 @@ function Get-ADSIFineGrainedPasswordPolicy
 	lockoutduration : Time in minute before reseting failed logon count
 	lockoutobservationwindow : Time between 2 failed logoin attemps before reseting the counter to 0
 	lockoutthreshold : Number of failed login attempt to trigger lockout
-	psoappliesto : Groups and/or Users 
+	psoappliesto : Groups and/or Users
 	WhenCreated
 	WhenChanged
 
 .PARAMETER  Name
 	Specify the name of the policy to retreive
-	
+
 .PARAMETER Credential
     Specify the Credential to use
 
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output
-	
+
 .EXAMPLE
 	Get-ADSIFineGrainedPasswordPolicy
     Retreive all the password policy on the current domain
@@ -40,7 +40,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 .EXAMPLE
 	Get-ADSIFineGrainedPasswordPolicy -Name Name
     Retreive the password policy nammed 'Name' on the current domain
-	
+
 .NOTES
 	Francois-Xavier Cat
 	LazyWinAdmin.com
@@ -49,23 +49,23 @@ function Get-ADSIFineGrainedPasswordPolicy
 	Olivier Miossec
 	@omiossec_med
 #>
-	
+
 
 
     [CmdletBinding()]
 	PARAM (
 		[Parameter(ParameterSetName = "Name")]
 		[String]$Name,
-			
+
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
 		[Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100'
 	)
@@ -123,7 +123,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 					"WhenCreated" = $Object.properties.whencreated -as [string]
 					"WhenChanged" = $Object.properties.whenchanged -as [string]
 				}
-				
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}

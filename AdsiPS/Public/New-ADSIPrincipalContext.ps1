@@ -41,10 +41,10 @@
 	LazyWinAdmin.com
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
-	
+
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.principalcontext(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	[OutputType('System.DirectoryServices.AccountManagement.PrincipalContext')]
 	PARAM
@@ -53,17 +53,17 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Parameter(Mandatory = $true)]
 		[System.DirectoryServices.AccountManagement.ContextType]$ContextType,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
-		
+
 		$Container,
-		
+
 		[System.DirectoryServices.AccountManagement.ContextOptions[]]$ContextOptions
 	)
-	
+
 	BEGIN
 	{
 		$ScriptName = (Get-Variable -name MyInvocation -Scope 0 -ValueOnly).MyCommand
@@ -80,26 +80,26 @@
 				"Machine" { $ArgumentList = $ContextType, $ComputerName }
 				"ApplicationDirectory" { $ArgumentList = $ContextType }
 			}
-			
+
 			IF ($PSBoundParameters['Container'])
 			{
 				$ArgumentList += $Container
 			}
-			
+
 			IF ($PSBoundParameters['ContextOptions'])
 			{
 				$ArgumentList += $($ContextOptions)
 			}
-			
+
 			IF ($PSBoundParameters['Credential'])
 			{
 				# Query the specified domain or current if not entered, with the specified credentials
 				$ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 			}
-			
+
 			IF ($PSCmdlet.ShouldProcess($DomainName, "Create Principal Context"))
 			{
-				# Query 
+				# Query
 				New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $ArgumentList
 			}
 		} #TRY

@@ -15,13 +15,13 @@
 
 .PARAMETER  DomainName
 	Specify the Domain to use
-	
+
 .PARAMETER Credential
     Specify the Credential to use
 
 .PARAMETER DomainDistinguishedName
     Specify the DistinguishedName of the Domain to query
-	
+
 .PARAMETER SizeLimit
     Specify the number of item(s) to output (1 to 1000)
 	Use NoResultLimit for more than 1000 objects
@@ -32,19 +32,19 @@
 	NoResultLimit parameter override SizeLimit parameter
 
 .EXAMPLE
-	Get-ADSIPrintQueue 
-	
+	Get-ADSIPrintQueue
+
 	Get all published printQueue on your current domain (default function SizeLimit return 100 objects Max)
 
 .EXAMPLE
 	Get-ADSIPrintQueue -SizeLimit 200
-	
-	Get 200 published printQueue on your current domain 
+
+	Get 200 published printQueue on your current domain
 
 .EXAMPLE
 	Get-ADSIPrintQueue -NoResultLimit
-	
-	Get all published printQueue on your current domain 
+
+	Get all published printQueue on your current domain
 	Warning : can take time! depend number of queues on your domain
 
 .EXAMPLE
@@ -55,18 +55,18 @@
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01
-	
+
 	Get all published printQueue for the server TestServer01 (default function SizeLimit return 100 objects Max)
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01.contoso.com
-	
+
 	Get all published printQueue for the server TestServer01.contoso.com (default function SizeLimit return 100 objects Max)
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01 -SizeLimit 200
-	
-	Get only 200 published printQueue for the server TestServer01 
+
+	Get only 200 published printQueue for the server TestServer01
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01 -NoResultLimit
@@ -85,7 +85,7 @@
 
 .EXAMPLE
 	Get-ADSIPrintQueue -ServerName TestServer01 -DomainName contoso2.com -NoResultLimit
-	
+
 	You will get all the printQueue from TestServer01 on contoso2.com domain
 
 .NOTES
@@ -93,28 +93,28 @@
 
 	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Parameter(ValueFromPipelineByPropertyName = $true)]
-		
+
 		[Alias("PrinterQueue")]
 		[String]$PrinterQueueName,
-		
+
 		[Alias("Server")]
 		[String]$ServerName,
 
 		[Alias("Domain")]
 		[String]$DomainName,
-		
+
 		[Alias("DomainDN", "SearchRoot", "SearchBase")]
 		[String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Alias("ResultLimit", "Limit")]
 		[int]$SizeLimit = '100',
 
@@ -130,12 +130,12 @@
 			$Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 			$Search.SearchRoot = $DomainDistinguishedName
 			$Search.filter = "(&(objectClass=printQueue))"
-			
+
 			IF ($PSBoundParameters['ServerName'])
-			{			
+			{
 				$Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
 			}
-		 	ELSEIF ($PSBoundParameters['PrinterQueue']) 
+		 	ELSEIF ($PSBoundParameters['PrinterQueue'])
 			{
 				$Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueueName))"
 			}
@@ -143,7 +143,7 @@
 		  	{
 				$Search.filter = "(objectClass=printQueue)"
 			}
-			
+
 			IF ($PSBoundParameters['DomainName'])
 			{
 				$DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
@@ -151,9 +151,9 @@
 			}
 			ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
 			{
-				IF ($DomainDistinguishedName -notlike "LDAP://*") 
-				{ 
-					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName" 
+				IF ($DomainDistinguishedName -notlike "LDAP://*")
+				{
+					$DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
 				}
 					Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
 					$Search.SearchRoot = $DomainDistinguishedName
@@ -163,8 +163,8 @@
 			{
 				$Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 				$Search.SearchRoot = $Cred
-			}		
-			
+			}
+
 			IF (-not$PSBoundParameters['NoResultLimit'])
 			{
 				$Search.SizeLimit = $SizeLimit
@@ -176,8 +176,8 @@
                 Write-Verbose -Message "Use NoResultLimit switch, all objects will be returned. no limit"
 			    $Search.PageSize = 10000
             }
-  			
-				
+
+
 			FOREACH ($Object IN $($Search.FindAll()))
 			{
 				# Define the properties
@@ -188,8 +188,8 @@
 					"printerName" = $Object.properties.printername -as [string]
 					"location" = $Object.properties.location -as [string]
 					"Description" = $Object.properties.description -as [string]
-					"portName" = $Object.properties.portname -as [string] 
-					"driverName"  = $Object.properties.drivername -as [string] 
+					"portName" = $Object.properties.portname -as [string]
+					"driverName"  = $Object.properties.drivername -as [string]
 					"ObjectCategory" = $Object.properties.objectcategory -as [string]
 					"ObjectClass" = $Object.properties.objectclass -as [string]
 					"DistinguishedName" = $Object.properties.distinguishedname -as [string]
@@ -200,8 +200,8 @@
 					"printShareName" = $Object.properties.printsharename -as [string]
 					"printStatus" = $Object.properties.printstatus -as [string]
 
-			} 
-				
+			}
+
 				# Output the info
 				New-Object -TypeName PSObject -Property $Properties
 			}

@@ -106,7 +106,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                         }
                     }
                 }
-                
+
 
                 # Examples
                 it "Example - Count should be greater than 0"{
@@ -121,8 +121,8 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 #    ($FunctionContent -split '\r\n'|select-string $Pattern).line -match "^$Pattern" | Should Be $true
                 #}
 
-                
-            
+
+
 		    <#
 			    # Testing the Examples
 			    $help.examples.example[0].code
@@ -140,7 +140,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 $help.parameters.parameter[0].description
                 $help.Name
                 $help.ModuleName
-            
+
                 $help.description
                 $help.syntax
                 $help.'xmlns:command'
@@ -158,7 +158,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # check each help keyword for indent
                 # check space between help keyword
-                # check no text pass the 80 characters 
+                # check no text pass the 80 characters
                 # check PARAM is upper case
                 # Check help keywords are upper.
                 # check you have outputs

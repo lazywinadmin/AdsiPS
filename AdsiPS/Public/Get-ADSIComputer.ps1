@@ -9,7 +9,7 @@ function Get-ADSIComputer
 
 .PARAMETER Identity
 	Specifies the Identity of the computer
-		
+
 	You can provide one of the following:
 		DistinguishedName
 		Guid
@@ -61,7 +61,7 @@ function Get-ADSIComputer
 	[CmdletBinding(DefaultParameterSetName="All")]
 	param ([Parameter(Mandatory=$true,ParameterSetName="Identity")]
 		[string]$Identity,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
@@ -72,13 +72,13 @@ function Get-ADSIComputer
 	BEGIN
 	{
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
-		
+
         IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
         IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
-		
+
         $Context = New-ADSIPrincipalContext @ContextSplatting
 
 	}

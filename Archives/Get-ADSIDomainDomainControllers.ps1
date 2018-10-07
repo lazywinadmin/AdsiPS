@@ -5,7 +5,7 @@
 		[Alias('RunAs')]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
 	)
 	PROCESS
@@ -18,15 +18,15 @@
 				$Splatting = @{ }
 				IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
 				IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
-				
+
 				(Get-ADSIDomain @splatting).domaincontrollers
-				
+
 			}
 			ELSE
 			{
 				(Get-ADSIDomain).domaincontrollers
 			}
-			
+
 		}
 		CATCH
 		{

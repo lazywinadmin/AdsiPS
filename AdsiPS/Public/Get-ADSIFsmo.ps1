@@ -38,7 +38,7 @@
 .OUTPUTS
 	System.Management.Automation.PSCustomObject
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.Management.Automation.PSCustomObject')]
 	param
@@ -47,10 +47,10 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -70,19 +70,19 @@
 					Write-Verbose -message "[$FunctionName] Add ForestName to splatting"
 					$Splatting.ForestName = $ForestName
 				}
-				
+
 				# Forest Query
 				Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
 				$Forest = (Get-ADSIForest @splatting)
-				
+
 				# Domain Splatting cleanup
 				$Splatting.Remove("ForestName")
 				$Splatting.DomainName = $Forest.RootDomain.name
-				
+
 				# Domain Query
 				Write-Verbose -message "[$FunctionName] Retrieve Domain information '$($Forest.RootDomain.name)'"
 				$Domain = (Get-ADSIDomain @Splatting)
-				
+
 			}
 			ELSE
 			{
@@ -91,7 +91,7 @@
 				Write-Verbose -message "[$FunctionName] Retrieve Domain information"
 				$Domain = Get-ADSIDomain
 			}
-			
+
 			Write-Verbose -message "[$FunctionName] Prepare Output"
 			$Properties = @{
 				SchemaRoleOwner = $Forest.SchemaRoleOwner
@@ -102,7 +102,7 @@
 			}
 
 			New-Object -Type PSObject -property $Properties
-			
+
 		}
 		CATCH
 		{

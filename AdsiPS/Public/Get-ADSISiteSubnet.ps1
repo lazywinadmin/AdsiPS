@@ -40,7 +40,7 @@
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
 #>
-	
+
 	[CmdletBinding()]
 	[OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet')]
 	PARAM
@@ -49,22 +49,22 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
-		
+
 		[Parameter(ValueFromPipelineByPropertyName=$true)]
         [Alias("Name")]
 		[String]$SubnetName
 	)
     BEGIN{
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
+
         # Create Context splatting
         $ContextSplatting=@{ ContextType = "Forest" }
 
 		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['ForestName']){$ContextSplatting.ForestName = $ForestName}
-        
+
         $Context = New-ADSIDirectoryContext @ContextSplatting
     }
 	PROCESS

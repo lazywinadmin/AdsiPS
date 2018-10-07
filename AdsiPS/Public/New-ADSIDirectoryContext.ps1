@@ -55,7 +55,7 @@
 	New-ADSIDirectoryContext -ContextType Forest -ForestName "FXTEST.local" -credential (Get-Credential)
 
 	This will create a new Directory Context of type Forest with Alternative credentials
-	
+
 .EXAMPLE
 	New-ADSIDirectoryContext -ContextType DirectoryServer -Server "DCSERVER01.FXTEST.local"
 
@@ -78,10 +78,10 @@
 	LazyWinAdmin.com
 	@lazywinadm
 	github.com/lazywinadmin/AdsiPS
-	
+
 	https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding(DefaultParameterSetName = 'Server',SupportsShouldProcess = $true)]
 	param
 	(
@@ -89,22 +89,22 @@
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		[Parameter(Mandatory)]
 		[System.DirectoryServices.ActiveDirectory.DirectoryContextType]$ContextType,
-		
+
 		[Parameter(ParameterSetName = 'Domain')]
 		$DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
-		
+
 		[Parameter(ParameterSetName = 'Forest')]
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
-		
+
 		[Parameter(ParameterSetName = 'Server')]
 		[ValidateNotNullOrEmpty]
 		[Alias("ComputerName","DomainController")]
 		$Server
 	)
-	
+
 	PROCESS
 	{
 		TRY
@@ -122,9 +122,9 @@
 				# Query the specified domain or current if not entered, with the specified credentials
 				$ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
 			}
-			
+
 			IF ($PSCmdlet.ShouldProcess("Create Directory Entry"))
-			{	
+			{
 				# Query the specified domain or current if not entered, with the current credentials
 				New-Object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList $ArgumentList
 			}

@@ -17,10 +17,10 @@
 
 	.EXAMPLE
         New-ADSIDirectoryContextForest
-	
+
     .EXAMPLE
         New-ADSIDirectoryContextForest -ForestName "Contoso.com" -Cred (Get-Credential)
-        
+
     .EXAMPLE
         $Forest = [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($(New-ADSIDirectoryContextForest -Credential LazyWinAdmin\francois-xavier.cat)))
         $Forest.FindGlobalCatalog()
@@ -29,24 +29,24 @@
         Francois-Xavier.Cat
         LazyWinAdmin.com
         @lazywinadm
-	
+
 		https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
-	
+
 	[CmdletBinding()]
 	PARAM (
 		[Alias("RunAs")]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty,
-		
+
 		$ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
-		
+
 	)
 	PROCESS
 	{
 		# ContextType = Domain
 		$ContextType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Forest
-		
+
 		TRY
 		{
 			IF ($PSBoundParameters['Credential'])
@@ -62,7 +62,7 @@
 		}#TRY
 		CATCH
 		{
-			
+
 		}
 	}#PROCESS
 }

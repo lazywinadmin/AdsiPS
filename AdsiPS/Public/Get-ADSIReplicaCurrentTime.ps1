@@ -1,13 +1,13 @@
 ﻿function Get-ADSIReplicaCurrentTime
 {
-<#  
-.SYNOPSIS  
+<#
+.SYNOPSIS
     Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
 
-.DESCRIPTION  
-    Get-ADSIReplicaCurrentTime retrieves the current time of a given DC. 
+.DESCRIPTION
+    Get-ADSIReplicaCurrentTime retrieves the current time of a given DC.
     When using the verbose switch, this cmdlet will display the time difference with the current system.
-      
+
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
 
@@ -19,24 +19,24 @@
 
       Connects to remote domain controller dc1.ad.local using current credentials and retrieves the current time.
 
-.NOTES  
+.NOTES
     Micky Balladelli
 	micky@balladelli.com
 	https://balladelli.com
-	
-	github.com/lazywinadmin/AdsiPS  
 
-#>	
+	github.com/lazywinadmin/AdsiPS
+
+#>
 	[CmdletBinding()]
 	param ([Parameter(Mandatory = $true)]
 		[string]$ComputerName,
-		
+
 		[Alias("RunAs")]
 		[System.Management.Automation.PSCredential]
 		[System.Management.Automation.Credential()]
 		$Credential = [System.Management.Automation.PSCredential]::Empty
 	)
-	
+
 	if ($ComputerName)
 	{
 		if ($Credential)
@@ -48,13 +48,13 @@
 			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
 		}
 	}
-	
+
 	if ($context)
 	{
 		Write-Verbose -Message "Connecting to $ComputerName"
 		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 	}
-	
+
 	if ($dc)
 	{
 		$now = Get-Date
