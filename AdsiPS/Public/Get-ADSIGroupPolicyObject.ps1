@@ -104,6 +104,7 @@ function Get-ADSIGroupPolicyObject
 					systemflags             = $gpo.properties.systemflags             -as [system.string]
 					dscorepropagationdata   = $gpo.properties.dscorepropagationdata   -as [system.string]
 					name                    = $gpo.properties.name                    -as [system.string]
+					raw                     = $gpo
 				}
 
 				# Output the info
