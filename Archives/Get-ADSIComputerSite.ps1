@@ -1,4 +1,4 @@
 ﻿function Get-ADSICurrentComputerSite
 {
-	[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
+    [System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
 }

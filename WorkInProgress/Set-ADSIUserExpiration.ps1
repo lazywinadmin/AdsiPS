@@ -10,8 +10,8 @@ PARAM(
     [parameter(Mandatory=$true)]
     [datetime]$ExpirationDateTime,
     [Alias("RunAs")]
-	[System.Management.Automation.Credential()]
-	$Credential = [System.Management.Automation.PSCredential]::Empty,
+    [System.Management.Automation.Credential()]
+    $Credential = [System.Management.Automation.PSCredential]::Empty,
     [String]$DomainName)
 
     BEGIN
@@ -20,7 +20,7 @@ PARAM(
 
         # Create Context splatting
         $ContextSplatting=@{}
-		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
+        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
 
         $Context = New-ADSIPrincipalContext @ContextSplatting -contexttype Domain

@@ -64,7 +64,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
         $FunctionContent = Get-Content function:$c
         $AST = [System.Management.Automation.Language.Parser]::ParseInput($FunctionContent, [ref]$null, [ref]$null)
 
-	    Context "$c - Help"{
+        Context "$c - Help"{
 
                 It "Synopsis"{$help.Synopsis| Should not BeNullOrEmpty}
                 It "Description"{$help.Description| Should not BeNullOrEmpty}
@@ -76,8 +76,8 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # Get the parameters declared in the Comment Based Help
                 #  minus the RiskMitigationParameters
-			    $RiskMitigationParameters = 'Whatif', 'Confirm'
-			    $HelpParameters = $help.parameters.parameter | Where-Object name -NotIn $RiskMitigationParameters
+                $RiskMitigationParameters = 'Whatif', 'Confirm'
+                $HelpParameters = $help.parameters.parameter | Where-Object name -NotIn $RiskMitigationParameters
 
                 # Parameter Count VS AST Parameter
                 $ASTParameters = $ast.ParamBlock.Parameters.Name.variablepath.userpath
@@ -123,12 +123,12 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
 
 
-		    <#
-			    # Testing the Examples
-			    $help.examples.example[0].code
-			    $help.examples.example[0].introduction
-			    $help.examples.example[0].remarks
-			    $help.examples.example[0].title
+            <#
+                # Testing the Examples
+                $help.examples.example[0].code
+                $help.examples.example[0].introduction
+                $help.examples.example[0].remarks
+                $help.examples.example[0].title
 
                 $help.examples.example[0].code
                 $help.examples.example[0].introduction
@@ -168,7 +168,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 # check does not use accelerator in PARAM()
                 # parameters in AST and Help are matching (same name)
                 # PARAM() no type defined on a property
-		    #>
-	    }
+            #>
+        }
     }
 }

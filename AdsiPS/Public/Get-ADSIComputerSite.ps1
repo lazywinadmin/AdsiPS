@@ -2,52 +2,52 @@ function Get-ADSIComputerSite
 {
 <#
 .SYNOPSIS
-	Function to retrieve the AD Site of a Computer
+    Function to retrieve the AD Site of a Computer
 
 .DESCRIPTION
-	Function to retrieve the AD Site of a Computer
+    Function to retrieve the AD Site of a Computer
 
-	This function does not rely on the .NET Framework to retrieve the information
-	http://www.pinvoke.net/default.aspx/netapi32.dsgetsitename
+    This function does not rely on the .NET Framework to retrieve the information
+    http://www.pinvoke.net/default.aspx/netapi32.dsgetsitename
 
-	There is .NET method to get this information but only works on the local machine.
-	[System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
+    There is .NET method to get this information but only works on the local machine.
+    [System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::GetComputerSite()
 
 .PARAMETER ComputerName
-	Specifies the computer name(s) that you want to know the site.
+    Specifies the computer name(s) that you want to know the site.
 
 .EXAMPLE
-	Get-ADSIComputerName -ComputerName TestServer01
+    Get-ADSIComputerName -ComputerName TestServer01
 
-	This will retrieve the Site of the Computer TestServer01
+    This will retrieve the Site of the Computer TestServer01
 
 .EXAMPLE
-	Get-ADSIComputerName -ComputerName TestServer01,TestServer02
+    Get-ADSIComputerName -ComputerName TestServer01,TestServer02
 
-	This will retrieve the Site of the Computers TestServer01 and TestServer02
+    This will retrieve the Site of the Computers TestServer01 and TestServer02
 
 .NOTES
-	Francois-Xavier Cat
-	lazywinadmin.com
-	@lazywinadm
-	github.com/lazywinadmin/ADSIPS
+    Francois-Xavier Cat
+    lazywinadmin.com
+    @lazywinadm
+    github.com/lazywinadmin/ADSIPS
 
-	Thanks to the Reddit folks for their help! :-)
-	https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
+    Thanks to the Reddit folks for their help! :-)
+    https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
 
 #>
 
-	[CmdletBinding()]
-	[OutputType('System.Management.Automation.PSCustomObject')]
-	param
-	(
+    [CmdletBinding()]
+    [OutputType('System.Management.Automation.PSCustomObject')]
+    param
+    (
         [parameter()]
-		[String[]]$ComputerName=$env:computername
-	)
+        [String[]]$ComputerName=$env:computername
+    )
 
-	BEGIN
-	{
-		$code = @"
+    BEGIN
+    {
+        $code = @"
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -72,25 +72,25 @@ public static class NetApi32 {
 }
 "@
 
-		Add-Type -TypeDefinition $code
-	}
-	PROCESS
-	{
-		FOREACH ($Computer in $ComputerName)
-		{
-			TRY
-			{
-				$Properties = @{
-					ComputerName = $Computer
-					SiteName = [NetApi32]::DsGetSiteName($Computer)
-				}
+        Add-Type -TypeDefinition $code
+    }
+    PROCESS
+    {
+        FOREACH ($Computer in $ComputerName)
+        {
+            TRY
+            {
+                $Properties = @{
+                    ComputerName = $Computer
+                    SiteName = [NetApi32]::DsGetSiteName($Computer)
+                }
 
-				New-Object -Type PSObject -property $Properties
-			}
-			CATCH
-			{
-				$pscmdlet.ThrowTerminatingError($_)
-			}
-		}
-	}
+                New-Object -Type PSObject -property $Properties
+            }
+            CATCH
+            {
+                $pscmdlet.ThrowTerminatingError($_)
+            }
+        }
+    }
 }

@@ -1,6 +1,6 @@
 ﻿function Get-ADSISitesInfo
 {
-	<#
+    <#
 .SYNOPSIS
     Get-ADSISitesInfo returns information about the connected DC's Sites.
 
@@ -47,35 +47,35 @@
 .LINK
     https://balladelli.com
 #>
-	[CmdletBinding()]
-	param ([Parameter(Mandatory = $true)]
-		[string]$ComputerName = $null,
+    [CmdletBinding()]
+    param ([Parameter(Mandatory = $true)]
+        [string]$ComputerName = $null,
 
-		[Management.Automation.PSCredential]
-		$Credential = $null
-	)
+        [Management.Automation.PSCredential]
+        $Credential = $null
+    )
 
-	if ($ComputerName)
-	{
-		if ($Credential)
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
-		}
-		else
-		{
-			$context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
-		}
-	}
+    if ($ComputerName)
+    {
+        if ($Credential)
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName, $Credential.UserName, $Credential.GetNetworkCredential().Password
+        }
+        else
+        {
+            $context = new-object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList "DirectoryServer", $ComputerName
+        }
+    }
 
-	if ($context)
-	{
-		Write-Verbose -Message "Connecting to $ComputerName"
-		$dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
-	}
+    if ($context)
+    {
+        Write-Verbose -Message "Connecting to $ComputerName"
+        $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
+    }
 
-	if ($dc)
-	{
-		Write-Verbose -Message "Information about forest $($dc.forest.name)"
-		$dc.forest.sites | ForEach-Object { $_ }
-	}
+    if ($dc)
+    {
+        Write-Verbose -Message "Information about forest $($dc.forest.name)"
+        $dc.forest.sites | ForEach-Object { $_ }
+    }
 }

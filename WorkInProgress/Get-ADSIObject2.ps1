@@ -26,11 +26,11 @@ PARAM(
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
-		$ContextSplatting = @{
-			Contexttype = "Domain"
-		}
+        $ContextSplatting = @{
+            Contexttype = "Domain"
+        }
 
-		IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
+        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
         IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
@@ -44,12 +44,12 @@ PARAM(
             $DirectoryEntryParams.remove('ContextType')
             $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 
-			# Principal Searcher
-			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
-			$DirectorySearcher.SearchRoot = $DirectoryEntry
+            # Principal Searcher
+            $DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
+            $DirectorySearcher.SearchRoot = $DirectoryEntry
 
             # Adding an Ambiguous Name Resolution LDAP Filter
-			$DirectorySearcher.Filter = "(anr=$identity)"
+            $DirectorySearcher.Filter = "(anr=$identity)"
 
             # Retrieve a single object
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()

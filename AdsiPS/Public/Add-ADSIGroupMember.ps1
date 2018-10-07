@@ -79,11 +79,11 @@ PARAM(
 
         # Create Context splatting
         Write-Verbose -Message "[$FunctionName] Create context splatting"
-		$ContextSplatting = @{
-			Contexttype = "Domain"
-		}
+        $ContextSplatting = @{
+            Contexttype = "Domain"
+        }
 
-		IF ($PSBoundParameters['Credential']){
+        IF ($PSBoundParameters['Credential']){
             Write-Verbose -Message "[$FunctionName] Context splatting - Add Credential"
             $ContextSplatting.Credential = $Credential
         }
@@ -102,19 +102,19 @@ PARAM(
             # Directory Entry object
             Write-Verbose -Message "[$FunctionName] Copy Context splatting and remove ContextType property"
             $DirectoryEntryParams = $ContextSplatting
-			$DirectoryEntryParams.remove('ContextType')
+            $DirectoryEntryParams.remove('ContextType')
             Write-Verbose -Message "[$FunctionName] Create New Directory Entry using using the copied context"
-			$DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
+            $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 
-			# Principal Searcher
+            # Principal Searcher
             Write-Verbose -Message "[$FunctionName] Create a System.DirectoryServices.DirectorySearcher"
-			$DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
+            $DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
             Write-Verbose -Message "[$FunctionName] Append DirectoryEntry to in the property SearchRoot of DirectorySearcher"
-			$DirectorySearcher.SearchRoot = $DirectoryEntry
+            $DirectorySearcher.SearchRoot = $DirectoryEntry
 
             # Adding an Ambiguous Name Resolution (ANR) LDAP Filter
             Write-Verbose -Message "[$FunctionName] Append LDAP Filter '(anr=$member)' to the property Filter of DirectorySearcher"
-			$DirectorySearcher.Filter = "(anr=$member)"
+            $DirectorySearcher.Filter = "(anr=$member)"
 
             # Retrieve a single object
             Write-Verbose -Message "[$FunctionName] Retrieve the account"

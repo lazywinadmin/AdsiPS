@@ -2,94 +2,94 @@ function Enable-ADSIComputer
 {
 <#
 .SYNOPSIS
-	Function to enable a Computer Account
+    Function to enable a Computer Account
 
 .DESCRIPTION
-	Function to enable a Computer Account
+    Function to enable a Computer Account
 
 .PARAMETER Identity
-	Specifies the Identity of the Computer.
+    Specifies the Identity of the Computer.
 
-	You can provide one of the following properties
-		DistinguishedName
-		Guid
-		Name
-		SamAccountName
-		Sid
+    You can provide one of the following properties
+        DistinguishedName
+        Guid
+        Name
+        SamAccountName
+        Sid
 
 .PARAMETER Credential
-	Specifies the alternative credential to use.
-	By default it will use the current user windows credentials.
+    Specifies the alternative credential to use.
+    By default it will use the current user windows credentials.
 
 .PARAMETER DomainName
-	Specifies the alternative Domain.
-	By default it will use the current domain.
+    Specifies the alternative Domain.
+    By default it will use the current domain.
 
 .EXAMPLE
-	Enable-ADSIComputer TESTSERVER01
+    Enable-ADSIComputer TESTSERVER01
 
-	This command will enable the account TESTSERVER01
-
-.EXAMPLE
-	Enable-ADSIComputer TESTSERVER01 -whatif
-
-	This command will emulate disabling the account TESTSERVER01
+    This command will enable the account TESTSERVER01
 
 .EXAMPLE
-	Enable-ADSIComputer TESTSERVER01 -credential (Get-Credential)
+    Enable-ADSIComputer TESTSERVER01 -whatif
 
-	This command will enable the account TESTSERVER01 using the alternative credential specified
+    This command will emulate disabling the account TESTSERVER01
 
 .EXAMPLE
-	Enable-ADSIComputer TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
+    Enable-ADSIComputer TESTSERVER01 -credential (Get-Credential)
 
-	This command will enable the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
+    This command will enable the account TESTSERVER01 using the alternative credential specified
+
+.EXAMPLE
+    Enable-ADSIComputer TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
+
+    This command will enable the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
 
 .NOTES
-	Francois-Xavier Cat
-	LazyWinAdmin.com
-	@lazywinadm
-	github.com/lazywinadmin/ADSIPS
+    Francois-Xavier Cat
+    LazyWinAdmin.com
+    @lazywinadm
+    github.com/lazywinadmin/ADSIPS
 
 .LINK
-	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
+    https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	PARAM (
-		[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
-		$Identity,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    PARAM (
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        $Identity,
 
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-		[String]$DomainName)
+        [String]$DomainName)
 
-	BEGIN
-	{
-		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+    BEGIN
+    {
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
-		# Create Context splatting
-		$ContextSplatting = @{ }
-		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        # Create Context splatting
+        $ContextSplatting = @{ }
+        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
+        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
 
-	}
-	PROCESS
-	{
-		TRY
-		{
-			if ($pscmdlet.ShouldProcess("$Identity", "enable Account"))
-			{
-				$Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
-				$Account.enabled = $true
-				$Account.Save()
-			}
-		}
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}
+    }
+    PROCESS
+    {
+        TRY
+        {
+            if ($pscmdlet.ShouldProcess("$Identity", "enable Account"))
+            {
+                $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
+                $Account.enabled = $true
+                $Account.Save()
+            }
+        }
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }
 }
