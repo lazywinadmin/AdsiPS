@@ -6,7 +6,7 @@ $UserPrincipal.Surname = "E*"
 
 # it will generate the filter for you
 
-$Searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+$Searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
 $Searcher.QueryFilter = $UserPrincipal
 
 

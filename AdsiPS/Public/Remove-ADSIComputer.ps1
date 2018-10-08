@@ -2,28 +2,28 @@ function Remove-ADSIComputer
 {
 <#
 .SYNOPSIS
-	Function to Remove a Computer Account
+    Function to Remove a Computer Account
 
 .DESCRIPTION
-	Function to Remove a Computer Account
+    Function to Remove a Computer Account
 
 .PARAMETER Identity
-	Specifies the Identity of the Computer.
+    Specifies the Identity of the Computer.
 
-	You can provide one of the following:
-		DistinguishedName
-		Guid
-		Name
-		SamAccountName
-		Sid
+    You can provide one of the following:
+        DistinguishedName
+        Guid
+        Name
+        SamAccountName
+        Sid
 
 .PARAMETER Credential
-	Specifies the alternative credential to use.
-	By default it will use the current user windows credentials.
+    Specifies the alternative credential to use.
+    By default it will use the current user windows credentials.
 
 .PARAMETER DomainName
-	Specifies the alternative Domain.
-	By default it will use the current domain.
+    Specifies the alternative Domain.
+    By default it will use the current domain.
 
 .PARAMETER Recursive
     Specifies that any child object should be deleted as well
@@ -31,92 +31,92 @@ function Remove-ADSIComputer
     when you try to delete the object without the -recursive param
 
 .EXAMPLE
-	Remove-ADSIComputer -identity TESTSERVER01
+    Remove-ADSIComputer -identity TESTSERVER01
 
-	This command will Remove the account TESTSERVER01
-
-.EXAMPLE
-	Remove-ADSIComputer -identity TESTSERVER01 -recursive
-
-	This command will Remove the account TESTSERVER01 and all the child leaf
+    This command will Remove the account TESTSERVER01
 
 .EXAMPLE
-	Remove-ADSIComputer -identity TESTSERVER01 -whatif
+    Remove-ADSIComputer -identity TESTSERVER01 -recursive
 
-	This command will emulate removing the account TESTSERVER01
-
-.EXAMPLE
-	Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential)
-
-	This command will Remove the account TESTSERVER01 using the alternative credential specified
+    This command will Remove the account TESTSERVER01 and all the child leaf
 
 .EXAMPLE
-	Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
+    Remove-ADSIComputer -identity TESTSERVER01 -whatif
 
-	This command will Remove the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
+    This command will emulate removing the account TESTSERVER01
+
+.EXAMPLE
+    Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential)
+
+    This command will Remove the account TESTSERVER01 using the alternative credential specified
+
+.EXAMPLE
+    Remove-ADSIComputer -identity TESTSERVER01 -credential (Get-Credential) -domain LazyWinAdmin.local
+
+    This command will Remove the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
 
 .NOTES
-	Francois-Xavier.Cat
-	LazyWinAdmin.com
-	@lazywinadm
-	github.com/lazywinadmin/AdsiPS
+    Francois-Xavier.Cat
+    LazyWinAdmin.com
+    @lazywinadm
+    github.com/lazywinadmin/AdsiPS
 
 .LINK
-	https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
+    https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
-	[CmdletBinding(SupportsShouldProcess = $true)]
-	PARAM (
-		[parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
-		$Identity,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    PARAM (
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        $Identity,
 
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-		[String]$DomainName,
+        [String]$DomainName,
 
-		[Switch]$Recursive
-	)
-	
-	BEGIN
-	{
-		Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-		
-		# Create Context splatting
-		$ContextSplatting = @{ }
-		IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-		IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        [Switch]$Recursive
+    )
 
-	}
-	PROCESS
-	{
-		TRY
-		{
-			# Not Recursive
-			if (-not $PSBoundParameters['Recursive'])
-			{
-				if ($pscmdlet.ShouldProcess("$Identity", "Remove Account"))
-				{
-					$Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
-					$Account.delete()
-				}
-			}
-			
-			# Recursive (if the computer is the parent of one leaf or more)
-			if ($PSBoundParameters['Recursive'])
-			{
-				if ($pscmdlet.ShouldProcess("$Identity", "Remove Account and any child objects"))
-				{
-					$Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
-					$Account.GetUnderlyingObject().deletetree()
-				}
-			}
-			
-		}
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}
+    BEGIN
+    {
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+
+        # Create Context splatting
+        $ContextSplatting = @{ }
+        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
+        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+
+    }
+    PROCESS
+    {
+        TRY
+        {
+            # Not Recursive
+            if (-not $PSBoundParameters['Recursive'])
+            {
+                if ($pscmdlet.ShouldProcess("$Identity", "Remove Account"))
+                {
+                    $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
+                    $Account.delete()
+                }
+            }
+
+            # Recursive (if the computer is the parent of one leaf or more)
+            if ($PSBoundParameters['Recursive'])
+            {
+                if ($pscmdlet.ShouldProcess("$Identity", "Remove Account and any child objects"))
+                {
+                    $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
+                    $Account.GetUnderlyingObject().deletetree()
+                }
+            }
+
+        }
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }
 }

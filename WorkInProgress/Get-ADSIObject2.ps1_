@@ -40,8 +40,7 @@ PARAM(
         TRY{
             # Resolving member
             # Directory Entry object
-            $DirectoryEntryParams = $ContextSplatting
-            $DirectoryEntryParams.remove('ContextType')
+            $DirectoryEntryParams = $ContextSplatting.remove('ContextType')
             $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 
             # Principal Searcher
@@ -65,7 +64,7 @@ PARAM(
             }
         }
         CATCH{
-            Write-Error $Error[0]
+            $pscmdlet.ThrowTerminatingError($_)
         }
     }
 }

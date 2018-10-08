@@ -2,13 +2,13 @@
 {
 <#
 .SYNOPSIS
-	This function modifies an account identified by its display name, sam account name or distinguished name.
+    This function modifies an account identified by its display name, sam account name or distinguished name.
 
 .DESCRIPTION
-	This function modifies an account identified by its display name, sam account name or distinguished name.
+    This function modifies an account identified by its display name, sam account name or distinguished name.
 
 .PARAMETER Identity
-	Specify the Identity of the accounts to modify.
+    Specify the Identity of the accounts to modify.
 
     The Identity can either be (in order of resolution attempt):
         A SAM account name
@@ -16,32 +16,32 @@
         A distinguished name
 
 .PARAMETER Country
-	Specify the country name. This parameter sets the co property of a user.
+    Specify the country name. This parameter sets the co property of a user.
 
 .PARAMETER Description
-	Specify the description. This parameter sets the description property of a user.
+    Specify the description. This parameter sets the description property of a user.
 
 .PARAMETER DisplayName
-	Specify the display name. This parameter sets the DisplayName property of a user.
+    Specify the display name. This parameter sets the DisplayName property of a user.
 
 .PARAMETER Location
-	Specify the location name. This parameter sets the l property of a user.
+    Specify the location name. This parameter sets the l property of a user.
 
 .PARAMETER Mail
-	Specify the mail address. This parameter sets the mail property of a user.
+    Specify the mail address. This parameter sets the mail property of a user.
 
 .PARAMETER Manager
-	Specify the manager. This parameter sets the manager property of a user.
+    Specify the manager. This parameter sets the manager property of a user.
     The manager must be specified as a SAM account name.
 
 .PARAMETER PostalCode
-	Specify the postal code name. This parameter sets the postalCode property of a user.
+    Specify the postal code name. This parameter sets the postalCode property of a user.
 
 .PARAMETER SamAccountName
-	Specify the Sam account name. This parameter sets the sAMAccountName property of a user.
+    Specify the Sam account name. This parameter sets the sAMAccountName property of a user.
 
 .PARAMETER UserPrincipalName
-	Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
+    Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
 .PARAMETER TelephoneNumber
     Specify the Telephone number
 .PARAMETER DomainName
@@ -60,52 +60,52 @@
 
 
 .NOTES
-	Micky Balladelli
-	github.com/lazywinadmin/AdsiPS
+    Micky Balladelli
+    github.com/lazywinadmin/AdsiPS
 #>
-	[CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = 'High')]
-	PARAM (
-		[Parameter(Mandatory = $true)]
-		[String]$Identity,
+    [CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = 'High')]
+    PARAM (
+        [Parameter(Mandatory = $true)]
+        [String]$Identity,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Country,
+        [Parameter(Mandatory = $false)]
+        [string]$Country,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Description,
+        [Parameter(Mandatory = $false)]
+        [string]$Description,
 
-		[Parameter(Mandatory = $false)]
-		[string]$DisplayName,
+        [Parameter(Mandatory = $false)]
+        [string]$DisplayName,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Location,
+        [Parameter(Mandatory = $false)]
+        [string]$Location,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Mail,
+        [Parameter(Mandatory = $false)]
+        [string]$Mail,
 
-		[Parameter(Mandatory = $false)]
-		[string]$Manager,
+        [Parameter(Mandatory = $false)]
+        [string]$Manager,
 
-		[Parameter(Mandatory = $false)]
-		[string]$PostalCode,
+        [Parameter(Mandatory = $false)]
+        [string]$PostalCode,
 
-		[Parameter(Mandatory = $false)]
-		[String]$SamAccountName,
+        [Parameter(Mandatory = $false)]
+        [String]$SamAccountName,
 
-		[Parameter(Mandatory = $false)]
-		[String]$TelephoneNumber,
+        [Parameter(Mandatory = $false)]
+        [String]$TelephoneNumber,
 
-		[Parameter(Mandatory = $false)]
-		[string]$UserPrincipalName,
+        [Parameter(Mandatory = $false)]
+        [string]$UserPrincipalName,
 
         [Alias("Domain", "DomainDN")]
-		[String]$DomainName = $(([adsisearcher]"").Searchroot.path),
+        [String]$DomainName = $(([adsisearcher]"").Searchroot.path),
 
-		[Alias("RunAs")]
-		[System.Management.Automation.PSCredential]
-		[System.Management.Automation.Credential()]
-		$Credential = [System.Management.Automation.PSCredential]::Empty
-	)
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty
+    )
     BEGIN
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
@@ -118,10 +118,10 @@
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-	PROCESS
-	{
-		TRY
-		{
+    PROCESS
+    {
+        TRY
+        {
             $DirectoryEntryParams = $ContextSplatting
             $DirectoryEntryParams.remove('ContextType')
             $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
@@ -131,29 +131,29 @@
             $Search.SizeLimit = 2
             $Search.SearchRoot = $DirectoryEntry
 
-			# Resolve the Object
-		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
-			$user = $Search.FindAll()
-			IF ($user.Count -eq 0)
-			{
-    		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
-	    		$user = $Search.FindAll()
-            }
-			IF ($user.Count -eq 0)
-			{
-    		    $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
-    			$user = $Search.FindAll()
+            # Resolve the Object
+            $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
+            $user = $Search.FindAll()
+            IF ($user.Count -eq 0)
+            {
+                $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
+                $user = $Search.FindAll()
             }
             IF ($user.Count -eq 0)
-			{
+            {
+                $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
+                $user = $Search.FindAll()
+            }
+            IF ($user.Count -eq 0)
+            {
                 $Search.filter = "(&(objectCategory=person)(objectClass=User)(UserPrincipalName=$Identity))"
-    			$user = $Search.FindAll()
+                $user = $Search.FindAll()
             }
 
-			IF ($user.Count -eq 1)
-			{
-				$Account = $user.Properties.samaccountname -as [string]
-				$adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
+            IF ($user.Count -eq 1)
+            {
+                $Account = $user.Properties.samaccountname -as [string]
+                $adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
 
                 # Country
                 if ($Country -ne '')
@@ -264,7 +264,7 @@
                         else
                         {
                             $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Manager))"
-			                $user = $Search.FindOne()
+                            $user = $Search.FindOne()
 
                             $Adspath.Put("manager", ($user.properties.distinguishedname -as [string]))
                             $Adspath.SetInfo()
@@ -347,9 +347,9 @@
                     }
                 }
 
-			}
-			ELSEIF ($user.Count -gt 1)
-			{
+            }
+            ELSEIF ($user.Count -gt 1)
+            {
                 Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique"
             }
             ELSEIF ($Search.FindAll().Count -eq 0)
@@ -357,14 +357,14 @@
                 Write-Warning -Message "[Set-ADSIUser] Account $identity not found"
             }
 
-		}#TRY
-		CATCH
-		{
-			$pscmdlet.ThrowTerminatingError($_)
-		}
-	}#PROCESS
-	END
-	{
-		Write-Verbose -Message "[END] Function Set-ADSIUser End."
-	}
+        }#TRY
+        CATCH
+        {
+            $pscmdlet.ThrowTerminatingError($_)
+        }
+    }#PROCESS
+    END
+    {
+        Write-Verbose -Message "[END] Function Set-ADSIUser End."
+    }
 }

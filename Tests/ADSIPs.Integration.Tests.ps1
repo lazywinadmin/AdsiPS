@@ -64,7 +64,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
         $FunctionContent = Get-Content function:$c
         $AST = [System.Management.Automation.Language.Parser]::ParseInput($FunctionContent, [ref]$null, [ref]$null)
 
-	    Context "$c - Help"{
+        Context "$c - Help"{
 
                 It "Synopsis"{$help.Synopsis| Should not BeNullOrEmpty}
                 It "Description"{$help.Description| Should not BeNullOrEmpty}
@@ -76,8 +76,8 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # Get the parameters declared in the Comment Based Help
                 #  minus the RiskMitigationParameters
-			    $RiskMitigationParameters = 'Whatif', 'Confirm'
-			    $HelpParameters = $help.parameters.parameter | Where-Object name -NotIn $RiskMitigationParameters
+                $RiskMitigationParameters = 'Whatif', 'Confirm'
+                $HelpParameters = $help.parameters.parameter | Where-Object name -NotIn $RiskMitigationParameters
 
                 # Parameter Count VS AST Parameter
                 $ASTParameters = $ast.ParamBlock.Parameters.Name.variablepath.userpath
@@ -85,7 +85,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                     $HelpParameters.name.count -eq $ASTParameters.count | Should Be $true}
 
                 # Parameters Description
-                $HelpParameters| ForEach-Object {
+                $HelpParameters| Foreach-Object -Process {
                     It "Parameter $($_.Name) - Should contains description"{
                         $_.description | Should not BeNullOrEmpty
                     }
@@ -106,7 +106,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                         }
                     }
                 }
-                
+
 
                 # Examples
                 it "Example - Count should be greater than 0"{
@@ -121,14 +121,14 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 #    ($FunctionContent -split '\r\n'|select-string $Pattern).line -match "^$Pattern" | Should Be $true
                 #}
 
-                
-            
-		    <#
-			    # Testing the Examples
-			    $help.examples.example[0].code
-			    $help.examples.example[0].introduction
-			    $help.examples.example[0].remarks
-			    $help.examples.example[0].title
+
+
+            <#
+                # Testing the Examples
+                $help.examples.example[0].code
+                $help.examples.example[0].introduction
+                $help.examples.example[0].remarks
+                $help.examples.example[0].title
 
                 $help.examples.example[0].code
                 $help.examples.example[0].introduction
@@ -140,7 +140,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 $help.parameters.parameter[0].description
                 $help.Name
                 $help.ModuleName
-            
+
                 $help.description
                 $help.syntax
                 $help.'xmlns:command'
@@ -158,7 +158,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
 
                 # check each help keyword for indent
                 # check space between help keyword
-                # check no text pass the 80 characters 
+                # check no text pass the 80 characters
                 # check PARAM is upper case
                 # Check help keywords are upper.
                 # check you have outputs
@@ -168,7 +168,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 # check does not use accelerator in PARAM()
                 # parameters in AST and Help are matching (same name)
                 # PARAM() no type defined on a property
-		    #>
-	    }
+            #>
+        }
     }
 }

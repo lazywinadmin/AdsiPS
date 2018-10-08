@@ -3,7 +3,7 @@ $UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement
 
 
 #$GroupPrincipal.Name = $Identity
-$searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+$searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
 $searcher.QueryFilter = $UserPrincipal
 $searcher.QueryFilter.Enabled=$false
 $searcher.QueryFilter.SamAccountName="fx*"
@@ -27,7 +27,7 @@ $searcher.GetUnderlyingSearcher().SearchScope = 'subtree' # "Base" "OneLevel"
 #include tombstone
 #$searcher.GetUnderlyingSearcher().Tombstone
 
-#SearchRoot 
+#SearchRoot
 #https://msdn.microsoft.com/en-us/library/system.directoryservices.directorysearcher.searchroot(v=vs.110).aspx
 $searcher.GetUnderlyingSearcher().SearchRoot =""
 
@@ -51,17 +51,17 @@ $UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement
 
 
 #$GroupPrincipal.Name = $Identity
-$searcher = new-object System.DirectoryServices.AccountManagement.PrincipalSearcher
+$searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
 $searcher.QueryFilter = $UserPrincipal
 $searcher.QueryFilter.AdvancedSearchFilter.
 #$searcher.GetUnderlyingSearcher().Filter = "(&(objectCategory=user)(objectClass=user)(samaccountname=fxt)(userAccountControl:1.2.840.113556.1.4.803:=2))"
 $searcher.GetUnderlyingSearcher().set_Filter("(&(objectCategory=user)(objectClass=user)(samaccountname=fxt)(userAccountControl:1.2.840.113556.1.4.803:=2))")
 $searcher
 
-$searcher.FindAll()|select name
+$searcher.FindAll()|Select-Object -Propertyname
 
 
 $Context = New-ADSIPrincipalContext -ContextType Domain
 $UserPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $Context
-$searcher2 = new-object system.directoryservices.directorysearcher -ArgumentList $UserPrincipal
+$searcher2 = New-Object -TypeName System.directoryservices.directorysearcher -ArgumentList $UserPrincipal
 $searcher2.q
