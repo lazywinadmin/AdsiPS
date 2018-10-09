@@ -1,6 +1,6 @@
 function Get-ADSIUser
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve a User in Active Directory
 
@@ -37,6 +37,9 @@ function Get-ADSIUser
 .PARAMETER LDAPFilter
     Specifies the LDAP query to apply
 
+.PARAMETER Adsi
+    Force LDAPFilter to return an ADSI object
+
 .EXAMPLE
     Get-ADSIUser
 
@@ -54,7 +57,6 @@ function Get-ADSIUser
 
     This example will retrieve the account 'testaccount' in the current domain using
     the current user credential
-
 .EXAMPLE
     Get-ADSIUser -Identity 'testaccount' -Credential (Get-Credential)
 
@@ -66,6 +68,12 @@ function Get-ADSIUser
 
     This example will retrieve the user account that contains fx inside the samaccountname
     property for the domain fx.lab. There is a limit of 1000 objects returned.
+
+.EXAMPLE
+    Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -Adsi
+
+    This example will retrieve the user account that contains fx inside the samaccountname
+    property and return an Adsi Object
 
 .EXAMPLE
     Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab' -NoResultLimit
@@ -107,6 +115,9 @@ function Get-ADSIUser
         [string]$LDAPFilter,
 
         [Parameter(ParameterSetName = "LDAPFilter")]
+        [Switch]$Adsi,
+        
+        [Parameter(ParameterSetName = "LDAPFilter")]
         [Parameter(ParameterSetName = "All")]
         [Switch]$NoResultLimit
 
@@ -119,8 +130,14 @@ function Get-ADSIUser
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        IF ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential 
+        }
+        IF ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName 
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
@@ -147,16 +164,27 @@ function Get-ADSIUser
             $DirectorySearcher.Filter = "(&(objectCategory=user)$LDAPFilter)"
             #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else{
+            if (-not$PSBoundParameters['NoResultLimit'])
+            {
+                Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"
+            }
+            else
+            {
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
                 $DirectorySearcher.PageSize = 10000
             }
 
-            $DirectorySearcher.FindAll() | Foreach-Object -Process {
-                [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $_.Properties["distinguishedname"])
-            }# Return UserPrincipale object
+            if (-not$PSBoundParameters['Adsi'])
+            {
+                $DirectorySearcher.FindAll() | Foreach-Object -Process {
+                    [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $_.Properties["distinguishedname"])
+                }
+            } # Return UserPrincipale object
+            else
+            {
+                $DirectorySearcher.FindAll()
+            } # Return Adsi object
         }
         ELSE
         {
@@ -166,14 +194,18 @@ function Get-ADSIUser
             $Searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
             $Searcher.QueryFilter = $UserPrincipal
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else {
+            if (-not$PSBoundParameters['NoResultLimit'])
+            {
+                Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"
+            }
+            else
+            {
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
-                $Searcher.GetUnderlyingSearcher().pagesize=10000
+                $Searcher.GetUnderlyingSearcher().pagesize = 10000
 
-                }
-           #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+            }
+            #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
             $Searcher.FindAll() # Return UserPrincipale
         }
     }
