@@ -1,11 +1,11 @@
-function Unlock-ADSIUser
+function Unlock-ADSIAccount
 {
 <#
 .SYNOPSIS
-    Function to Unlock a User in Active Directory
+    Function to Unlock a User account in Active Directory
 
 .DESCRIPTION
-    Function to Unlock a User in Active Directory
+    Function to Unlock a User account in Active Directory
 
 .PARAMETER Identity
     Specifies the Identity
@@ -14,10 +14,10 @@ function Unlock-ADSIUser
     Specifies alternative credential
 
 .EXAMPLE
-    Unlock-ADSIUser -Identity 'testaccount'
+    Unlock-ADSIAccount -Identity 'testaccount'
 
 .EXAMPLE
-    Unlock-ADSIUser -Identity 'testaccount' -Credential (Get-Credential)
+    Unlock-ADSIAccount -Identity 'testaccount' -Credential (Get-Credential)
 
 .PARAMETER DomainName
     Specifies the alternative Domain where the user should be created
@@ -53,3 +53,4 @@ function Unlock-ADSIUser
         (Get-ADSIUser -Identity $Identity @ContextSplatting).UnlockAccount()
     }
 }
+New-Alias -Name Unlock-ADSIUser -Value Unlock-ADSIAccount
