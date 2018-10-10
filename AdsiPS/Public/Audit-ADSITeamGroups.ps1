@@ -3,19 +3,14 @@ Function Audit-ADSITeamGroups
     <#
 .SYNOPSIS
     Function to Audit AD groups of a team 
-
 .DESCRIPTION
     See if all your team's members have the same AD groups. Make a snapshot of your team's members current AD groups
-
 .PARAMETER Credential
     Specifies alternative credential
-
 .PARAMETER DomainName
     Specifies the Domain Name where the function should look
-
 .PARAMETER BaseGroupIdentity
     Specifies the Identity of one team's users group
-
     You can provide one of the following properties
     DistinguishedName
     Guid
@@ -23,23 +18,16 @@ Function Audit-ADSITeamGroups
     SamAccountName
     Sid
     UserPrincipalName
-
     Those properties come from the following enumeration:
     System.DirectoryServices.AccountManagement.IdentityType
-
 .PARAMETER TeamUsersIdentity
     Specifies the Identity of team's users (array)
-
 .EXAMPLE
     Audit-ADSITeamGroups -BaseGroupIdentity 'MainGroup'
-
     Get groups of all users in MainGroup 
-
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3')
-
     Get groups of all users in the array 
-
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -Credential (Get-Credential)
     
@@ -47,18 +35,13 @@ Function Audit-ADSITeamGroups
     
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -DomainName "CONTOSO.local"
-
     Use a different domain name to perform the audit
-
 .EXAMPLE
     Audit-ADSITeamGroup -BaseGroupIdentity 'MainGroup' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
-
     Use a different domain distinguished name to perform the audit
-
 .NOTES
     Christophe Kumor
     https://christophekumor.github.io 
-
     github.com/lazywinadmin/ADSIPS
 #>
     
@@ -68,7 +51,7 @@ Function Audit-ADSITeamGroups
         [Parameter(ParameterSetName = 'TeamUsers', Mandatory = $true)]
         [array]$Users,
         
-        [Parameter(ParameterSetName = "Identity", Mandatory = $true)]
+        [Parameter(ParameterSetName = 'Identity', Mandatory = $true)]
         [string]$BaseGroupIdentity,
 
         [Alias('RunAs')]
@@ -83,7 +66,7 @@ Function Audit-ADSITeamGroups
                 }
                 else
                 {
-                    throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"
+                    throw ("DomainName must be FQDN. Ex: contoso.locale - Hostname like '{0}' is not working" -f $_)
                 } })]
         [String]$DomainName
     )
@@ -107,47 +90,47 @@ Function Audit-ADSITeamGroups
 
         $sw = [Diagnostics.Stopwatch]::StartNew()
 
-        $AllUsersGroups = [System.Collections.ArrayList]@()
+        $AllUsersGroups = [Collections.ArrayList]@()
 
         IF ($PSBoundParameters['BaseGroupIdentity']) 
         {
-            $Users = @((Get-ADSIGroupMember -Identity "$BaseGroupIdentity" -Recurse).SamAccountName)
+            $Users = @((Get-ADSIGroupMember -Identity ('{0}' -f $BaseGroupIdentity) -Recurse).SamAccountName)
         }
 
         Write-Verbose ('{0} - Get-ADSIGroupMember' -f $sw.Elapsed.TotalSeconds)
 
-        $Result = [System.Collections.ArrayList]@()
-        $ResultUsersInfos = [System.Collections.ArrayList]@()
-        $ResultGoupsInfos = [System.Collections.ArrayList]@()
+        $Result = [Collections.ArrayList]@()
+        $ResultUsersInfos = [Collections.ArrayList]@()
+        $ResultGoupsInfos = [Collections.ArrayList]@()
 
         foreach ($User in $Users)
         {
             # Get all groups of a user
             $Object = $null
-            $UserInfos = Get-ADSIUser -LDAPFilter "(&(objectClass=user)(samaccountname=$user))" -Adsi @ContextSplatting
+            $UserInfos = Get-ADSIUser -LDAPFilter ('(&(objectClass=user)(samaccountname={0}))' -f $user) -Adsi @ContextSplatting
         
             Write-Verbose ('{0} - {1} Get-ADSIUser' -f $sw.Elapsed.TotalSeconds, $user)
 
 
         
-            $Usergroups = [System.Collections.ArrayList]@()
+            $Usergroups = [Collections.ArrayList]@()
 
             #Get Primary group
 
             $BinarySID = $UserInfos.properties.Item('objectSID')
-            $SID = New-Object System.Security.Principal.SecurityIdentifier ($($UserInfos.properties.Item('objectSID')), 0)
+            $SID = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList ($($UserInfos.properties.Item('objectSID')), 0)
 
             $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfos.properties.Item('primarygroupid'))
 
-            $group = [adsi]("LDAP://<SID=$groupSID>")
+            $group = [adsi](('LDAP://<SID={0}>' -f $groupSID))
 
 
             $Object = [ordered]@{}
-            $Object.name = $group.name
-            $Object.description = $group.description
+            $Object.name = [string]$group.name
+            $Object.description = [string]$group.description
             [void] $Usergroups.add([pscustomobject]$Object)
 
-            $Usermemberof = @(([ADSISEARCHER]"(&(objectCategory=User)(samAccountName=$($user)))").Findone().Properties.memberof)
+            $Usermemberof = @(([ADSISEARCHER]('(&(objectCategory=User)(samAccountName={0}))' -f ($user))).Findone().Properties.memberof)
         
             if ($Usermemberof)
             {
@@ -155,7 +138,7 @@ Function Audit-ADSITeamGroups
                 {
 
                     $Object = [ordered]@{}
-                    $ADSIusergroup = [adsi]"LDAP://$item"
+                    $ADSIusergroup = [adsi]('LDAP://{0}' -f $item)
                     $Object.name = [string]$ADSIusergroup.Properties.name
                     $Object.description = [string]$ADSIusergroup.Properties.description
         
@@ -177,13 +160,13 @@ Function Audit-ADSITeamGroups
 
         Write-Verbose ('{0} - foreach ($User in $Users)' -f $sw.Elapsed.TotalSeconds)
 
-        $AllUsersGroups = $AllUsersGroups | Sort-Object name -Unique
-
-        [void] $ResultGoupsInfos.Add($AllUsersGroups)
+        $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name -Unique
+        $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name
+        [void] $ResultGoupsInfos.Addrange($AllUsersGroups)
 
         Write-Verbose ('{0} - $AllUsersGroups | Sort-Object -Unique' -f $sw.Elapsed.TotalSeconds)
 
-        $ResultAuditUsersGroups = [System.Collections.ArrayList]@()
+        $ResultAuditUsersGroups = [Collections.ArrayList]@()
         foreach ($item in $ResultUsersInfos)
         {
             $Object = $null
