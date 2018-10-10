@@ -75,7 +75,6 @@ Function Audit-ADSITeamGroups
     {
         # Create Context splatting
         $ContextSplatting = @{ }
-
         IF ($PSBoundParameters['Credential'])
         {
             $ContextSplatting.Credential = $Credential 
@@ -90,7 +89,7 @@ Function Audit-ADSITeamGroups
 
         $sw = [Diagnostics.Stopwatch]::StartNew()
 
-        $AllUsersGroups = [Collections.ArrayList]@()
+        $AllUsersGroups = @()
 
         IF ($PSBoundParameters['BaseGroupIdentity']) 
         {
@@ -99,36 +98,31 @@ Function Audit-ADSITeamGroups
 
         Write-Verbose ('{0} - Get-ADSIGroupMember' -f $sw.Elapsed.TotalSeconds)
 
-        $Result = [Collections.ArrayList]@()
-        $ResultUsersInfos = [Collections.ArrayList]@()
-        $ResultGoupsInfos = [Collections.ArrayList]@()
+        $Result = @()
+        $ResultUsersInfos = @()
+        $ResultGoupsInfos = @()
 
         foreach ($User in $Users)
         {
             # Get all groups of a user
-            $Object = $null
+            $Object = $Usergroups = $null
             $UserInfos = Get-ADSIUser -LDAPFilter ('(&(objectClass=user)(samaccountname={0}))' -f $user) -Adsi @ContextSplatting
         
             Write-Verbose ('{0} - {1} Get-ADSIUser' -f $sw.Elapsed.TotalSeconds, $user)
 
-
-        
-            $Usergroups = [Collections.ArrayList]@()
+            $Usergroups = @()
 
             #Get Primary group
-
-            $BinarySID = $UserInfos.properties.Item('objectSID')
             $SID = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList ($($UserInfos.properties.Item('objectSID')), 0)
 
             $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfos.properties.Item('primarygroupid'))
 
             $group = [adsi](('LDAP://<SID={0}>' -f $groupSID))
 
-
             $Object = [ordered]@{}
             $Object.name = [string]$group.name
             $Object.description = [string]$group.description
-            [void] $Usergroups.add([pscustomobject]$Object)
+            $Usergroups += [pscustomobject]$Object
 
             $Usermemberof = @(([ADSISEARCHER]('(&(objectCategory=User)(samAccountName={0}))' -f ($user))).Findone().Properties.memberof)
         
@@ -136,37 +130,36 @@ Function Audit-ADSITeamGroups
             {
                 foreach ($item in $Usermemberof)
                 {
-
                     $Object = [ordered]@{}
                     $ADSIusergroup = [adsi]('LDAP://{0}' -f $item)
                     $Object.name = [string]$ADSIusergroup.Properties.name
                     $Object.description = [string]$ADSIusergroup.Properties.description
         
-                    [void] $Usergroups.add([pscustomobject]$Object)
+                    $Usergroups += [pscustomobject]$Object
                 }
             }
 
             Write-Verbose ('{0} - {1} GetGroups' -f $sw.Elapsed.TotalSeconds, $user)
 
-            [void] $AllUsersGroups.Add($Usergroups)
+            $AllUsersGroups += $Usergroups
 
             $Object = [ordered]@{}
             $Object.SamAccountName = [string]$UserInfos.Properties.Item('SamAccountName')
             $Object.DisplayName = [string]$UserInfos.Properties.Item('DisplayName')
             $Object.Groups = $Usergroups
-    
-            [void] $ResultUsersInfos.add([pscustomobject]$Object)
+
+            $ResultUsersInfos += [pscustomobject]$Object
         }
 
         Write-Verbose ('{0} - foreach ($User in $Users)' -f $sw.Elapsed.TotalSeconds)
 
         $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name -Unique
-        $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name
-        [void] $ResultGoupsInfos.Addrange($AllUsersGroups)
+        #$AllUsersGroups = $AllUsersGroups | Sort-Object -Property name
+        $ResultGoupsInfos += $AllUsersGroups
 
         Write-Verbose ('{0} - $AllUsersGroups | Sort-Object -Unique' -f $sw.Elapsed.TotalSeconds)
 
-        $ResultAuditUsersGroups = [Collections.ArrayList]@()
+        $ResultAuditUsersGroups = @()
         foreach ($item in $ResultUsersInfos)
         {
             $Object = $null
@@ -176,30 +169,27 @@ Function Audit-ADSITeamGroups
 
             foreach ($group in $AllUsersGroups)
             {
-
                 if ($item.Groups.name -contains $group.name)
                 {
                     $Object.$($group.name) = 'x'
                 }
                 else
                 {
-
                     $Object.$($group.name) = ''
-
                 }
 
             }
             Write-Verbose ('{0} - {1} process' -f $sw.Elapsed.TotalSeconds, $item.SamAccountName)
 
-            [void] $ResultAuditUsersGroups.add([pscustomobject]$Object)
+            $ResultAuditUsersGroups += [pscustomobject]$Object
         }
         Write-Verbose ('{0} - foreach ($item in $ResultUsersInfos)' -f $sw.Elapsed.TotalSeconds)
 
         $sw.stop()
 
-        [void] $Result.Add($ResultAuditUsersGroups)
-        [void] $Result.Add($ResultGoupsInfos)
-        return $Result
+        $Result += ,$ResultAuditUsersGroups
+        $Result += ,$ResultGoupsInfos
+        $Result
     }
 
 }
