@@ -7,14 +7,32 @@ Function Get-ADSIPrincipalGroupMembership
 .DESCRIPTION
     Get all AD groups of a user, primary one and others
 
+.PARAMETER Identity
+    Specifies the Identity of the User
+
+    You can provide one of the following properties
+    DistinguishedName
+    Guid
+    Name
+    SamAccountName
+    Sid
+    UserPrincipalName
+
+    Those properties come from the following enumeration:
+    System.DirectoryServices.AccountManagement.IdentityType
+
 .PARAMETER Credential
-    Specifies alternative credential
+    Specifies the alternative credential to use.
+    By default it will use the current user windows credentials.
 
 .PARAMETER DomainName
-    Specifies the Domain Name where the function should look
+    Specifies the alternative Domain where the user should be created
+    By default it will use the current domain.
 
-.PARAMETER samaccountname
-    Specifies the samaccountname of the user
+.PARAMETER NoResultLimit
+    Remove the SizeLimit of 1000
+
+    SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1'
@@ -46,24 +64,22 @@ Function Get-ADSIPrincipalGroupMembership
     [CmdletBinding()]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [string]$samaccountname,
-
-        [Alias('RunAs')]
-        [pscredential]
+        [Parameter(Mandatory = $true, ParameterSetName = "Identity")]
+        [string]$Identity,
+        
+        [Parameter(Mandatory = $true, ParameterSetName = "UserInfos")]
+        $UserInfos,
+        
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
-        $Credential = [pscredential]::Empty,
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-        [Alias('Domain')]
-        [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
-                {
-                    $true
-                }
-                else
-                {
-                    throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"
-                } })]
-        [String]$DomainName
+        [Parameter(ParameterSetName = "Identity")]
+        [String]$DomainName,
+        
+        [Parameter(ParameterSetName = "Identity")]
+        [Switch]$NoResultLimit
     )
     
     BEGIN
@@ -79,20 +95,31 @@ Function Get-ADSIPrincipalGroupMembership
         {
             $ContextSplatting.DomainName = $DomainName 
         }
+        IF ($PSBoundParameters['NoResultLimit'])
+        {
+            $ContextSplatting.NoResultLimit = $true 
+        }
     }
     PROCESS
     {
-        $Object = $null
-        $UserInfos = Get-ADSIUser -LDAPFilter "(&(objectClass=user)(samaccountname=$samaccountname))" -Adsi @ContextSplatting
+        $Object = $Usergroups = $null
+        
+        IF ($PSBoundParameters['UserInfos'])
+        {
+            $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
+        }
+        else
+        {
+            $UserInfos = Get-ADSIUser -Identity $Identity @ContextSplatting
+            $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
+            
+        }
 
         $Usergroups = @()
 
         #Get Primary group
-        $BinarySID = $UserInfos.properties.Item('objectSID')
-        $SID = New-Object System.Security.Principal.SecurityIdentifier ($($UserInfos.properties.Item('objectSID')), 0)
-
-        $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfos.properties.Item('primarygroupid'))
-
+        $SID = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList ($($UserInfosMoreProperties.properties.Item('objectSID')), 0)
+        $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfosMoreProperties.properties.Item('primarygroupid'))
         $group = [adsi]("LDAP://<SID=$groupSID>")
 
         $Object = [ordered]@{}
@@ -101,7 +128,7 @@ Function Get-ADSIPrincipalGroupMembership
 
         $Usergroups += [pscustomobject]$Object
 
-        $Usermemberof = @(([ADSISEARCHER]"(&(objectCategory=User)(samAccountName=$($samaccountname)))").Findone().Properties.memberof)
+        $Usermemberof = $UserInfosMoreProperties.memberOf
         
         if ($Usermemberof)
         {
@@ -115,6 +142,6 @@ Function Get-ADSIPrincipalGroupMembership
                 $Usergroups += [pscustomobject]$Object
             }
         }
-        return ,$Usergroups
+        return , $Usergroups
     }        
 }

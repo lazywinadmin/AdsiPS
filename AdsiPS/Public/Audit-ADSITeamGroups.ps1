@@ -106,46 +106,19 @@ Function Audit-ADSITeamGroups
         {
             # Get all groups of a user
             $Object = $Usergroups = $null
-            $UserInfos = Get-ADSIUser -LDAPFilter ('(&(objectClass=user)(samaccountname={0}))' -f $user) -Adsi @ContextSplatting
-        
+            $UserInfos = Get-ADSIUser -Identity $user @ContextSplatting
+
             Write-Verbose ('{0} - {1} Get-ADSIUser' -f $sw.Elapsed.TotalSeconds, $user)
 
-            $Usergroups = @()
-
-            #Get Primary group
-            $SID = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList ($($UserInfos.properties.Item('objectSID')), 0)
-
-            $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfos.properties.Item('primarygroupid'))
-
-            $group = [adsi](('LDAP://<SID={0}>' -f $groupSID))
-
-            $Object = [ordered]@{}
-            $Object.name = [string]$group.name
-            $Object.description = [string]$group.description
-            $Usergroups += [pscustomobject]$Object
-
-            $Usermemberof = @(([ADSISEARCHER]('(&(objectCategory=User)(samAccountName={0}))' -f ($user))).Findone().Properties.memberof)
-        
-            if ($Usermemberof)
-            {
-                foreach ($item in $Usermemberof)
-                {
-                    $Object = [ordered]@{}
-                    $ADSIusergroup = [adsi]('LDAP://{0}' -f $item)
-                    $Object.name = [string]$ADSIusergroup.Properties.name
-                    $Object.description = [string]$ADSIusergroup.Properties.description
-        
-                    $Usergroups += [pscustomobject]$Object
-                }
-            }
+            $Usergroups = Get-ADSIPrincipalGroupMembership -UserInfos $UserInfos
 
             Write-Verbose ('{0} - {1} GetGroups' -f $sw.Elapsed.TotalSeconds, $user)
 
             $AllUsersGroups += $Usergroups
 
             $Object = [ordered]@{}
-            $Object.SamAccountName = [string]$UserInfos.Properties.Item('SamAccountName')
-            $Object.DisplayName = [string]$UserInfos.Properties.Item('DisplayName')
+            $Object.SamAccountName = [string]$UserInfos.SamAccountName
+            $Object.DisplayName = [string]$UserInfos.DisplayName
             $Object.Groups = $Usergroups
 
             $ResultUsersInfos += [pscustomobject]$Object
