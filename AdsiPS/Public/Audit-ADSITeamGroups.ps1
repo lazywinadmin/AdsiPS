@@ -3,12 +3,16 @@ Function Audit-ADSITeamGroups
     <#
 .SYNOPSIS
     Function to Audit AD groups of a team 
+
 .DESCRIPTION
     See if all your team's members have the same AD groups. Make a snapshot of your team's members current AD groups
+
 .PARAMETER Credential
     Specifies alternative credential
+
 .PARAMETER DomainName
     Specifies the Domain Name where the function should look
+
 .PARAMETER BaseGroupIdentity
     Specifies the Identity of one team's users group
     You can provide one of the following properties
@@ -20,53 +24,62 @@ Function Audit-ADSITeamGroups
     UserPrincipalName
     Those properties come from the following enumeration:
     System.DirectoryServices.AccountManagement.IdentityType
+
 .PARAMETER TeamUsersIdentity
     Specifies the Identity of team's users (array)
+
 .EXAMPLE
     Audit-ADSITeamGroups -BaseGroupIdentity 'MainGroup'
-    Get groups of all users in MainGroup 
+
+    Get groups of all users IN MainGroup 
+
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3')
-    Get groups of all users in the array 
+
+    Get groups of all users IN the array 
+
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -Credential (Get-Credential)
-    
+
     Use a different credential to perform the audit
-    
+
 .EXAMPLE
     Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -DomainName "CONTOSO.local"
+
     Use a different domain name to perform the audit
+
 .EXAMPLE
     Audit-ADSITeamGroup -BaseGroupIdentity 'MainGroup' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
+
     Use a different domain distinguished name to perform the audit
+
 .NOTES
     Christophe Kumor
     https://christophekumor.github.io 
     github.com/lazywinadmin/ADSIPS
 #>
-    
     [CmdletBinding()]
-    param
+    PARAM
     (
         [Parameter(ParameterSetName = 'TeamUsers', Mandatory = $true)]
-        [array]$Users,
+        [array]$TeamUsersIdentity,
         
         [Parameter(ParameterSetName = 'Identity', Mandatory = $true)]
         [string]$BaseGroupIdentity,
 
         [Alias('RunAs')]
-        [pscredential]
+        [System.Management.Automation.pscredential]
         [System.Management.Automation.Credential()]
-        $Credential = [pscredential]::Empty,
+        $Credential = [System.Management.Automation.pscredential]::Empty,
 
         [Alias('Domain')]
-        [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
+        [ValidateScript( { IF ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
                 {
                     $true
                 }
-                else
+                ELSE
                 {
-                    throw ("DomainName must be FQDN. Ex: contoso.locale - Hostname like '{0}' is not working" -f $_)
+                    THROW ("DomainName must be FQDN. Ex: contoso.locale - Hostname like '{0}' is not working" -f $_)
                 } })]
         [String]$DomainName
     )
@@ -77,88 +90,70 @@ Function Audit-ADSITeamGroups
         $ContextSplatting = @{ }
         IF ($PSBoundParameters['Credential'])
         {
-            $ContextSplatting.Credential = $Credential 
+            $ContextSplatting.Credential = $Credential
         }
         IF ($PSBoundParameters['DomainName'])
         {
-            $ContextSplatting.DomainName = $DomainName 
+            $ContextSplatting.DomainName = $DomainName
         }
     }
     PROCESS
     {
-
-        $sw = [Diagnostics.Stopwatch]::StartNew()
-
         $AllUsersGroups = @()
 
-        IF ($PSBoundParameters['BaseGroupIdentity']) 
+        IF ($PSBoundParameters['BaseGroupIdentity'])
         {
-            $Users = @((Get-ADSIGroupMember -Identity ('{0}' -f $BaseGroupIdentity) -Recurse).SamAccountName)
+            $TeamUsersIdentity = @((Get-ADSIGroupMember -Identity ('{0}' -f $BaseGroupIdentity) -Recurse).SamAccountName)
         }
-
-        Write-Verbose ('{0} - Get-ADSIGroupMember' -f $sw.Elapsed.TotalSeconds)
 
         $Result = @()
         $ResultUsersInfos = @()
         $ResultGoupsInfos = @()
 
-        foreach ($User in $Users)
+        FOREACH ($User IN $TeamUsersIdentity)
         {
             # Get all groups of a user
-            $Object = $Usergroups = $null
+            $Usergroups = $null
             $UserInfos = Get-ADSIUser -Identity $user @ContextSplatting
-
-            Write-Verbose ('{0} - {1} Get-ADSIUser' -f $sw.Elapsed.TotalSeconds, $user)
 
             $Usergroups = Get-ADSIPrincipalGroupMembership -UserInfos $UserInfos
 
-            Write-Verbose ('{0} - {1} GetGroups' -f $sw.Elapsed.TotalSeconds, $user)
-
             $AllUsersGroups += $Usergroups
 
-            $Object = [ordered]@{}
-            $Object.SamAccountName = [string]$UserInfos.SamAccountName
-            $Object.DisplayName = [string]$UserInfos.DisplayName
-            $Object.Groups = $Usergroups
-
-            $ResultUsersInfos += [pscustomobject]$Object
+            $ResultUsersInfos += [pscustomobject]@{
+                SamAccountName = [string]$UserInfos.name
+                DisplayName    = [string]$UserInfos.description
+                Groups         = $Usergroups
+            }
         }
-
-        Write-Verbose ('{0} - foreach ($User in $Users)' -f $sw.Elapsed.TotalSeconds)
 
         $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name -Unique
         #$AllUsersGroups = $AllUsersGroups | Sort-Object -Property name
         $ResultGoupsInfos += $AllUsersGroups
 
-        Write-Verbose ('{0} - $AllUsersGroups | Sort-Object -Unique' -f $sw.Elapsed.TotalSeconds)
-
         $ResultAuditUsersGroups = @()
-        foreach ($item in $ResultUsersInfos)
+        FOREACH ($item IN $ResultUsersInfos)
         {
             $Object = $null
             $Object = [ordered]@{}
             $Object.SamAccountName = $item.SamAccountName
             $Object.DisplayName = $item.DisplayName
 
-            foreach ($group in $AllUsersGroups)
+            FOREACH ($group IN $AllUsersGroups)
             {
-                if ($item.Groups.name -contains $group.name)
+                IF ($item.Groups.name -contains $group.name)
                 {
                     $Object.$($group.name) = 'x'
                 }
-                else
+                ELSE
                 {
                     $Object.$($group.name) = ''
                 }
 
             }
-            Write-Verbose ('{0} - {1} process' -f $sw.Elapsed.TotalSeconds, $item.SamAccountName)
 
             $ResultAuditUsersGroups += [pscustomobject]$Object
         }
-        Write-Verbose ('{0} - foreach ($item in $ResultUsersInfos)' -f $sw.Elapsed.TotalSeconds)
-
-        $sw.stop()
 
         $Result += ,$ResultAuditUsersGroups
         $Result += ,$ResultGoupsInfos
