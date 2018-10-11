@@ -64,10 +64,18 @@ Function Get-ADSIPrincipalGroupMembership
     (
         [Parameter(Mandatory = $true, ParameterSetName = "Identity")]
         [string]$Identity,
-        
+
         [Parameter(Mandatory = $true, ParameterSetName = "UserInfos")]
+        [ValidateScript( { IF ($_.GetType().Name -eq 'UserPrincipal')
+                {
+                    $true
+                }
+                ELSE
+                {
+                    THROW ('UserInfos must be a UserPrincipal type System.DirectoryServices.AccountManagement.AuthenticablePrincipal')
+                } })]
         $UserInfos,
-        
+
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -75,7 +83,7 @@ Function Get-ADSIPrincipalGroupMembership
 
         [Parameter(ParameterSetName = "Identity")]
         [String]$DomainName,
-        
+
         [Parameter(ParameterSetName = "Identity")]
         [Switch]$NoResultLimit
     )
@@ -140,6 +148,6 @@ Function Get-ADSIPrincipalGroupMembership
                 }
             }
         }
-        RETURN ,$Usergroups
+        $Usergroups
     }        
 }

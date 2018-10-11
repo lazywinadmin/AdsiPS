@@ -7,5 +7,6 @@
     "powershell.codeFormatting.ignoreOneLineBlock": false,
     "powershell.codeFormatting.newLineAfterCloseBrace": true,
     "powershell.codeFormatting.newLineAfterOpenBrace": true,
-    "powershell.codeFormatting.openBraceOnSameLine": false
+    "powershell.codeFormatting.openBraceOnSameLine": false,
+    "powershell.codeFormatting.whitespaceAfterSeparator": true
 }
