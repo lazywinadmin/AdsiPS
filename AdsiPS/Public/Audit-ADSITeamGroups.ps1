@@ -49,7 +49,7 @@ Function Audit-ADSITeamGroups
     param
     (
         [Parameter(ParameterSetName = 'TeamUsers', Mandatory = $true)]
-        [array]$Users,
+        [array]$TeamUsersIdentity,
         
         [Parameter(ParameterSetName = 'Identity', Mandatory = $true)]
         [string]$BaseGroupIdentity,
@@ -102,7 +102,7 @@ Function Audit-ADSITeamGroups
         $ResultUsersInfos = @()
         $ResultGoupsInfos = @()
 
-        foreach ($User in $Users)
+        foreach ($User in $TeamUsersIdentity)
         {
             # Get all groups of a user
             $Object = $Usergroups = $null
