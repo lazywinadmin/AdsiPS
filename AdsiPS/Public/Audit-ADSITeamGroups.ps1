@@ -86,6 +86,7 @@ Function Audit-ADSITeamGroups
 
     BEGIN
     {
+        
         # Create Context splatting
         $ContextSplatting = @{ }
         IF ($PSBoundParameters['Credential'])
@@ -155,8 +156,8 @@ Function Audit-ADSITeamGroups
             $ResultAuditUsersGroups += [pscustomobject]$Object
         }
 
-        $Result += ,$ResultAuditUsersGroups
-        $Result += ,$ResultGoupsInfos
+        $Result += , $ResultAuditUsersGroups
+        $Result += , $ResultGoupsInfos
         $Result
     }
 
