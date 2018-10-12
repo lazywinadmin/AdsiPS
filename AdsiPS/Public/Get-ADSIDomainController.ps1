@@ -41,11 +41,11 @@
         $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain()
     )
 
-    BEGIN
+    begin
     {
 
 
-        IF ($PSBoundParameters['Credential'])
+        if ($PSBoundParameters['Credential'])
         {
             $Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain
             if ($PSBoundParameters['DomainName'])
@@ -53,7 +53,7 @@
                 $Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain -DomainName $DomainName
             }
         }
-        ELSE
+        else
         {
             $Context = New-ADSIDirectoryContext -contextType Domain
             if ($PSBoundParameters['DomainName'])
@@ -62,7 +62,7 @@
             }
         }
     }
-    PROCESS
+    process
     {
         [System.DirectoryServices.ActiveDirectory.DomainController]::FindAll($Context)
     }

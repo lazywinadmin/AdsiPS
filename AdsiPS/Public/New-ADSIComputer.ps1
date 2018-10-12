@@ -81,21 +81,27 @@ function New-ADSIComputer
         [String]$DomainName
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
 
             if ($PSCmdlet.ShouldProcess($Name, "Create Computer"))
@@ -103,36 +109,38 @@ function New-ADSIComputer
                 $newObject = New-Object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
                 $newObject.SamAccountName = $Name
 
-                IF ($PSBoundParameters['Enable'])
+                if ($PSBoundParameters['Enable'])
                 {
                     $newObject.Enabled = $true
                 }
 
-                IF ($PSBoundParameters['Description'])
+                if ($PSBoundParameters['Description'])
                 {
                     $newObject.Description = $Description
                 }
 
-                IF ($PSBoundParameters['DisplayName'])
-                { $newObject.DisplayName }
+                if ($PSBoundParameters['DisplayName'])
+                {
+                    $newObject.DisplayName
+                }
 
                 # Push to ActiveDirectory
                 $newObject.Save($Context)
 
-                IF ($PSBoundParameters['Passthru'])
+                if ($PSBoundParameters['Passthru'])
                 {
                     $ContextSplatting.Remove('ContextType')
                     Get-ADSIComputer -Identity $Name @ContextSplatting
                 }
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
 
     }
-    END
+    end
     {
 
     }

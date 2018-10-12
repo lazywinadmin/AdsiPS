@@ -55,7 +55,7 @@ function Disable-ADSIComputer
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
-    PARAM (
+    param (
         [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
         $Identity,
 
@@ -66,19 +66,25 @@ function Disable-ADSIComputer
 
         [String]$DomainName)
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ }
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             if ($pscmdlet.ShouldProcess("$Identity", "Disable Account"))
             {
@@ -87,7 +93,7 @@ function Disable-ADSIComputer
                 $Account.Save()
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

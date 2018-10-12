@@ -42,12 +42,16 @@
 
 .PARAMETER UserPrincipalName
     Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
+
 .PARAMETER TelephoneNumber
     Specify the Telephone number
+
 .PARAMETER DomainName
     Specify the Domain Distinguished name
+
 .PARAMETER Credential
     Specify alternative Credential
+
 .EXAMPLE
     Set-ADSIUSer -Identity micky -UserPrincipalName micky@contoso.com -confirm:$false -SamAccountName mickyballadelli
 
@@ -58,13 +62,12 @@
 
     Changes the Country value of the account micky
 
-
 .NOTES
     Micky Balladelli
     github.com/lazywinadmin/AdsiPS
 #>
-    [CmdletBinding(SupportsShouldProcess = $true,ConfirmImpact = 'High')]
-    PARAM (
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    param (
         [Parameter(Mandatory = $true)]
         [String]$Identity,
 
@@ -106,21 +109,27 @@
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty
     )
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             $DirectoryEntryParams = $ContextSplatting
             $DirectoryEntryParams.remove('ContextType')
@@ -134,23 +143,23 @@
             # Resolve the Object
             $Search.filter = "(&(objectCategory=person)(objectClass=User)(samaccountname=$Identity))"
             $user = $Search.FindAll()
-            IF ($user.Count -eq 0)
+            if ($user.Count -eq 0)
             {
                 $Search.filter = "(&(objectCategory=person)(objectClass=User)(objectsid=$Identity))"
                 $user = $Search.FindAll()
             }
-            IF ($user.Count -eq 0)
+            if ($user.Count -eq 0)
             {
                 $Search.filter = "(&(objectCategory=person)(objectClass=User)(distinguishedname=$Identity))"
                 $user = $Search.FindAll()
             }
-            IF ($user.Count -eq 0)
+            if ($user.Count -eq 0)
             {
                 $Search.filter = "(&(objectCategory=person)(objectClass=User)(UserPrincipalName=$Identity))"
                 $user = $Search.FindAll()
             }
 
-            IF ($user.Count -eq 1)
+            if ($user.Count -eq 1)
             {
                 $Account = $user.Properties.samaccountname -as [string]
                 $adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
@@ -348,22 +357,22 @@
                 }
 
             }
-            ELSEIF ($user.Count -gt 1)
+            elseif ($user.Count -gt 1)
             {
                 Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique"
             }
-            ELSEIF ($Search.FindAll().Count -eq 0)
+            elseif ($Search.FindAll().Count -eq 0)
             {
                 Write-Warning -Message "[Set-ADSIUser] Account $identity not found"
             }
 
-        }#TRY
-        CATCH
+        }#try
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
-    }#PROCESS
-    END
+    }#process
+    end
     {
         Write-Verbose -Message "[END] Function Set-ADSIUser End."
     }

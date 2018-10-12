@@ -1,6 +1,6 @@
 ﻿function New-ADSISiteSubnet
 {
-<#
+    <#
 .SYNOPSIS
     Function to create a new Site Subnet
 
@@ -57,23 +57,29 @@
         [String]$ForestName
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Forest" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['ForestName']) { $ContextSplatting.ForestName = $ForestName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['ForestName'])
+        {
+            $ContextSplatting.ForestName = $ForestName
+        }
 
         $Context = New-ADSIDirectoryContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSCmdlet.ShouldProcess($SubnetName, "Create new Subnet"))
+            if ($PSCmdlet.ShouldProcess($SubnetName, "Create new Subnet"))
             {
                 $Subnet = New-Object -TypeName System.DirectoryServices.ActiveDirectory.ActiveDirectorysubnet -ArgumentList $Context, $SubnetName, $SiteName
 
@@ -90,13 +96,13 @@
                 #$SubnetEntry
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
             break
         }
     }
-    END
+    end
     {
     }
 }

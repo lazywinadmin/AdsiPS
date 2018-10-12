@@ -58,8 +58,8 @@ function Get-ADSIComputer
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
-    [CmdletBinding(DefaultParameterSetName="All")]
-    param ([Parameter(Mandatory=$true,ParameterSetName="Identity")]
+    [CmdletBinding(DefaultParameterSetName = "All")]
+    param ([Parameter(Mandatory = $true, ParameterSetName = "Identity")]
         [string]$Identity,
 
         [Alias("RunAs")]
@@ -69,27 +69,35 @@ function Get-ADSIComputer
 
         [String]$DomainName
     )
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
 
     }
-    PROCESS
+    process
     {
-        TRY{
-            IF($Identity)
+        try
+        {
+            if ($Identity)
             {
                 [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
             }
-            ELSE{
+            else
+            {
                 $ComputerPrincipal = New-object -TypeName System.DirectoryServices.AccountManagement.ComputerPrincipal -ArgumentList $Context
                 $Searcher = new-object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
                 $Searcher.QueryFilter = $ComputerPrincipal
@@ -97,7 +105,7 @@ function Get-ADSIComputer
                 $Searcher.FindAll()
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

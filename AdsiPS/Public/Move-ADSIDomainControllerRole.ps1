@@ -67,9 +67,9 @@
         [Switch]$Force
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             # DirectoryContext Splatting
             $Splatting = $PSBoundParameters.Remove("Force")
@@ -81,17 +81,17 @@
             # Get the DomainController
             $DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($Context)
 
-            IF ($PSBoundParameters['Force'])
+            if ($PSBoundParameters['Force'])
             {
-                ForEach ($RoleObj in $Role)
+                foreach ($RoleObj in $Role)
                 {
                     Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Forcing a role transfer of role $RoleObj"
                     $DomainController.SeizeRoleOwnership($RoleObj)
                 }
             }
-            ELSE
+            else
             {
-                ForEach ($RoleObj in $Role)
+                foreach ($RoleObj in $Role)
                 {
                     Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name) Transferring role $RoleObj"
                     $DomainController.TransferRoleOwnership($RoleObj)
@@ -99,7 +99,7 @@
             }
             Write-Verbose -Message "[Move-ADSIDomainControllerRole][PROCESS] $($DomainController.name)  Done."
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

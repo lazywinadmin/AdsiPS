@@ -38,7 +38,7 @@
 #>
 
     [CmdletBinding()]
-    PARAM (
+    param (
         [Parameter(ParameterSetName = "SamAccountName")]
         [Alias("Name", "DisplayName")]
         [String]$SamAccountName,
@@ -58,31 +58,36 @@
         [Alias("ResultLimit", "Limit")]
         [int]$SizeLimit = '100'
     )
-    BEGIN { }
-    PROCESS
+    begin
     {
-        TRY
+    }
+    process
+    {
+        try
         {
             # Building the basic search object with some parameters
             $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
             $Search.SizeLimit = $SizeLimit
             $Search.SearchRoot = $DomainDistinguishedName
 
-            IF ($PSBoundParameters['SamAccountName'])
+            if ($PSBoundParameters['SamAccountName'])
             {
                 $Search.filter = "(|(name=$SamAccountName)(samaccountname=$SamAccountName)(displayname=$samaccountname))"
             }
-            IF ($PSBoundParameters['DistinguishedName'])
+            if ($PSBoundParameters['DistinguishedName'])
             {
                 $Search.filter = "(&(distinguishedname=$DistinguishedName))"
             }
-            IF ($PSBoundParameters['DomainDistinguishedName'])
+            if ($PSBoundParameters['DomainDistinguishedName'])
             {
-                IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+                if ($DomainDistinguishedName -notlike "LDAP://*")
+                {
+                    $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
+                }#if
                 Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
                 $Search.SearchRoot = $DomainDistinguishedName
             }
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
                 $Search.SearchRoot = $Cred
@@ -93,29 +98,29 @@
                 # Define the properties
 
                 $Properties = @{
-                    "displayname" = $Object.properties.displayname -as [string]
-                    "name" = $Object.properties.name -as [string]
-                    "objectcategory" = $Object.properties.objectcategory -as [string]
-                    "objectclass" = $Object.properties.objectclass -as [string]
-                    "samaccountName" = $Object.properties.samaccountname -as [string]
-                    "description" = $Object.properties.description -as [string]
+                    "displayname"       = $Object.properties.displayname -as [string]
+                    "name"              = $Object.properties.name -as [string]
+                    "objectcategory"    = $Object.properties.objectcategory -as [string]
+                    "objectclass"       = $Object.properties.objectclass -as [string]
+                    "samaccountName"    = $Object.properties.samaccountname -as [string]
+                    "description"       = $Object.properties.description -as [string]
                     "distinguishedname" = $Object.properties.distinguishedname -as [string]
-                    "adspath" = $Object.properties.adspath -as [string]
-                    "lastlogon" = $Object.properties.lastlogon -as [string]
-                    "whencreated" = $Object.properties.whencreated -as [string]
-                    "whenchanged" = $Object.properties.whenchanged -as [string]
+                    "adspath"           = $Object.properties.adspath -as [string]
+                    "lastlogon"         = $Object.properties.lastlogon -as [string]
+                    "whencreated"       = $Object.properties.whencreated -as [string]
+                    "whenchanged"       = $Object.properties.whenchanged -as [string]
                 }
 
                 # Output the info
                 New-Object -TypeName PSObject -Property $Properties
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
-    END
+    end
     {
         Write-Verbose -Message "[END] Function Get-ADSIObject End."
     }

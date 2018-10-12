@@ -1,6 +1,6 @@
 function Remove-ADSIComputer
 {
-<#
+    <#
 .SYNOPSIS
     Function to Remove a Computer Account
 
@@ -65,7 +65,7 @@ function Remove-ADSIComputer
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
-    PARAM (
+    param (
         [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
         $Identity,
 
@@ -79,19 +79,25 @@ function Remove-ADSIComputer
         [Switch]$Recursive
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ }
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             # Not Recursive
             if (-not $PSBoundParameters['Recursive'])
@@ -114,7 +120,7 @@ function Remove-ADSIComputer
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

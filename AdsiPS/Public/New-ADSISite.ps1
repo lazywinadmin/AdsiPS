@@ -1,6 +1,6 @@
 ﻿function New-ADSISite
 {
-<#
+    <#
 .SYNOPSIS
     Function to create a new Site
 
@@ -51,23 +51,29 @@
         [String]$ForestName
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Forest" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['ForestName']) { $ContextSplatting.ForestName = $ForestName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['ForestName'])
+        {
+            $ContextSplatting.ForestName = $ForestName
+        }
 
         $Context = New-ADSIDirectoryContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSCmdlet.ShouldProcess($SiteName, "Create Site"))
+            if ($PSCmdlet.ShouldProcess($SiteName, "Create Site"))
             {
                 $Site = New-Object -TypeName System.DirectoryServices.ActiveDirectory.ActiveDirectorySite -ArgumentList $Context, $SiteName
                 $Site.Location = $Location
@@ -76,12 +82,12 @@
                 #$site.GetDirectoryEntry()
             }
         }
-        CATCH
+        catch
         {
             $PSCmdlet.ThrowTerminatingError($_)
         }
     }
-    END
+    end
     {
 
     }

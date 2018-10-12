@@ -38,7 +38,7 @@ function Test-ADSIUserIsLockedOut
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty
     )
-    PROCESS
+    process
     {
         (Get-ADSIUser @PSBoundParameters).IsAccountLockedOut()
     }

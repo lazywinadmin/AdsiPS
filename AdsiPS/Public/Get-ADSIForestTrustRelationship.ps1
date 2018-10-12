@@ -53,14 +53,14 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             Write-Verbose -Message '[Get-ADSIForestTrustRelationship][PROCESS] Credential or FirstName specified'
             (Get-ADSIForest @PSBoundParameters).GetAllTrustRelationships()
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

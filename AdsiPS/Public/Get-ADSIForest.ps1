@@ -1,6 +1,6 @@
 ﻿function Get-ADSIForest
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve the current or specified forest
 
@@ -33,6 +33,7 @@
     LazyWinAdmin.com
     @lazywinadm
     github.com/lazywinadmin/ADSIPS
+
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest(v=vs.110).aspx
 #>
@@ -49,27 +50,33 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
                 Write-Verbose -Message "[PROCESS] Credential or FirstName specified"
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['ForestName'])
+                {
+                    $Splatting.ForestName = $ForestName
+                }
 
                 $ForestContext = New-ADSIDirectoryContext @splatting
                 [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
             }
-            ELSE
+            else
             {
                 [System.DirectoryServices.ActiveDirectory.Forest]::GetCurrentForest()
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

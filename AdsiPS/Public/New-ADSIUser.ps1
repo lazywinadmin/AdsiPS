@@ -1,7 +1,7 @@
 ﻿function New-ADSIUser
 {
 
-<#
+    <#
 .SYNOPSIS
     Function to create a new User
 
@@ -107,24 +107,30 @@
         [Switch]$Passthru
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
 
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSCmdlet.ShouldProcess($SamAccountName, "Create User Account"))
+            if ($PSCmdlet.ShouldProcess($SamAccountName, "Create User Account"))
             {
                 Write-Verbose -message "Build the user object"
                 $User = New-Object -TypeName System.DirectoryServices.AccountManagement.UserPrincipal -ArgumentList $context
@@ -136,32 +142,68 @@
                 $user.UserCannotChangePassword = $UserCannotChangePassword
                 $User.PasswordNotRequired = $PasswordNotRequired
 
-                IF ($PSBoundParameters['Name']) { $User.Name = $Name }
-                IF ($PSBoundParameters['DisplayName']) { $User.DisplayName = $DisplayName }
-                IF ($PSBoundParameters['GivenName']) { $User.GivenName = $GivenName }
-                IF ($PSBoundParameters['SurName']) { $User.SurName = $SurName }
-                IF ($PSBoundParameters['UserPrincipalName']) { $User.UserPrincipalName = $UserPrincipalName }
-                IF ($PSBoundParameters['Description']) { $user.Description = $Description }
-                IF ($PSBoundParameters['EmployeeId']) { $user.EmployeeId = $EmployeeId }
-                IF ($PSBoundParameters['HomeDirectory']) { $user.HomeDirectory = $HomeDirectory }
-                IF ($PSBoundParameters['HomeDrive']) { $user.HomeDrive = $HomeDrive }
-                IF ($PSBoundParameters['MiddleName']) { $user.MiddleName = $MiddleName }
-                IF ($PSBoundParameters['VoiceTelephoneNumber']) { $user.VoiceTelephoneNumber }
-                IF ($PSBoundParameters['AccountPassword']){$User.SetPassword((New-Object -TypeName PSCredential -ArgumentList "user",$AccountPassword).GetNetworkCredential().Password)}
+                if ($PSBoundParameters['Name'])
+                {
+                    $User.Name = $Name
+                }
+                if ($PSBoundParameters['DisplayName'])
+                {
+                    $User.DisplayName = $DisplayName
+                }
+                if ($PSBoundParameters['GivenName'])
+                {
+                    $User.GivenName = $GivenName
+                }
+                if ($PSBoundParameters['SurName'])
+                {
+                    $User.SurName = $SurName
+                }
+                if ($PSBoundParameters['UserPrincipalName'])
+                {
+                    $User.UserPrincipalName = $UserPrincipalName
+                }
+                if ($PSBoundParameters['Description'])
+                {
+                    $user.Description = $Description
+                }
+                if ($PSBoundParameters['EmployeeId'])
+                {
+                    $user.EmployeeId = $EmployeeId
+                }
+                if ($PSBoundParameters['HomeDirectory'])
+                {
+                    $user.HomeDirectory = $HomeDirectory
+                }
+                if ($PSBoundParameters['HomeDrive'])
+                {
+                    $user.HomeDrive = $HomeDrive
+                }
+                if ($PSBoundParameters['MiddleName'])
+                {
+                    $user.MiddleName = $MiddleName
+                }
+                if ($PSBoundParameters['VoiceTelephoneNumber'])
+                {
+                    $user.VoiceTelephoneNumber
+                }
+                if ($PSBoundParameters['AccountPassword'])
+                {
+                    $User.SetPassword((New-Object -TypeName PSCredential -ArgumentList "user", $AccountPassword).GetNetworkCredential().Password)
+                }
 
                 Write-Verbose -message "Create the Account in Active Directory"
                 $User.Save($Context)
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
             break
         }
     }
-    END
+    end
     {
-        IF ($PSBoundParameters['Passthru'])
+        if ($PSBoundParameters['Passthru'])
         {
             $ContextSplatting.Remove("ContextType")
             Get-ADSIUser -Identity $SamAccountName @ContextSplatting

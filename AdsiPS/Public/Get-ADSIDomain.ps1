@@ -1,6 +1,6 @@
 ﻿Function Get-ADSIDomain
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve the current or specified domain
 
@@ -17,18 +17,22 @@
     Get-ADSIDomain
 
     Retrieve the current domain
+
 .EXAMPLE
     Get-ADSIForest -DomainName lazywinadmin.com
 
     Retrieve the domain lazywinadmin.com
+
 .EXAMPLE
     Get-ADSIDomain -Credential (Get-Credential superAdmin) -Verbose
 
     Retrieve the current domain with the specified credential.
+
 .EXAMPLE
     Get-ADSIDomain -DomainName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
 
     Retrieve the domain lazywinadmin.com with the specified credential.
+
 .NOTES
     Francois-Xavier Cat
     LazyWinAdmin.com
@@ -37,12 +41,13 @@
 
 .OUTPUTS
     'System.DirectoryServices.ActiveDirectory.Domain'
+
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.domain(v=vs.110).aspx
 #>
     [cmdletbinding()]
     [OutputType('System.DirectoryServices.ActiveDirectory.Domain')]
-    PARAM (
+    param (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -50,27 +55,33 @@
 
         $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
     )
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
                 Write-Verbose -Message '[PROCESS] Credential or DomainName specified'
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $Splatting.DomainName = $DomainName
+                }
 
                 $DomainContext = New-ADSIDirectoryContext @splatting -contextType Domain
                 [System.DirectoryServices.ActiveDirectory.Domain]::GetDomain($DomainContext)
             }
-            ELSE
+            else
             {
                 [System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

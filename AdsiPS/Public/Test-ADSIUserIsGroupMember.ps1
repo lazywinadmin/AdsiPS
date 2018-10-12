@@ -24,7 +24,7 @@
     @lazywinadm
     github.com/lazywinadmin/AdsiPS
 #>
-    PARAM (
+    param (
         $GroupSamAccountName,
 
         $UserSamAccountName

@@ -41,7 +41,7 @@ function Test-ADSICredential
 #>
     [OutputType('System.Boolean')]
     [CmdletBinding()]
-    PARAM
+    param
     (
         [Parameter(Mandatory)]
         [Alias("UserName")]
@@ -56,26 +56,32 @@ function Test-ADSICredential
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
         [String]$DomainName)
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             Write-Verbose -Message "[Test-ADSICredential][PROCESS] Validating $AccountName Credential against $($Context.ConnectedServer)"
-            $Context.ValidateCredentials($AccountName, (New-Object -TypeName PSCredential -ArgumentList "user",$AccountPassword).GetNetworkCredential().Password)
+            $Context.ValidateCredentials($AccountName, (New-Object -TypeName PSCredential -ArgumentList "user", $AccountPassword).GetNetworkCredential().Password)
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

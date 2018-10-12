@@ -43,7 +43,7 @@
 
     [CmdletBinding()]
     [OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet')]
-    PARAM
+    param
     (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -52,35 +52,42 @@
 
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 
-        [Parameter(ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [Alias("Name")]
         [String]$SubnetName
     )
-    BEGIN{
+    begin
+    {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
-        $ContextSplatting=@{ ContextType = "Forest" }
+        $ContextSplatting = @{ ContextType = "Forest" }
 
-        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['ForestName']){$ContextSplatting.ForestName = $ForestName}
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['ForestName'])
+        {
+            $ContextSplatting.ForestName = $ForestName
+        }
 
         $Context = New-ADSIDirectoryContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF($PSBoundParameters['SubnetName'])
+            if ($PSBoundParameters['SubnetName'])
             {
-                [System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet]::FindByName($Context,$SubnetName)
+                [System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet]::FindByName($Context, $SubnetName)
             }
-            IF(-not $PSBoundParameters['SubnetName'])
+            if (-not $PSBoundParameters['SubnetName'])
             {
                 (Get-ADSISite @PSBoundParameters).subnets
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

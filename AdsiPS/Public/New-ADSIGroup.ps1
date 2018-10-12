@@ -74,21 +74,27 @@
         [String]$DomainName
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
 
             if ($PSCmdlet.ShouldProcess($Name, "Create Group"))
@@ -102,25 +108,28 @@
                 #$newGroup.Members
                 $newGroup.SamAccountName = $Name
 
-                IF ($PSBoundParameters['UserPrincipalName']) { $newGroup.UserPrincipalName = $UserPrincipalName }
+                if ($PSBoundParameters['UserPrincipalName'])
+                {
+                    $newGroup.UserPrincipalName = $UserPrincipalName
+                }
 
                 # Push to ActiveDirectory
                 $newGroup.Save($Context)
 
-                IF ($PSBoundParameters['Passthru'])
+                if ($PSBoundParameters['Passthru'])
                 {
                     $ContextSplatting.Remove('ContextType')
                     Get-ADSIGroup -Identity $Name @ContextSplatting
                 }
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
 
     }
-    END
+    end
     {
 
     }

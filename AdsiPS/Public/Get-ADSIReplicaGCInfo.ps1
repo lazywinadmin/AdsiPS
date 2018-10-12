@@ -1,28 +1,22 @@
 ﻿function Get-ADSIReplicaGCInfo
 {
-    <#
+<#
 .SYNOPSIS
     Get-ADSIReplicaGCInfo finds out if a given DC holds the GC role.
 
 .DESCRIPTION
-
-      Get-ADSIReplicaGCInfo finds out if a given DC holds the Global Catalog role.
+    Get-ADSIReplicaGCInfo finds out if a given DC holds the Global Catalog role.
 
 .PARAMETER ComputerName
-
     Defines the remote computer to connect to.
 
 .PARAMETER Credential
-
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
-
 .EXAMPLE
+    Get-ADSIReplicaGCInfo -ComputerName dc1.ad.local
 
-      Get-ADSIReplicaGCInfo -ComputerName dc1.ad.local
-
-      Connects to remote domain controller dc1.ad.local using current credentials retrieves GC info.
-
+    Connects to remote domain controller dc1.ad.local using current credentials retrieves GC info.
 
 .NOTES
     Micky Balladelli

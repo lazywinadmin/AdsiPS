@@ -1,6 +1,6 @@
 ﻿function New-ADSIPrincipalContext
 {
-<#
+    <#
 .SYNOPSIS
     Function to create an Active Directory PrincipalContext object
 
@@ -47,7 +47,7 @@
 
     [CmdletBinding(SupportsShouldProcess = $true)]
     [OutputType('System.DirectoryServices.AccountManagement.PrincipalContext')]
-    PARAM
+    param
     (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -64,48 +64,57 @@
         [System.DirectoryServices.AccountManagement.ContextOptions[]]$ContextOptions
     )
 
-    BEGIN
+    begin
     {
         $ScriptName = (Get-Variable -name MyInvocation -Scope 0 -ValueOnly).MyCommand
         Write-Verbose -Message "[$ScriptName] Add Type System.DirectoryServices.AccountManagement"
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             switch ($ContextType)
             {
-                "Domain" { $ArgumentList = $ContextType, $DomainName }
-                "Machine" { $ArgumentList = $ContextType, $ComputerName }
-                "ApplicationDirectory" { $ArgumentList = $ContextType }
+                "Domain"
+                {
+                    $ArgumentList = $ContextType, $DomainName
+                }
+                "Machine"
+                {
+                    $ArgumentList = $ContextType, $ComputerName
+                }
+                "ApplicationDirectory"
+                {
+                    $ArgumentList = $ContextType
+                }
             }
 
-            IF ($PSBoundParameters['Container'])
+            if ($PSBoundParameters['Container'])
             {
                 $ArgumentList += $Container
             }
 
-            IF ($PSBoundParameters['ContextOptions'])
+            if ($PSBoundParameters['ContextOptions'])
             {
                 $ArgumentList += $($ContextOptions)
             }
 
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 # Query the specified domain or current if not entered, with the specified credentials
                 $ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
             }
 
-            IF ($PSCmdlet.ShouldProcess($DomainName, "Create Principal Context"))
+            if ($PSCmdlet.ShouldProcess($DomainName, "Create Principal Context"))
             {
                 # Query
                 New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalContext -ArgumentList $ArgumentList
             }
-        } #TRY
-        CATCH
+        } #try
+        catch
         {
             $PSCmdlet.ThrowTerminatingError($_)
         }
-    } #PROCESS
+    } #process
 }

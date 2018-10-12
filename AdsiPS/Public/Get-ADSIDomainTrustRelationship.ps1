@@ -53,27 +53,33 @@
         $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::GetcurrentDomain()
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])
             {
                 Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['DomainName']) { $Splatting.DomainName = $DomainName }
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $Splatting.DomainName = $DomainName
+                }
 
                 (Get-ADSIDomain @splatting).GetAllTrustRelationships()
 
             }
-            ELSE
+            else
             {
                 (Get-ADSIDomain).GetAllTrustRelationships()
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

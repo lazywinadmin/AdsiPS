@@ -1,8 +1,8 @@
 Function Get-ADSIPrincipalGroupMembership
 {
-<#
+    <#
 .SYNOPSIS
-    Function to retrieve groups from a user IN Active Directory
+    Function to retrieve groups from a user in Active Directory
 
 .DESCRIPTION
     Get all AD groups of a user, primary one and others
@@ -56,23 +56,24 @@ Function Get-ADSIPrincipalGroupMembership
 
 .NOTES
     Christophe Kumor
-    https://christophekumor.github.io 
+    https://christophekumor.github.io
+
     github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
-    PARAM
+    param
     (
         [Parameter(Mandatory = $true, ParameterSetName = "Identity")]
         [string]$Identity,
 
         [Parameter(Mandatory = $true, ParameterSetName = "UserInfos")]
-        [ValidateScript( { IF ($_.GetType().Name -eq 'UserPrincipal')
+        [ValidateScript( { if ($_.GetType().Name -eq 'UserPrincipal')
                 {
                     $true
                 }
-                ELSE
+                else
                 {
-                    THROW ('UserInfos must be a UserPrincipal type System.DirectoryServices.AccountManagement.AuthenticablePrincipal')
+                    throw ('UserInfos must be a UserPrincipal type System.DirectoryServices.AccountManagement.AuthenticablePrincipal')
                 } })]
         $UserInfos,
 
@@ -87,38 +88,37 @@ Function Get-ADSIPrincipalGroupMembership
         [Parameter(ParameterSetName = "Identity")]
         [Switch]$NoResultLimit
     )
-    
-    BEGIN
+
+    begin
     {
         # Create Context splatting
         $ContextSplatting = @{}
 
-        IF ($PSBoundParameters['Credential'])
+        if ($PSBoundParameters['Credential'])
         {
             $ContextSplatting.Credential = $Credential
         }
-        IF ($PSBoundParameters['DomainName'])
+        if ($PSBoundParameters['DomainName'])
         {
             $ContextSplatting.DomainName = $DomainName
         }
-        IF ($PSBoundParameters['NoResultLimit'])
+        if ($PSBoundParameters['NoResultLimit'])
         {
-            $ContextSplatting.NoResultLimit = $true 
+            $ContextSplatting.NoResultLimit = $true
         }
     }
-    PROCESS
+    process
     {
         $Usergroups = $null
-        
-        IF ($PSBoundParameters['UserInfos'])
+
+        if ($PSBoundParameters['UserInfos'])
         {
             $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
         }
-        ELSE
+        else
         {
             $UserInfos = Get-ADSIUser -Identity $Identity @ContextSplatting
             $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
-            
         }
 
         $Usergroups = @()
@@ -136,10 +136,10 @@ Function Get-ADSIPrincipalGroupMembership
 
         #Get others groups
         $Usermemberof = $UserInfosMoreProperties.memberOf
-        
-        IF ($Usermemberof)
+
+        if ($Usermemberof)
         {
-            FOREACH ($item IN $Usermemberof)
+            foreach ($item in $Usermemberof)
             {
                 $ADSIusergroup = [adsi]"LDAP://$item"
 
@@ -150,5 +150,5 @@ Function Get-ADSIPrincipalGroupMembership
             }
         }
         $Usergroups
-    }        
+    }
 }

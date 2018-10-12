@@ -43,7 +43,7 @@
 
     [CmdletBinding()]
     [OutputType('System.DirectoryServices.ActiveDirectory.DomainController')]
-    PARAM
+    param
     (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -52,17 +52,17 @@
 
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest(),
 
-        [Parameter(ValueFromPipelineByPropertyName=$true)]
+        [Parameter(ValueFromPipelineByPropertyName = $true)]
         [String]$Name
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             (Get-ADSISite @PSBoundParameters).servers
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

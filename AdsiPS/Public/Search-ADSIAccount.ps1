@@ -229,7 +229,14 @@ Function Search-ADSIAccount
         $Credential = [pscredential]::Empty,
 
         [Alias('Domain')]
-        [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$') {$true} else {throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"} })]
+        [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
+                {
+                    $true
+                }
+                else
+                {
+                    throw "DomainName must be FQDN. Ex: contoso.locale - Hostname like '$_' is not working"
+                } })]
         [String]$DomainName,
 
         [Alias('DomainDN', 'SearchRoot', 'SearchBase')]
@@ -243,16 +250,16 @@ Function Search-ADSIAccount
     $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
 
 
-    IF ($PSBoundParameters['DomainName'])
+    if ($PSBoundParameters['DomainName'])
     {
         $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace('.', ',DC='))"
 
         Write-Verbose -Message "Current Domain: $DomainDistinguishedName"
 
     }
-    ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
+    elseif ($PSBoundParameters['DomainDistinguishedName'])
     {
-        IF ($DomainDistinguishedName -notlike 'LDAP://*')
+        if ($DomainDistinguishedName -notlike 'LDAP://*')
         {
             $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
         }
@@ -262,7 +269,7 @@ Function Search-ADSIAccount
 
     $Search.SearchRoot = $DomainDistinguishedName
 
-    IF ($PSBoundParameters['Credential'])
+    if ($PSBoundParameters['Credential'])
     {
         $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
         $Search.SearchRoot = $Cred
@@ -271,16 +278,16 @@ Function Search-ADSIAccount
 
     write-verbose -Message ('ParameterSetName : {0}' -f $PSCmdlet.ParameterSetName)
 
-    IF ($PSBoundParameters['Computers'])
+    if ($PSBoundParameters['Computers'])
     {
         $type = 'computer'
     }
-    ELSE
+    else
     {
         $type = 'user'
     }
 
-    SWITCH -wildcard ($PSCmdlet.ParameterSetName)
+    switch -wildcard ($PSCmdlet.ParameterSetName)
     {
 
         '?AccountNeverLogged'
@@ -382,7 +389,7 @@ Function Search-ADSIAccount
 
         }
 
-        Default
+        DEFAULT
         {
             write-verbose -Message 'unknown ParameterSetName'
             return
@@ -391,13 +398,13 @@ Function Search-ADSIAccount
     }
 
 
-    IF (-not$PSBoundParameters['NoResultLimit'])
+    if (-not$PSBoundParameters['NoResultLimit'])
     {
         Write-warning -Message "Result is limited to $SizeLimit entries, specify a specific number (1-1000) on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
 
         $Search.SizeLimit = $SizeLimit
     }
-    ELSE
+    else
     {
         Write-Verbose -Message 'Use NoResultLimit switch, all objects will be returned. no limit'
 

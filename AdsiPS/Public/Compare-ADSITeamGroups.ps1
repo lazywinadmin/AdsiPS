@@ -1,8 +1,8 @@
 Function Compare-ADSITeamGroups
 {
-<#
+    <#
 .SYNOPSIS
-    Function to compare AD groups of a team 
+    Function to compare AD groups of a team
 
 .DESCRIPTION
     See if all your team's members have the same AD groups. Make a snapshot of your team's members current AD groups
@@ -31,12 +31,12 @@ Function Compare-ADSITeamGroups
 .EXAMPLE
     Compare-ADSITeamGroups -BaseGroupIdentity 'MainGroup'
 
-    Get groups of all users IN MainGroup 
+    Get groups of all users in MainGroup
 
 .EXAMPLE
     Compare-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3')
 
-    Get groups of all users IN the array 
+    Get groups of all users in the array
 
 .EXAMPLE
     Compare-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -Credential (Get-Credential)
@@ -55,15 +55,16 @@ Function Compare-ADSITeamGroups
 
 .NOTES
     Christophe Kumor
-    https://christophekumor.github.io 
+    https://christophekumor.github.io
+
     github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
-    PARAM
+    param
     (
         [Parameter(ParameterSetName = 'TeamUsers', Mandatory = $true)]
         [array]$TeamUsersIdentity,
-        
+
         [Parameter(ParameterSetName = 'Identity', Mandatory = $true)]
         [string]$BaseGroupIdentity,
 
@@ -73,35 +74,35 @@ Function Compare-ADSITeamGroups
         $Credential = [System.Management.Automation.pscredential]::Empty,
 
         [Alias('Domain')]
-        [ValidateScript( { IF ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
+        [ValidateScript( { if ($_ -match '^(?:(?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}$')
                 {
                     $true
                 }
-                ELSE
+                else
                 {
-                    THROW ("DomainName must be FQDN. Ex: contoso.locale - Hostname like '{0}' is not working" -f $_)
+                    throw ("DomainName must be FQDN. Ex: contoso.locale - Hostname like '{0}' is not working" -f $_)
                 } })]
         [String]$DomainName
     )
 
-    BEGIN
+    begin
     {
         # Create Context splatting
         $ContextSplatting = @{ }
-        IF ($PSBoundParameters['Credential'])
+        if ($PSBoundParameters['Credential'])
         {
             $ContextSplatting.Credential = $Credential
         }
-        IF ($PSBoundParameters['DomainName'])
+        if ($PSBoundParameters['DomainName'])
         {
             $ContextSplatting.DomainName = $DomainName
         }
     }
-    PROCESS
+    process
     {
         $AllUsersGroups = @()
 
-        IF ($PSBoundParameters['BaseGroupIdentity'])
+        if ($PSBoundParameters['BaseGroupIdentity'])
         {
             $TeamUsersIdentity = @((Get-ADSIGroupMember -Identity ('{0}' -f $BaseGroupIdentity) -Recurse).SamAccountName)
         }
@@ -110,7 +111,7 @@ Function Compare-ADSITeamGroups
         $ResultUsersInfos = @()
         $ResultGoupsInfos = @()
 
-        FOREACH ($User IN $TeamUsersIdentity)
+        foreach ($User in $TeamUsersIdentity)
         {
             # Get all groups of a user
             $Usergroups = $null
@@ -131,20 +132,20 @@ Function Compare-ADSITeamGroups
         $ResultGoupsInfos += $AllUsersGroups
 
         $ResultAuditUsersGroups = @()
-        FOREACH ($item IN $ResultUsersInfos)
+        foreach ($item in $ResultUsersInfos)
         {
             $Object = $null
             $Object = [ordered]@{}
             $Object.SamAccountName = $item.SamAccountName
             $Object.DisplayName = $item.DisplayName
 
-            FOREACH ($group IN $AllUsersGroups)
+            foreach ($group in $AllUsersGroups)
             {
-                IF ($item.Groups.name -contains $group.name)
+                if ($item.Groups.name -contains $group.name)
                 {
                     $Object.$($group.name) = 'x'
                 }
-                ELSE
+                else
                 {
                     $Object.$($group.name) = ''
                 }

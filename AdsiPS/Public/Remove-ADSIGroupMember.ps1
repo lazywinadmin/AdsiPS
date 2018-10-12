@@ -1,6 +1,6 @@
 function Remove-ADSIGroupMember
 {
-<#
+    <#
 .SYNOPSIS
     Function to Remove a group member
 
@@ -55,22 +55,22 @@ function Remove-ADSIGroupMember
     @lazywinadm
     github.com/lazywinadmin/AdsiPS
 #>
-[CmdletBinding(SupportsShouldProcess=$true)]
-PARAM(
-    [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
-    $Identity,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        $Identity,
 
-    [Alias("RunAs")]
-    [System.Management.Automation.PSCredential]
-    [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-    [String]$DomainName,
+        [String]$DomainName,
 
-    $Member
+        $Member
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
@@ -79,14 +79,21 @@ PARAM(
             Contexttype = "Domain"
         }
 
-        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY{
+        try
+        {
             # Resolving member
             # Directory Entry object
             $DirectoryEntryParams = $ContextSplatting
@@ -103,24 +110,35 @@ PARAM(
             # Retrieve a single object
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
 
-            if($Account)
+            if ($Account)
             {
                 switch ($Account.SchemaClassName)
                 {
-                'user' {$member =[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                'group' {$member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                'computer' {$member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
+                    'user'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
+                    'group'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
+                    'computer'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
                 }
             }
 
 
-            if ($pscmdlet.ShouldProcess("$Identity", "Remove Account member $member")){
-                $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting)
+            if ($pscmdlet.ShouldProcess("$Identity", "Remove Account member $member"))
+            {
+                $group = (Get-ADSIGroup -Identity $Identity @ContextSplatting)
                 [void]$group.members.remove($Member) #Void because this method returns $True/$false
                 ($group.Save())
             }
         }
-        CATCH{
+        catch
+        {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }

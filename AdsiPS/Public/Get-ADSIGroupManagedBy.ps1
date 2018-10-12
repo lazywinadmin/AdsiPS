@@ -8,7 +8,6 @@
     This function retrieve the group that the current user manage in the ActiveDirectory.
     Typically the function will search for group(s) and look at the 'ManagedBy' property where it matches the current user.
 
-
 .PARAMETER SamAccountName
     Specify the SamAccountName of the Manager of the group
     You can also use the alias: ManagerSamAccountName.
@@ -55,7 +54,7 @@
     github.com/lazywinadmin/AdsiPS
 #>
     [CmdletBinding(DefaultParameterSetName = "One")]
-    PARAM (
+    param (
         [Parameter(ParameterSetName = "One")]
         [Alias("ManagerSamAccountName")]
         [String]$SamAccountName = $env:USERNAME,
@@ -78,33 +77,38 @@
         [int]$SizeLimit = '100'
     )
 
-    BEGIN { }
-    PROCESS
+    begin
     {
-        TRY
+    }
+    process
+    {
+        try
         {
             # Building the basic search object with some parameters
             $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
             $Search.SizeLimit = $SizeLimit
             $Search.SearchRoot = $DomainDN
 
-            IF ($PSBoundParameters['DomainDistinguishedName'])
+            if ($PSBoundParameters['DomainDistinguishedName'])
             {
                 # Fixing the path if needed
-                IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+                if ($DomainDistinguishedName -notlike "LDAP://*")
+                {
+                    $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
+                }#if
 
                 Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
                 $Search.SearchRoot = $DomainDistinguishedName
             }
 
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 Write-Verbose -Message "Different Credential specified: $($Credential.UserName)"
                 $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
                 $Search.SearchRoot = $Cred
             }
 
-            IF ($PSBoundParameters['SamAccountName'])
+            if ($PSBoundParameters['SamAccountName'])
             {
                 Write-Verbose -Message "SamAccountName"
                 #Look for User DN
@@ -116,19 +120,19 @@
                 $Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN))"
             }
 
-            IF ($PSBoundParameters['AllManagedGroups'])
+            if ($PSBoundParameters['AllManagedGroups'])
             {
                 Write-Verbose -Message "All Managed Groups Param"
                 $Search.Filter = "(&(objectCategory=group)(managedBy=*))"
             }
 
-            IF ($PSBoundParameters['NoManager'])
+            if ($PSBoundParameters['NoManager'])
             {
                 Write-Verbose -Message "No Manager param"
                 $Search.Filter = "(&(objectCategory=group)(!(!managedBy=*)))"
             }
 
-            IF (-not ($PSBoundParameters['SamAccountName']) -and -not ($PSBoundParameters['AllManagedGroups']) -and -not ($PSBoundParameters['NoManager']))
+            if (-not ($PSBoundParameters['SamAccountName']) -and -not ($PSBoundParameters['AllManagedGroups']) -and -not ($PSBoundParameters['NoManager']))
             {
                 Write-Verbose -Message "No parameters used"
                 #Look for User DN
@@ -140,21 +144,24 @@
                 $Search.Filter = "(&(objectCategory=group)(ManagedBy=$UserDN))"
             }
 
-            Foreach ($group in $Search.FindAll())
+            foreach ($group in $Search.FindAll())
             {
                 $Properties = @{
-                    "SamAccountName" = $group.properties.samaccountname -as [string]
+                    "SamAccountName"    = $group.properties.samaccountname -as [string]
                     "DistinguishedName" = $group.properties.distinguishedname -as [string]
-                    "GroupType" = $group.properties.grouptype -as [string]
-                    "Mail" = $group.properties.mail -as [string]
+                    "GroupType"         = $group.properties.grouptype -as [string]
+                    "Mail"              = $group.properties.mail -as [string]
                 }
                 New-Object -TypeName psobject -Property $Properties
             }
         }#try
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }#Process
-    END { Write-Verbose -Message "[END] Function Get-ADSIGroupManagedBy End." }
+    end
+    {
+        Write-Verbose -Message "[END] Function Get-ADSIGroupManagedBy End."
+    }
 }

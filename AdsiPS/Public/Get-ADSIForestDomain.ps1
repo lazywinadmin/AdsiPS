@@ -35,7 +35,7 @@
     github.com/lazywinadmin/ADSIPS
 #>
     [cmdletbinding()]
-    PARAM (
+    param (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -43,27 +43,33 @@
 
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
                 Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['ForestName'])
+                {
+                    $Splatting.ForestName = $ForestName
+                }
 
                 (Get-ADSIForest @splatting).Domains
 
             }
-            ELSE
+            else
             {
                 (Get-ADSIForest).Domains
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

@@ -55,22 +55,22 @@ function Add-ADSIGroupMember
     @lazywinadm
     github.com/lazywinadmin/ADSIPS
 #>
-[CmdletBinding(SupportsShouldProcess=$true)]
-PARAM(
-    [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
-    $Identity,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        $Identity,
 
-    [Alias("RunAs")]
-    [System.Management.Automation.PSCredential]
-    [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-    [String]$DomainName,
+        [String]$DomainName,
 
-    $Member
+        $Member
     )
 
-    BEGIN
+    begin
     {
         $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
@@ -83,11 +83,13 @@ PARAM(
             Contexttype = "Domain"
         }
 
-        IF ($PSBoundParameters['Credential']){
+        if ($PSBoundParameters['Credential'])
+        {
             Write-Verbose -Message "[$FunctionName] Context splatting - Add Credential"
             $ContextSplatting.Credential = $Credential
         }
-        IF ($PSBoundParameters['DomainName']){
+        if ($PSBoundParameters['DomainName'])
+        {
             Write-Verbose -Message "[$FunctionName] Context splatting - Add DomainName"
             $ContextSplatting.DomainName = $DomainName
         }
@@ -95,9 +97,10 @@ PARAM(
         Write-Verbose -Message "[$FunctionName] Create New Principal Context using Context Splatting"
         $Context = New-ADSIPrincipalContext @ContextSplatting -ErrorAction Stop
     }
-    PROCESS
+    process
     {
-        TRY{
+        try
+        {
             # Resolving member
             # Directory Entry object
             Write-Verbose -Message "[$FunctionName] Copy Context splatting and remove ContextType property"
@@ -120,33 +123,45 @@ PARAM(
             Write-Verbose -Message "[$FunctionName] Retrieve the account"
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
 
-            if($Account)
+            if ($Account)
             {
                 Write-Verbose -Message "[$FunctionName] Account Retrieved"
                 switch ($Account.SchemaClassName)
                 {
-                    'user' {$member =[System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                    'group' {$member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
-                    'computer' {$member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)}
+                    'user'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
+                    'group'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
+                    'computer'
+                    {
+                        $member = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Account.distinguishedname)
+                    }
                 }
             }
-            else{
+            else
+            {
                 Write-Error -Message "[$FunctionName] Can't retrieve the identity '$identity'"
             }
 
-
-            if ($pscmdlet.ShouldProcess("$Identity", "Add Account member $member")){
+            if ($pscmdlet.ShouldProcess("$Identity", "Add Account member $member"))
+            {
                 Write-Verbose -Message "[$FunctionName] Retrieve group with the identity '$identity' using Get-ADSIGroup using the Context Splatting"
-                $group =(Get-ADSIGroup -Identity $Identity @ContextSplatting -ErrorAction Stop)
+                $group = (Get-ADSIGroup -Identity $Identity @ContextSplatting -ErrorAction Stop)
                 $group.members.add($Member)
                 $group.Save()
             }
         }
-        CATCH{
+        catch
+        {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
-    END{
+    end
+    {
         Write-Verbose -Message "[$FunctionName] Done."
     }
 }

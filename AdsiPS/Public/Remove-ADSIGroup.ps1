@@ -1,6 +1,6 @@
 ﻿function Remove-ADSIGroup
 {
-<#
+    <#
 .SYNOPSIS
     function to remove a group
 
@@ -41,19 +41,19 @@
     @lazywinadm
     github.com/lazywinadmin/AdsiPS
 #>
-[CmdletBinding(SupportsShouldProcess=$true)]
-PARAM(
-    [parameter(Mandatory=$true, ValueFromPipelineByPropertyName=$true, ValueFromPipeline=$true)]
-    $Identity,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        $Identity,
 
-    [Alias("RunAs")]
-    [System.Management.Automation.PSCredential]
-    [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-    [String]$DomainName)
+        [String]$DomainName)
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
@@ -62,18 +62,27 @@ PARAM(
             Contexttype = "Domain"
         }
 
-        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['DomainName']){$ContextSplatting.DomainName = $DomainName}
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
     }
-    PROCESS
+    process
     {
-        TRY{
-            if ($pscmdlet.ShouldProcess("$Identity", "Delete Account")){
+        try
+        {
+            if ($pscmdlet.ShouldProcess("$Identity", "Delete Account"))
+            {
                 (Get-ADSIGroup -Identity $Identity @ContextSplatting).delete()
             }
         }
-        CATCH{
+        catch
+        {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }

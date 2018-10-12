@@ -1,6 +1,6 @@
 ﻿Function Remove-ADSISite
 {
-<#
+    <#
 .SYNOPSIS
     function to remove a Site
 
@@ -27,39 +27,47 @@
     @lazywinadm
     github.com/lazywinadmin/AdsiPS
 #>
-[CmdletBinding(SupportsShouldProcess=$true)]
-PARAM(
-    [parameter(Mandatory=$true)]
-    [String]$SiteName,
+    [CmdletBinding(SupportsShouldProcess = $true)]
+    param (
+        [parameter(Mandatory = $true)]
+        [String]$SiteName,
 
-    [Alias("RunAs")]
-    [System.Management.Automation.PSCredential]
-    [System.Management.Automation.Credential()]
-    $Credential = [System.Management.Automation.PSCredential]::Empty,
+        [Alias("RunAs")]
+        [System.Management.Automation.PSCredential]
+        [System.Management.Automation.Credential()]
+        $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-    [String]$ForestName
+        [String]$ForestName
 
-)
-    BEGIN{
+    )
+    begin
+    {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
-        $ContextSplatting=@{}
+        $ContextSplatting = @{}
 
-        IF ($PSBoundParameters['Credential']){$ContextSplatting.Credential = $Credential}
-        IF ($PSBoundParameters['ForestName']){$ContextSplatting.ForestName = $ForestName}
-    }
-    PROCESS
-    {
-        TRY
+        if ($PSBoundParameters['Credential'])
         {
-            IF ($PSCmdlet.ShouldProcess($SiteName, "Delete"))
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['ForestName'])
+        {
+            $ContextSplatting.ForestName = $ForestName
+        }
+    }
+    process
+    {
+        try
+        {
+            if ($PSCmdlet.ShouldProcess($SiteName, "Delete"))
             {
                 # Delete Site
                 (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
             }
         }
-        CATCH{
+        catch
+        {
             $pscmdlet.ThrowTerminatingError($_)
             break
         }

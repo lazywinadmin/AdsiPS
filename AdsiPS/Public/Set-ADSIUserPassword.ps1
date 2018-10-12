@@ -1,6 +1,6 @@
 ﻿function Set-ADSIUserPassword
 {
-<#
+    <#
 .SYNOPSIS
     Function to change a User's password
 
@@ -18,6 +18,7 @@
     The object needs to be a System.Security.SecureString.
     You can use something like that:
         $AccountPassword = (read-host -AsSecureString -Prompt "AccountPassword")
+
 .PARAMETER DomainName
     Specifies the DomainName to query
     By default it will take the current domain.
@@ -39,7 +40,7 @@
     github.com/lazywinadmin/AdsiPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
-    PARAM (
+    param (
         [parameter(Mandatory = $true)]
         $Identity,
 
@@ -53,25 +54,31 @@
 
         [String]$DomainName)
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ }
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             if ($pscmdlet.ShouldProcess("$Identity", "Change Account Password"))
             {
-                (Get-ADSIUser -Identity $Identity @ContextSplatting).SetPassword((New-Object -TypeName PSCredential -ArgumentList "user",$AccountPassword).GetNetworkCredential().Password)
+                (Get-ADSIUser -Identity $Identity @ContextSplatting).SetPassword((New-Object -TypeName PSCredential -ArgumentList "user", $AccountPassword).GetNetworkCredential().Password)
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
