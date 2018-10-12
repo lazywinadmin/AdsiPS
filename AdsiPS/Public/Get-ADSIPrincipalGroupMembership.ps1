@@ -1,6 +1,6 @@
 Function Get-ADSIPrincipalGroupMembership
 {
-    <#
+<#
 .SYNOPSIS
     Function to retrieve groups from a user IN Active Directory
 
@@ -134,6 +134,7 @@ Function Get-ADSIPrincipalGroupMembership
             'description' = [string]$group.description
         }
 
+        #Get others groups
         $Usermemberof = $UserInfosMoreProperties.memberOf
         
         IF ($Usermemberof)

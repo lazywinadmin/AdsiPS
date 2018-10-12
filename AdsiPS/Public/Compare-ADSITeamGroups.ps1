@@ -1,8 +1,8 @@
-Function Audit-ADSITeamGroups
+Function Compare-ADSITeamGroups
 {
-    <#
+<#
 .SYNOPSIS
-    Function to Audit AD groups of a team 
+    Function to compare AD groups of a team 
 
 .DESCRIPTION
     See if all your team's members have the same AD groups. Make a snapshot of your team's members current AD groups
@@ -29,29 +29,29 @@ Function Audit-ADSITeamGroups
     Specifies the Identity of team's users (array)
 
 .EXAMPLE
-    Audit-ADSITeamGroups -BaseGroupIdentity 'MainGroup'
+    Compare-ADSITeamGroups -BaseGroupIdentity 'MainGroup'
 
     Get groups of all users IN MainGroup 
 
 .EXAMPLE
-    Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3')
+    Compare-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3')
 
     Get groups of all users IN the array 
 
 .EXAMPLE
-    Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -Credential (Get-Credential)
+    Compare-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -Credential (Get-Credential)
 
-    Use a different credential to perform the audit
-
-.EXAMPLE
-    Audit-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -DomainName "CONTOSO.local"
-
-    Use a different domain name to perform the audit
+    Use a different credential to perform the comparison
 
 .EXAMPLE
-    Audit-ADSITeamGroup -BaseGroupIdentity 'MainGroup' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
+    Compare-ADSITeamGroups -TeamUsersIdentity @('User1','User2','User3') -DomainName "CONTOSO.local"
 
-    Use a different domain distinguished name to perform the audit
+    Use a different domain name to perform the comparison
+
+.EXAMPLE
+    Compare-ADSITeamGroups -BaseGroupIdentity 'MainGroup' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
+
+    Use a different domain distinguished name to perform the comparison
 
 .NOTES
     Christophe Kumor
@@ -128,7 +128,6 @@ Function Audit-ADSITeamGroups
         }
 
         $AllUsersGroups = $AllUsersGroups | Sort-Object -Property name -Unique
-        #$AllUsersGroups = $AllUsersGroups | Sort-Object -Property name
         $ResultGoupsInfos += $AllUsersGroups
 
         $ResultAuditUsersGroups = @()
@@ -155,8 +154,7 @@ Function Audit-ADSITeamGroups
             $ResultAuditUsersGroups += [pscustomobject]$Object
         }
 
-        $Result += ,$ResultAuditUsersGroups
-        $Result += ,$ResultGoupsInfos
+        $Result += $ResultAuditUsersGroups, $ResultGoupsInfos
         $Result
     }
 
