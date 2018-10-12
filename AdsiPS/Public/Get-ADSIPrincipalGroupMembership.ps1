@@ -19,6 +19,10 @@ Function Get-ADSIPrincipalGroupMembership
     Those properties come from the following enumeration:
     System.DirectoryServices.AccountManagement.IdentityType
 
+.PARAMETER UserInfos
+    UserInfos is a UserPrincipal object.
+    Type System.DirectoryServices.AccountManagement.AuthenticablePrincipal
+
 .PARAMETER Credential
     Specifies the alternative credential to use.
 
