@@ -3,5 +3,10 @@
     "editor.tabSize": 4,
     "editor.autoIndent": true,
     "editor.detectIndentation": false,
-    "editor.renderWhitespace": "all"
+    "editor.renderWhitespace": "all",
+    "powershell.codeFormatting.ignoreOneLineBlock": false,
+    "powershell.codeFormatting.newLineAfterCloseBrace": true,
+    "powershell.codeFormatting.newLineAfterOpenBrace": true,
+    "powershell.codeFormatting.openBraceOnSameLine": false,
+    "powershell.codeFormatting.whitespaceAfterSeparator": true
 }
