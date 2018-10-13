@@ -5,8 +5,8 @@
     Start-ADSIReplicationConsistencyCheck starts the knowledge consistency checker on a given DC.
 
 .DESCRIPTION
-      Start-ADSIReplicationConsistencyCheck connects to an Active Directory Domain Controller and starts the KCC to verify if the replication
-      topology needs to be optimized.
+    Start-ADSIReplicationConsistencyCheck connects to an Active Directory Domain Controller and starts the KCC to verify if the replication
+    topology needs to be optimized.
 
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
@@ -15,9 +15,8 @@
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
 .EXAMPLE
-      Start-ADSIReplicationConsistencyCheck -ComputerName dc1.ad.local
-      Connects to remote domain controller dc1.ad.local using current credentials and starts a KCC check.
-
+    Start-ADSIReplicationConsistencyCheck -ComputerName dc1.ad.local
+    Connects to remote domain controller dc1.ad.local using current credentials and starts a KCC check.
 
 .NOTES
     Micky Balladelli
@@ -26,7 +25,7 @@
 
     github.com/lazywinadmin/AdsiPS
 #>
-    [CmdletBinding(SupportsShouldProcess=$true)]
+    [CmdletBinding(SupportsShouldProcess = $true)]
     param ([Parameter(Mandatory = $true)]
         [string]$ComputerName,
 
@@ -54,7 +53,7 @@
         $dc = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
     }
 
-    IF ($PSCmdlet.ShouldProcess($dc, "Check Replication Consistency (KCC Check)"))
+    if ($PSCmdlet.ShouldProcess($dc, "Check Replication Consistency (KCC Check)"))
     {
         if ($dc)
         {

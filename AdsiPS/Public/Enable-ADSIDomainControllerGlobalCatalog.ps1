@@ -55,16 +55,18 @@
         $Credential = [System.Management.Automation.PSCredential]::Empty
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             $Context = New-ADSIDirectoryContext -ContextType 'DirectoryServer' @PSBoundParameters
             $DomainController = [System.DirectoryServices.ActiveDirectory.DomainController]::GetDomainController($context)
 
-            IF ($DomainController.IsGlobalCatalog())
-            { Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) is already a Global Catalog" }
-            ELSE
+            if ($DomainController.IsGlobalCatalog())
+            {
+                Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) is already a Global Catalog"
+            }
+            else
             {
                 Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) Enabling Global Catalog ..."
                 $DomainController.EnableGlobalCatalog()
@@ -72,7 +74,7 @@
 
             Write-Verbose -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] $($DomainController.name) Done."
         }
-        CATCH
+        catch
         {
             Write-Error -Message "[Enable-ADSIDomainControllerGlobalCatalog][PROCESS] Something wrong happened"
             $pscmdlet.ThrowTerminatingError($_)

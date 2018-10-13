@@ -82,7 +82,7 @@
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 
-    [CmdletBinding(DefaultParameterSetName = 'Server',SupportsShouldProcess = $true)]
+    [CmdletBinding(DefaultParameterSetName = 'Server', SupportsShouldProcess = $true)]
     param
     (
         [Alias("RunAs")]
@@ -101,37 +101,52 @@
 
         [Parameter(ParameterSetName = 'Server')]
         [ValidateNotNullOrEmpty]
-        [Alias("ComputerName","DomainController")]
+        [Alias("ComputerName", "DomainController")]
         $Server
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             switch ($ContextType)
             {
-                "Domain" { $ArgumentList = $ContextType,$DomainName }
-                "Forest" { $ArgumentList = $ContextType, $ForestName }
-                "DirectoryServer" { $ArgumentList = $ContextType, $Server }
-                "ApplicationPartition" { $ArgumentList = $ContextType }
-                "ConfigurationSet" { $ArgumentList = $ContextType }
+                "Domain"
+                {
+                    $ArgumentList = $ContextType, $DomainName
+                }
+                "Forest"
+                {
+                    $ArgumentList = $ContextType, $ForestName
+                }
+                "DirectoryServer"
+                {
+                    $ArgumentList = $ContextType, $Server
+                }
+                "ApplicationPartition"
+                {
+                    $ArgumentList = $ContextType
+                }
+                "ConfigurationSet"
+                {
+                    $ArgumentList = $ContextType
+                }
             }
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 # Query the specified domain or current if not entered, with the specified credentials
                 $ArgumentList += $($Credential.UserName), $($Credential.GetNetworkCredential().password)
             }
 
-            IF ($PSCmdlet.ShouldProcess("Create Directory Entry"))
+            if ($PSCmdlet.ShouldProcess("Create Directory Entry"))
             {
                 # Query the specified domain or current if not entered, with the current credentials
                 New-Object -TypeName System.DirectoryServices.ActiveDirectory.DirectoryContext -ArgumentList $ArgumentList
             }
-        } #TRY
-        CATCH
+        } #try
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
-    } #PROCESS
+    } #process
 }

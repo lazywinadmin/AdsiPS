@@ -1,6 +1,6 @@
 ﻿function Get-ADSIPrintQueue
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve PrintQueue in Active Directory from PrinterQueue name or server name
 
@@ -90,12 +90,13 @@
 
 .NOTES
     Christophe Kumor
+    https://christophekumor.github.io
 
     github.com/lazywinadmin/AdsiPS
 #>
 
     [CmdletBinding()]
-    PARAM (
+    param (
         [Parameter(ValueFromPipelineByPropertyName = $true)]
 
         [Alias("PrinterQueue")]
@@ -121,56 +122,58 @@
         [Switch]$NoResultLimit
     )
 
-    BEGIN { }
-    PROCESS
+    begin
     {
-        TRY
+    }
+    process
+    {
+        try
         {
             # Building the basic search object with some parameters
             $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
             $Search.SearchRoot = $DomainDistinguishedName
             $Search.filter = "(&(objectClass=printQueue))"
 
-            IF ($PSBoundParameters['ServerName'])
+            if ($PSBoundParameters['ServerName'])
             {
                 $Search.filter = "(&(objectClass=printQueue)(|(serverName=$ServerName)(shortServerName=$ServerName)))"
             }
-             ELSEIF ($PSBoundParameters['PrinterQueue'])
+            elseif ($PSBoundParameters['PrinterQueue'])
             {
                 $Search.filter = "(&(objectClass=printQueue)(printerName=$PrinterQueueName))"
             }
-             ELSE
-              {
+            else
+            {
                 $Search.filter = "(objectClass=printQueue)"
             }
 
-            IF ($PSBoundParameters['DomainName'])
+            if ($PSBoundParameters['DomainName'])
             {
                 $DomainDistinguishedName = "LDAP://DC=$($DomainName.replace(".", ",DC="))"
                 $Search.SearchRoot = $DomainDistinguishedName
             }
-            ELSEIF ($PSBoundParameters['DomainDistinguishedName'])
+            elseif ($PSBoundParameters['DomainDistinguishedName'])
             {
-                IF ($DomainDistinguishedName -notlike "LDAP://*")
+                if ($DomainDistinguishedName -notlike "LDAP://*")
                 {
                     $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
                 }
-                    Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
-                    $Search.SearchRoot = $DomainDistinguishedName
+                Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
+                $Search.SearchRoot = $DomainDistinguishedName
             }
 
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
                 $Search.SearchRoot = $Cred
             }
 
-            IF (-not$PSBoundParameters['NoResultLimit'])
+            if (-not$PSBoundParameters['NoResultLimit'])
             {
                 $Search.SizeLimit = $SizeLimit
                 Write-Warning -Message "Result is limited to $SizeLimit entries, specify a specific number on the parameter SizeLimit or use -NoResultLimit switch to remove the limit"
             }
-            ELSE
+            else
             {
 
                 Write-Verbose -Message "Use NoResultLimit switch, all objects will be returned. no limit"
@@ -178,40 +181,40 @@
             }
 
 
-            FOREACH ($Object IN $($Search.FindAll()))
+            foreach ($Object in $($Search.FindAll()))
             {
                 # Define the properties
                 #  The properties need to be lowercase!!!!!!!!
                 $Properties = @{
-                    "DisplayName" = $Object.properties.displayname -as [string]
-                    "Name" = $Object.properties.name -as [string]
-                    "printerName" = $Object.properties.printername -as [string]
-                    "location" = $Object.properties.location -as [string]
-                    "Description" = $Object.properties.description -as [string]
-                    "portName" = $Object.properties.portname -as [string]
-                    "driverName"  = $Object.properties.drivername -as [string]
-                    "ObjectCategory" = $Object.properties.objectcategory -as [string]
-                    "ObjectClass" = $Object.properties.objectclass -as [string]
+                    "DisplayName"       = $Object.properties.displayname -as [string]
+                    "Name"              = $Object.properties.name -as [string]
+                    "printerName"       = $Object.properties.printername -as [string]
+                    "location"          = $Object.properties.location -as [string]
+                    "Description"       = $Object.properties.description -as [string]
+                    "portName"          = $Object.properties.portname -as [string]
+                    "driverName"        = $Object.properties.drivername -as [string]
+                    "ObjectCategory"    = $Object.properties.objectcategory -as [string]
+                    "ObjectClass"       = $Object.properties.objectclass -as [string]
                     "DistinguishedName" = $Object.properties.distinguishedname -as [string]
-                    "WhenCreated" = $Object.properties.whencreated -as [string]
-                    "WhenChanged" = $Object.properties.whenchanged -as [string]
-                    "serverName" = $Object.properties.servername -as [string]
-                    "uNCName" = $Object.properties.uncname -as [string]
-                    "printShareName" = $Object.properties.printsharename -as [string]
-                    "printStatus" = $Object.properties.printstatus -as [string]
+                    "WhenCreated"       = $Object.properties.whencreated -as [string]
+                    "WhenChanged"       = $Object.properties.whenchanged -as [string]
+                    "serverName"        = $Object.properties.servername -as [string]
+                    "uNCName"           = $Object.properties.uncname -as [string]
+                    "printShareName"    = $Object.properties.printsharename -as [string]
+                    "printStatus"       = $Object.properties.printstatus -as [string]
 
-            }
+                }
 
                 # Output the info
                 New-Object -TypeName PSObject -Property $Properties
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
-    END
+    end
     {
         Write-Verbose -Message "[END] Function Get-ADSIPrintQueue End."
     }

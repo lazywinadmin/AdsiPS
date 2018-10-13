@@ -1,6 +1,6 @@
 function Get-ADSIUser
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve a User in Active Directory
 
@@ -9,7 +9,6 @@ function Get-ADSIUser
 
 .PARAMETER Identity
     Specifies the Identity of the User
-
     You can provide one of the following properties
     DistinguishedName
     Guid
@@ -17,7 +16,6 @@ function Get-ADSIUser
     SamAccountName
     Sid
     UserPrincipalName
-
     Those properties come from the following enumeration:
     System.DirectoryServices.AccountManagement.IdentityType
 
@@ -31,7 +29,6 @@ function Get-ADSIUser
 
 .PARAMETER NoResultLimit
     Remove the SizeLimit of 1000
-
     SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
 .PARAMETER LDAPFilter
@@ -39,44 +36,37 @@ function Get-ADSIUser
 
 .EXAMPLE
     Get-ADSIUser
-
     This example will retrieve all accounts in the current domain using
     the current user credential. There is a limit of 1000 objects returned.
 
 .EXAMPLE
     Get-ADSIUser -NoResultLimit
-
     This example will retrieve all accounts in the current domain using
     the current user credential. Using the parameter -NoResultLimit will remove the Sizelimit on the Result.
 
 .EXAMPLE
     Get-ADSIUser -Identity 'testaccount'
-
     This example will retrieve the account 'testaccount' in the current domain using
     the current user credential
 
 .EXAMPLE
     Get-ADSIUser -Identity 'testaccount' -Credential (Get-Credential)
-
     This example will retrieve the account 'testaccount' in the current domain using
     the specified credential
 
 .EXAMPLE
     Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab'
-
     This example will retrieve the user account that contains fx inside the samaccountname
     property for the domain fx.lab. There is a limit of 1000 objects returned.
 
 .EXAMPLE
     Get-ADSIUSer -LDAPFilter "(&(objectClass=user)(samaccountname=*fx*))" -DomainName 'fx.lab' -NoResultLimit
-
     This example will retrieve the user account that contains fx inside the samaccountname
     property for the domain fx.lab. There is NO limit of 1000 objects returned.
 
 .EXAMPLE
     $user = Get-ADSIUser -Identity 'testaccount'
     $user.GetUnderlyingObject()| Select-Object -Property *
-
     Help you find all the extra properties and methods available
 
 .NOTES
@@ -112,27 +102,33 @@ function Get-ADSIUser
 
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        IF ($Identity)
+        if ($Identity)
         {
             Write-Verbose -Message "Identity"
             [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
 
         }
-        ELSEIF ($PSBoundParameters['LDAPFilter'])
+        elseif ($PSBoundParameters['LDAPFilter'])
         {
 
             # Directory Entry object
@@ -147,8 +143,12 @@ function Get-ADSIUser
             $DirectorySearcher.Filter = "(&(objectCategory=user)$LDAPFilter)"
             #$DirectorySearcher.PropertiesToLoad.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else{
+            if (-not$PSBoundParameters['NoResultLimit'])
+            {
+                Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"
+            }
+            else
+            {
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
                 $DirectorySearcher.PageSize = 10000
@@ -158,7 +158,7 @@ function Get-ADSIUser
                 [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $_.Properties["distinguishedname"])
             }# Return UserPrincipale object
         }
-        ELSE
+        else
         {
             Write-Verbose -Message "Searcher"
 
@@ -166,14 +166,18 @@ function Get-ADSIUser
             $Searcher = New-Object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
             $Searcher.QueryFilter = $UserPrincipal
 
-            if(-not$PSBoundParameters['NoResultLimit']){Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"}
-            else {
+            if (-not$PSBoundParameters['NoResultLimit'])
+            {
+                Write-Warning -Message "Result is limited to 1000 entries, specify a specific number on the parameter SizeLimit or 0 to remove the limit"
+            }
+            else
+            {
                 # SizeLimit is useless, even if there is a$Searcher.GetUnderlyingSearcher().sizelimit=$SizeLimit
                 # the server limit is kept
-                $Searcher.GetUnderlyingSearcher().pagesize=10000
+                $Searcher.GetUnderlyingSearcher().pagesize = 10000
 
-                }
-           #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
+            }
+            #$Searcher.GetUnderlyingSearcher().propertiestoload.AddRange("'Enabled','SamAccountName','DistinguishedName','Sid','DistinguishedName'")
             $Searcher.FindAll() # Return UserPrincipale
         }
     }

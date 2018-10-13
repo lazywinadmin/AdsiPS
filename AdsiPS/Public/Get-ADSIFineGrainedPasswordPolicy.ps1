@@ -53,7 +53,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 
 
     [CmdletBinding()]
-    PARAM (
+    param (
         [Parameter(ParameterSetName = "Name")]
         [String]$Name,
 
@@ -69,9 +69,9 @@ function Get-ADSIFineGrainedPasswordPolicy
         [Alias("ResultLimit", "Limit")]
         [int]$SizeLimit = '100'
     )
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             $FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
 
@@ -82,20 +82,23 @@ function Get-ADSIFineGrainedPasswordPolicy
             $Search.filter = "(objectclass=msDS-PasswordSettings)"
 
 
-            IF ($PSBoundParameters['name'])
+            if ($PSBoundParameters['name'])
             {
                 $Search.filter = "(|(name=$name))"
                 Write-Verbose -Message "[$FunctionName] Set Filter to '$($Search.filter)'"
             }
 
-            IF ($PSBoundParameters['DomainDistinguishedName'])
+            if ($PSBoundParameters['DomainDistinguishedName'])
             {
-                IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+                if ($DomainDistinguishedName -notlike "LDAP://*")
+                {
+                    $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
+                }#if
                 Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
                 $Search.SearchRoot = $DomainDistinguishedName
                 Write-Verbose -Message "[$FunctionName] Set SearchRoot to '$($Search.SearchRoot)'"
             }
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 Write-Verbose -Message "[$FunctionName] Add Credential'"
                 $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
@@ -108,20 +111,20 @@ function Get-ADSIFineGrainedPasswordPolicy
                 # Define the properties
                 #  The properties need to be lowercase!
                 $Properties = @{
-                    "name" = $Object.properties.name -as [string]
-                    "passwordhistorylength" = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
-                    "minimumpasswordlength" = $Object.Properties.Item("msds-minimumpasswordlength") -as [int]
+                    "name"                                = $Object.properties.name -as [string]
+                    "passwordhistorylength"               = $Object.Properties.Item("msds-passwordhistorylength") -as [int]
+                    "minimumpasswordlength"               = $Object.Properties.Item("msds-minimumpasswordlength") -as [int]
                     "passwordreversibleencryptionenabled" = $Object.Properties.Item("msds-passwordreversibleencryptionenabled") -as [string]
-                    "minimumpasswordage" = $Object.Properties.Item("msds-minimumpasswordage") -as [string]
-                    "maximumpasswordage" = $Object.Properties.Item("msds-maximumpasswordage") -as [string]
-                    "passwordcomplexityenabled" = $Object.Properties.Item("msds-passwordcomplexityenabled") -as [string]
-                    "passwordsettingsprecedence" = $Object.Properties.Item("msds-passwordsettingsprecedence") -as [string]
-                    "lockoutduration" = $Object.Properties.Item("msds-lockoutduration") -as [string]
-                    "lockoutobservationwindow" = $Object.Properties.Item("msds-lockoutobservationwindow") -as [string]
-                    "lockoutthreshold" = $Object.Properties.Item("msds-lockoutthreshold") -as [string]
-                    "psoappliesto" = $Object.Properties.Item("msds-psoappliesto") -as [string]
-                    "WhenCreated" = $Object.properties.whencreated -as [string]
-                    "WhenChanged" = $Object.properties.whenchanged -as [string]
+                    "minimumpasswordage"                  = $Object.Properties.Item("msds-minimumpasswordage") -as [string]
+                    "maximumpasswordage"                  = $Object.Properties.Item("msds-maximumpasswordage") -as [string]
+                    "passwordcomplexityenabled"           = $Object.Properties.Item("msds-passwordcomplexityenabled") -as [string]
+                    "passwordsettingsprecedence"          = $Object.Properties.Item("msds-passwordsettingsprecedence") -as [string]
+                    "lockoutduration"                     = $Object.Properties.Item("msds-lockoutduration") -as [string]
+                    "lockoutobservationwindow"            = $Object.Properties.Item("msds-lockoutobservationwindow") -as [string]
+                    "lockoutthreshold"                    = $Object.Properties.Item("msds-lockoutthreshold") -as [string]
+                    "psoappliesto"                        = $Object.Properties.Item("msds-psoappliesto") -as [string]
+                    "WhenCreated"                         = $Object.properties.whencreated -as [string]
+                    "WhenChanged"                         = $Object.properties.whenchanged -as [string]
                 }
 
                 # Output the info
@@ -129,13 +132,13 @@ function Get-ADSIFineGrainedPasswordPolicy
             }
 
         }
-        CATCH
+        catch
         {
             # Return current error
             $PSCmdlet.ThrowTerminatingError($_)
         }
     }
-    END
+    end
     {
         Write-Verbose -Message "[$FunctionName] Done"
     }

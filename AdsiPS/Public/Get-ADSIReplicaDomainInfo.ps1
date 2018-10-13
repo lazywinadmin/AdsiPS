@@ -1,6 +1,6 @@
 ﻿function Get-ADSIReplicaDomainInfo
 {
-    <#
+<#
 .SYNOPSIS
     Get-ADSIReplicaDomainInfo returns information about the connected DC's Domain.
 
@@ -30,7 +30,7 @@
         InfrastructureRoleOwner : DC1.ad.local
         Name                    : ad.local
 
-      Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
+    Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
 .NOTES
     Micky Balladelli

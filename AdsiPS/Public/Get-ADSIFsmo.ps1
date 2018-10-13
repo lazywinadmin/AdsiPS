@@ -51,21 +51,21 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential'])
+                if ($PSBoundParameters['Credential'])
                 {
                     Write-Verbose -message "[$FunctionName] Add Credential to splatting"
                     $Splatting.Credential = $Credential
                 }
-                IF ($PSBoundParameters['ForestName'])
+                if ($PSBoundParameters['ForestName'])
                 {
                     Write-Verbose -message "[$FunctionName] Add ForestName to splatting"
                     $Splatting.ForestName = $ForestName
@@ -84,7 +84,7 @@
                 $Domain = (Get-ADSIDomain @Splatting)
 
             }
-            ELSE
+            else
             {
                 Write-Verbose -message "[$FunctionName] Retrieve Forest information '$ForestName'"
                 $Forest = Get-ADSIForest
@@ -94,22 +94,23 @@
 
             Write-Verbose -message "[$FunctionName] Prepare Output"
             $Properties = @{
-                SchemaRoleOwner = $Forest.SchemaRoleOwner
-                NamingRoleOwner = $Forest.NamingRoleOwner
+                SchemaRoleOwner         = $Forest.SchemaRoleOwner
+                NamingRoleOwner         = $Forest.NamingRoleOwner
                 InfrastructureRoleOwner = $Domain.InfrastructureRoleOwner
-                RidRoleOwner = $Domain.RidRoleOwner
-                PdcRoleOwner = $Domain.PdcRoleOwner
+                RidRoleOwner            = $Domain.RidRoleOwner
+                PdcRoleOwner            = $Domain.PdcRoleOwner
             }
 
             New-Object -TypeName PSObject -property $Properties
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
-    END{
+    end
+    {
         Write-Verbose -message "[$FunctionName] Done."
     }
 }

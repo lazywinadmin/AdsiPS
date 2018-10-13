@@ -1,6 +1,6 @@
 function Reset-ADSIUserPasswordAge
 {
-<#
+    <#
 .SYNOPSIS
     Function to reset a User's password age to zero
 
@@ -27,7 +27,7 @@ function Reset-ADSIUserPasswordAge
 #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]
-    PARAM
+    param
     (
         [Parameter(Mandatory = $true)]
         [string]$Identity,
@@ -37,7 +37,7 @@ function Reset-ADSIUserPasswordAge
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty
     )
-    PROCESS
+    process
     {
         if ($pscmdlet.ShouldProcess("$Identity", "Change Account Password"))
         {

@@ -1,6 +1,6 @@
 ﻿function Get-ADSIDomainRoot
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve the Domain Root in the Forest
 
@@ -36,6 +36,7 @@
 
 .OUTPUTS
     System.DirectoryServices.ActiveDirectory.Domain
+
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.domain(v=vs.110).aspx
 #>

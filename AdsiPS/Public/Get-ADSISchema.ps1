@@ -38,20 +38,20 @@
     param
     (
         [Parameter(ParameterSetName = 'Default',
-                   Mandatory = $true)]
+            Mandatory = $true)]
         [ValidateSet("mandatory", "optional")]
         [String]$PropertyType,
 
         [Parameter(ParameterSetName = 'Default',
-                   Mandatory = $true)]
+            Mandatory = $true)]
         [String]$ClassName,
 
         [Parameter(ParameterSetName = 'AllClasses',
-                   Mandatory = $true)]
+            Mandatory = $true)]
         [Switch]$AllClasses,
 
         [Parameter(ParameterSetName = 'FindClasses',
-                   Mandatory = $true)]
+            Mandatory = $true)]
         [String]$FindClassName,
 
         [Alias("RunAs")]
@@ -62,45 +62,52 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    BEGIN
+    begin
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
                 Write-Verbose -Message '[PROCESS] Credential or ForestName specified'
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName}
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['ForestName'])
+                {
+                    $Splatting.ForestName = $ForestName
+                }
 
                 $SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
                 $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
             }
-            ELSE
+            else
             {
                 $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
             }
         }
-        CATCH {
+        catch
+        {
             $pscmdlet.ThrowTerminatingError($_)
-         }
+        }
     }
 
-    PROCESS
+    process
     {
-        IF ($PSBoundParameters['AllClasses'])
+        if ($PSBoundParameters['AllClasses'])
         {
             $schema.FindAllClasses().Name
         }
-        IF ($PSBoundParameters['FindClassName'])
+        if ($PSBoundParameters['FindClassName'])
         {
             $schema.FindAllClasses() | Where-Object -FilterScript { $_.name -match $FindClassName } | Select-Object -Property Name
         }
 
-        ELSE
+        else
         {
 
-            Switch ($PropertyType)
+            switch ($PropertyType)
             {
                 "mandatory"
                 {
@@ -110,8 +117,8 @@
                 {
                     ($schema.FindClass("$ClassName")).OptionalProperties
                 }
-            }#Switch
-        }#ELSE
+            }#switch
+        }#else
 
-    }#PROCESS
+    }#process
 }

@@ -1,13 +1,12 @@
 ﻿function Get-ADSIReplicaForestInfo
 {
-    <#
+<#
 .SYNOPSIS
     Get-ADSIReplicaForestInfo returns information about the connected DC's Forest.
 
 .DESCRIPTION
 
-      Get-ADSIForestInfo returns information about the connected DC's Forest.
-
+    Get-ADSIForestInfo returns information about the connected DC's Forest.
 
 .PARAMETER ComputerName
 
@@ -17,10 +16,9 @@
 
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
-
 .EXAMPLE
 
-      Get-ADSIReplicaForestInfo -ComputerName dc1.ad.local
+    Get-ADSIReplicaForestInfo -ComputerName dc1.ad.local
 
         Name                  : ad.local
         Sites                 : {Default-First-Site-Name}
@@ -34,9 +32,7 @@
         SchemaRoleOwner       : DC1.ad.local
         NamingRoleOwner       : DC1.ad.local
 
-      Connects to remote domain controller dc1.ad.local using current credentials retrieves forest info.
-
-
+    Connects to remote domain controller dc1.ad.local using current credentials retrieves forest info.
 
 .NOTES
     Micky Balladelli

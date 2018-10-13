@@ -1,6 +1,6 @@
 ﻿function Remove-ADSISiteSubnet
 {
-<#
+    <#
 .SYNOPSIS
     function to remove a Subnet
 
@@ -42,32 +42,38 @@
         [String]$ForestName
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['ForestName']) { $ContextSplatting.ForestName = $ForestName }
-    }
-    PROCESS
-    {
-        TRY
+        if ($PSBoundParameters['Credential'])
         {
-            IF ($PSCmdlet.ShouldProcess($SubnetName, "Remove Subnet"))
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['ForestName'])
+        {
+            $ContextSplatting.ForestName = $ForestName
+        }
+    }
+    process
+    {
+        try
+        {
+            if ($PSCmdlet.ShouldProcess($SubnetName, "Remove Subnet"))
             {
                 (Get-ADSISiteSubnet -SubnetName $SubnetName @ContextSplatting).Delete()
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
             break
         }
     }
-    END
+    end
     {
     }
 }

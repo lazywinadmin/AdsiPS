@@ -45,7 +45,7 @@
 #>
 
     [CmdletBinding()]
-    PARAM
+    param
     (
         [Parameter(Mandatory)]
         [string]$ComputerName,
@@ -58,9 +58,9 @@
         [Parameter(Mandatory = $true)]
         [string]$Site
     )
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             # DirectoryContext Splatting
             $Splatting = $PSBoundParameters.Remove("Site")
@@ -72,7 +72,7 @@
             Write-Verbose -Message "[Move-ADSIDomainControllerToSite][PROCESS] $($DomainController.name) to site $Site"
             $DomainController.MoveToAnotherSite($Site)
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

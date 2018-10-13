@@ -15,9 +15,9 @@
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
 .EXAMPLE
-      Get-ADSIReplicaCurrentTime -ComputerName dc1.ad.local
+    Get-ADSIReplicaCurrentTime -ComputerName dc1.ad.local
 
-      Connects to remote domain controller dc1.ad.local using current credentials and retrieves the current time.
+    Connects to remote domain controller dc1.ad.local using current credentials and retrieves the current time.
 
 .NOTES
     Micky Balladelli
@@ -25,7 +25,6 @@
     https://balladelli.com
 
     github.com/lazywinadmin/AdsiPS
-
 #>
     [CmdletBinding()]
     param ([Parameter(Mandatory = $true)]

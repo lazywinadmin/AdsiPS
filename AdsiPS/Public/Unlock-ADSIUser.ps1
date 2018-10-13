@@ -39,16 +39,22 @@ function Unlock-ADSIUser
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
         [String]$DomainName)
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ }
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
     }
-    PROCESS
+    process
     {
         (Get-ADSIUser -Identity $Identity @ContextSplatting).UnlockAccount()
     }

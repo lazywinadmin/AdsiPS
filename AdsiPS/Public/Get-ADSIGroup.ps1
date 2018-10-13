@@ -143,28 +143,34 @@ function Get-ADSIGroup
 
     )
 
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($Identity)
+            if ($Identity)
             {
                 Write-Verbose -Message "Identity"
                 [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
             }
-            ELSEIF ($PSBoundParameters['LDAPFilter'])
+            elseif ($PSBoundParameters['LDAPFilter'])
             {
                 Write-Verbose -Message "LDAPFilter"
 
@@ -183,7 +189,7 @@ function Get-ADSIGroup
                     [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, ($_.path -replace 'LDAP://'))
                 }
             }
-            ELSE
+            else
             {
                 Write-Verbose -Message "Other Filters"
 
@@ -191,19 +197,40 @@ function Get-ADSIGroup
                 #$GroupPrincipal.Name = $Identity
                 $searcher = new-object -TypeName System.DirectoryServices.AccountManagement.PrincipalSearcher
                 $searcher.QueryFilter = $GroupPrincipal
-                if ($PSBoundParameters['IsSecurityGroup']) { $searcher.QueryFilter.IsSecurityGroup = $IsSecurityGroup}
-                if ($PSBoundParameters['GroupScope']) { $searcher.QueryFilter.GroupScope = $GroupScope }
-                if ($PSBoundParameters['UserPrincipalName']) { $searcher.QueryFilter.UserPrincipalName = $UserPrincipalName }
-                if ($PSBoundParameters['Description']) { $searcher.QueryFilter.Description = $Description }
-                if ($PSBoundParameters['DisplayName']) { $searcher.QueryFilter.DisplayName = $DisplayName }
+                if ($PSBoundParameters['IsSecurityGroup'])
+                {
+                    $searcher.QueryFilter.IsSecurityGroup = $IsSecurityGroup
+                }
+                if ($PSBoundParameters['GroupScope'])
+                {
+                    $searcher.QueryFilter.GroupScope = $GroupScope
+                }
+                if ($PSBoundParameters['UserPrincipalName'])
+                {
+                    $searcher.QueryFilter.UserPrincipalName = $UserPrincipalName
+                }
+                if ($PSBoundParameters['Description'])
+                {
+                    $searcher.QueryFilter.Description = $Description
+                }
+                if ($PSBoundParameters['DisplayName'])
+                {
+                    $searcher.QueryFilter.DisplayName = $DisplayName
+                }
                 #if($PSBoundParameters['DistinguishedName']){$searcher.QueryFilter.DistinguishedName = $DistinguishedName}
-                if ($PSBoundParameters['Sid']) { $searcher.QueryFilter.Sid.Value = $SID }
-                if ($PSBoundParameters['Name']) { $searcher.QueryFilter.Name = $Name }
+                if ($PSBoundParameters['Sid'])
+                {
+                    $searcher.QueryFilter.Sid.Value = $SID
+                }
+                if ($PSBoundParameters['Name'])
+                {
+                    $searcher.QueryFilter.Name = $Name
+                }
 
                 $searcher.FindAll()
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

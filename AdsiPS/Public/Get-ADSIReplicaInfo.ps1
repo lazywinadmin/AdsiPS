@@ -5,10 +5,9 @@
     Get-ADSIReplicaInfo retrieves Active Directory replication information
 
 .DESCRIPTION
-
-      Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
-      such as latency of replication and replication status.
-      If no switches are used, latency information is returned.
+    Get-ADSIReplicaInfo connects to an Active Directory Domain Controller and retrieves Active Directory replication information
+    such as latency of replication and replication status.
+    If no switches are used, latency information is returned.
 
 .PARAMETER ComputerName
     Defines the remote computer to connect to.
@@ -53,25 +52,24 @@
     {DC1.ad.local, DC2.ad.local} {}  {}   {}    {}      {}
 
 .EXAMPLE
-      Get-ADSIReplicaInfo
+    Get-ADSIReplicaInfo
 
-      Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
-
-.EXAMPLE
-      Get-ADSIReplicaInfo -ComputerName dc1.ad.local -Credential $Credential
-
-      Connects to remote domain controller dc1.ad.local using alternate credentials.
+    Tries to find a domain to connect to and if it succeeds, it will find a domain controller to retrieve replication information.
 
 .EXAMPLE
-      Get-ADSIReplicaInfo -Domain ad.local
+    Get-ADSIReplicaInfo -ComputerName dc1.ad.local -Credential $Credential
 
-      Connects to remote domain controller dc1.ad.local using current credentials.
+    Connects to remote domain controller dc1.ad.local using alternate credentials.
 
 .EXAMPLE
-      Get-ADSIReplicaInfo -Domain ad.local
+    Get-ADSIReplicaInfo -Domain ad.local
 
-      Connects to remote domain controller dc1.ad.local using current credentials.
+    Connects to remote domain controller dc1.ad.local using current credentials.
 
+.EXAMPLE
+    Get-ADSIReplicaInfo -Domain ad.local
+
+    Connects to remote domain controller dc1.ad.local using current credentials.
 
 .NOTES
     Micky Balladelli

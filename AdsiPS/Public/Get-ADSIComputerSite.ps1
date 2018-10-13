@@ -34,7 +34,6 @@ function Get-ADSIComputerSite
 
     Thanks to the Reddit folks for their help! :-)
     https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/
-
 #>
 
     [CmdletBinding()]
@@ -42,10 +41,10 @@ function Get-ADSIComputerSite
     param
     (
         [parameter()]
-        [String[]]$ComputerName=$env:computername
+        [String[]]$ComputerName = $env:computername
     )
 
-    BEGIN
+    begin
     {
         $code = @"
 using System;
@@ -74,20 +73,20 @@ public static class NetApi32 {
 
         Add-Type -TypeDefinition $code
     }
-    PROCESS
+    process
     {
-        FOREACH ($Computer in $ComputerName)
+        foreach ($Computer in $ComputerName)
         {
-            TRY
+            try
             {
                 $Properties = @{
                     ComputerName = $Computer
-                    SiteName = [NetApi32]::DsGetSiteName($Computer)
+                    SiteName     = [NetApi32]::DsGetSiteName($Computer)
                 }
 
                 New-Object -TypeName PSObject -property $Properties
             }
-            CATCH
+            catch
             {
                 $pscmdlet.ThrowTerminatingError($_)
             }

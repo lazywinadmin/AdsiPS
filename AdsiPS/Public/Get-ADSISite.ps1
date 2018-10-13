@@ -43,7 +43,7 @@
 
     [CmdletBinding()]
     [OutputType('System.DirectoryServices.ActiveDirectory.ActiveDirectorySite')]
-    PARAM
+    param
     (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -56,11 +56,11 @@
         [String]$SiteName
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Name'])
+            if ($PSBoundParameters['Name'])
             {
                 # Remove Name from the PSBoundParameters Splatting
                 [Void]$PSBoundParameters.Remove('Name')
@@ -71,13 +71,13 @@
                 # Get the site name specified
                 [System.DirectoryServices.ActiveDirectory.ActiveDirectorySite]::FindByName($Context, $Name)
             }
-            ELSE
+            else
             {
                 [Void]$PSBoundParameters.Remove('Name')
                 (Get-ADSIForest @PSBoundParameters).Sites
             }
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

@@ -44,7 +44,7 @@ function Move-ADSIComputer
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
     [CmdletBinding()]
-    param ([Parameter(Mandatory=$true)]
+    param ([Parameter(Mandatory = $true)]
         [string]$Identity,
 
         [Alias("RunAs")]
@@ -56,22 +56,29 @@ function Move-ADSIComputer
 
         $Destination
     )
-    BEGIN
+    begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        IF ($PSBoundParameters['Credential']) { $ContextSplatting.Credential = $Credential }
-        IF ($PSBoundParameters['DomainName']) { $ContextSplatting.DomainName = $DomainName }
+        if ($PSBoundParameters['Credential'])
+        {
+            $ContextSplatting.Credential = $Credential
+        }
+        if ($PSBoundParameters['DomainName'])
+        {
+            $ContextSplatting.DomainName = $DomainName
+        }
 
         $Context = New-ADSIPrincipalContext @ContextSplatting
 
     }
-    PROCESS
+    process
     {
-        TRY{
+        try
+        {
             $Computer = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
 
             # Retrieve DirectoryEntry
@@ -84,7 +91,7 @@ function Move-ADSIComputer
             $Computer.GetUnderlyingObject().psbase.moveto($NewDirectoryEntry)
             $Computer.Save()
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

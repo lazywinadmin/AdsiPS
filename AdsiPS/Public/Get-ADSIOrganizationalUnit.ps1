@@ -50,7 +50,7 @@
     github.com/lazywinadmin/AdsiPS
 #>
     [CmdletBinding(DefaultParameterSetName = "All")]
-    PARAM (
+    param (
         [Parameter(ParameterSetName = "Name")]
         [String]$Name,
 
@@ -74,10 +74,12 @@
         [Alias("ResultLimit", "Limit")]
         [int]$SizeLimit = '100'
     )
-    BEGIN { }
-    PROCESS
+    begin
     {
-        TRY
+    }
+    process
+    {
+        try
         {
             # Building the basic search object with some parameters
             $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
@@ -85,42 +87,45 @@
             $Search.SearchRoot = $DomainDistinguishedName
 
 
-            If ($Name)
+            if ($Name)
             {
                 $Search.filter = "(&(objectCategory=organizationalunit)(name=$Name))"
-                IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+                if ($psboundparameters["GroupPolicyInheritanceBlocked"])
                 {
                     $Search.filter = "(&(objectCategory=organizationalunit)(name=$Name)(gpoptions=1))"
                 }
             }
-            IF ($DistinguishedName)
+            if ($DistinguishedName)
             {
                 $Search.filter = "(&(objectCategory=organizationalunit)(distinguishedname=$distinguishedname))"
-                IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+                if ($psboundparameters["GroupPolicyInheritanceBlocked"])
                 {
                     $Search.filter = "(&(objectCategory=organizationalunit)(distinguishedname=$distinguishedname)(gpoptions=1))"
                 }
             }
-            IF ($all)
+            if ($all)
             {
                 $Search.filter = "(&(objectCategory=organizationalunit))"
-                IF ($psboundparameters["GroupPolicyInheritanceBlocked"])
+                if ($psboundparameters["GroupPolicyInheritanceBlocked"])
                 {
                     $Search.filter = "(&(objectCategory=organizationalunit)(gpoptions=1))"
                 }
             }
-            IF ($DomainDistinguishedName)
+            if ($DomainDistinguishedName)
             {
-                IF ($DomainDistinguishedName -notlike "LDAP://*") { $DomainDistinguishedName = "LDAP://$DomainDistinguishedName" }#IF
+                if ($DomainDistinguishedName -notlike "LDAP://*")
+                {
+                    $DomainDistinguishedName = "LDAP://$DomainDistinguishedName"
+                }#if
                 Write-Verbose -Message "Different Domain specified: $DomainDistinguishedName"
                 $Search.SearchRoot = $DomainDistinguishedName
             }
-            IF ($PSBoundParameters['Credential'])
+            if ($PSBoundParameters['Credential'])
             {
                 $Cred = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList $DomainDistinguishedName, $($Credential.UserName), $($Credential.GetNetworkCredential().password)
                 $Search.SearchRoot = $Cred
             }
-            If (-not $PSBoundParameters["SizeLimit"])
+            if (-not $PSBoundParameters["SizeLimit"])
             {
                 Write-Warning -Message "Default SizeLimit: 100 Results"
             }
@@ -130,30 +135,30 @@
                 # Define the properties
                 #  The properties need to be lowercase!!!!!!!!
                 $Properties = @{
-                    "Name" = $ou.properties.name -as [string]
-                    "DistinguishedName" = $ou.properties.distinguishedname -as [string]
-                    "ADsPath" = $ou.properties.adspath -as [string]
-                    "ObjectCategory" = $ou.properties.objectcategory -as [string]
-                    "ObjectClass" = $ou.properties.objectclass -as [string]
-                    "ObjectGuid" = $ou.properties.objectguid
-                    "WhenCreated" = $ou.properties.whencreated -as [string] -as [datetime]
-                    "WhenChanged" = $ou.properties.whenchanged -as [string] -as [datetime]
-                    "usncreated" = $ou.properties.usncreated -as [string]
-                    "usnchanged" = $ou.properties.usnchanged -as [string]
+                    "Name"                  = $ou.properties.name -as [string]
+                    "DistinguishedName"     = $ou.properties.distinguishedname -as [string]
+                    "ADsPath"               = $ou.properties.adspath -as [string]
+                    "ObjectCategory"        = $ou.properties.objectcategory -as [string]
+                    "ObjectClass"           = $ou.properties.objectclass -as [string]
+                    "ObjectGuid"            = $ou.properties.objectguid
+                    "WhenCreated"           = $ou.properties.whencreated -as [string] -as [datetime]
+                    "WhenChanged"           = $ou.properties.whenchanged -as [string] -as [datetime]
+                    "usncreated"            = $ou.properties.usncreated -as [string]
+                    "usnchanged"            = $ou.properties.usnchanged -as [string]
                     "dscorepropagationdata" = $ou.properties.dscorepropagationdata
-                    "instancetype" = $ou.properties.instancetype -as [string]
+                    "instancetype"          = $ou.properties.instancetype -as [string]
                 }
 
                 # Output the info
                 New-Object -TypeName PSObject -Property $Properties
             }
-        }#TRY
-        CATCH
+        }#try
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
-    }#PROCESS
-    END
+    }#process
+    end
     {
         Write-Verbose -Message "[END] Function Get-ADSIOrganizationalUnit End."
     }

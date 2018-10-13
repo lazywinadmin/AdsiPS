@@ -1,6 +1,6 @@
 ﻿Function Get-ADSIForestMode
 {
-<#
+    <#
 .SYNOPSIS
     Function to retrieve the forest mode
 
@@ -17,18 +17,22 @@
     Get-ADSIForestMode
 
     Retrieve the forest mode of the current forest
+
 .EXAMPLE
     Get-ADSIForestMode -ForestName lazywinadmin.com
 
     Retrieve the forest mode of the forest lazywinadmin.com
+
 .EXAMPLE
     Get-ADSIForestMode -Credential (Get-Credential superAdmin) -Verbose
 
     Retrieve the forest mode of the current forest using the credentials specified
+
 .EXAMPLE
     Get-ADSIForestMode -ForestName lazywinadmin.com -Credential (Get-Credential superAdmin) -Verbose
 
     Retrieve the forest mode of the forest lazywinadmin.com using the credentials specified
+
 .OUTPUTS
     System.directoryservices.activedirectory.forest.forestmode
 
@@ -37,12 +41,13 @@
     LazyWinAdmin.com
     @lazywinadm
     github.com/lazywinadmin/ADSIPS
+
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest.forestmode(v=vs.110).aspx
 #>
     [cmdletbinding()]
     [OutputType('System.directoryservices.activedirectory.forest.forestmode')]
-    PARAM (
+    param (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -50,27 +55,33 @@
 
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
-    PROCESS
+    process
     {
-        TRY
+        try
         {
-            IF ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
+            if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
                 Write-Verbose -Message '[PROCESS] Credential or FirstName specified'
                 $Splatting = @{ }
-                IF ($PSBoundParameters['Credential']) { $Splatting.Credential = $Credential }
-                IF ($PSBoundParameters['ForestName']) { $Splatting.ForestName = $ForestName }
+                if ($PSBoundParameters['Credential'])
+                {
+                    $Splatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['ForestName'])
+                {
+                    $Splatting.ForestName = $ForestName
+                }
 
                 (Get-ADSIForest @splatting).ForestMode
 
             }
-            ELSE
+            else
             {
                 (Get-ADSIForest).ForestMode
             }
 
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }

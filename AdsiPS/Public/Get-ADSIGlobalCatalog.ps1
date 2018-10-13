@@ -42,14 +42,14 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    PROCESS
+    process
     {
-        TRY
+        try
         {
             Write-Verbose -Message '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
             (Get-ADSIForest @PSBoundParameters).GlobalCatalogs
         }
-        CATCH
+        catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
