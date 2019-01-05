@@ -1,3 +1,5 @@
+[![Build status](https://ci.appveyor.com/api/projects/status/8ctm6vw79s2ecln3?svg=true)](https://ci.appveyor.com/project/lazywinadmin/adsips)
+
 # AdsiPS
 
 PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
