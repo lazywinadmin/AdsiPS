@@ -20,10 +20,7 @@ function Reset-ADSIUserPasswordAge
     Reset-ADSIUserPasswordAge -Identity 'testaccount' -Credential (Get-Credential)
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

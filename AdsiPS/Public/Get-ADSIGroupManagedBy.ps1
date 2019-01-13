@@ -48,10 +48,7 @@
     This will list all the group(s) without Manager
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(DefaultParameterSetName = "One")]
     param (

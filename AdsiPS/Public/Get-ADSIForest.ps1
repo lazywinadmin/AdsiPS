@@ -29,10 +29,7 @@
     System.DirectoryServices.ActiveDirectory.Forest
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest(v=vs.110).aspx

@@ -24,15 +24,7 @@
     Connects to remote domain controller dc2.ad.local using SuperAdmin credentials and enable the GC role.
 
 .NOTES
-    Micky Balladelli
-    balladelli.com
-    micky@balladelli.com
-    @mickyballadelli
-
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
     Version History
         1.0 Initial Version (Micky Balladelli)

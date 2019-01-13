@@ -41,11 +41,7 @@
 
 
 .NOTES
-    Filename    : Get-ADSISitesInfo.ps1
-    Author      : Micky Balladelli micky@balladelli.com
-
-.LINK
-    https://balladelli.com
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
     param ([Parameter(Mandatory = $true)]

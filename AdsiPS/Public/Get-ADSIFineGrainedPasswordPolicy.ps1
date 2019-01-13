@@ -42,12 +42,8 @@ function Get-ADSIFineGrainedPasswordPolicy
     Retreive the password policy nammed 'Name' on the current domain
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
-    Olivier Miossec
-    @omiossec_med
+    https://github.com/lazywinadmin/ADSIPS
+
 #>
 
 

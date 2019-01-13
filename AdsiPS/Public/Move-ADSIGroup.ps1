@@ -36,10 +36,7 @@ function Move-ADSIGroup
     Move-ADSIGroup -Identity 'FXGROUPTEST01' -Destination 'OU=TEST,DC=FX,DC=lab'
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal(v=vs.110).aspx

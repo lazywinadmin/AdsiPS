@@ -26,15 +26,7 @@
     moves it to the site "Paris".
 
 .NOTES
-    Micky Balladelli
-    balladelli.com
-    micky@balladelli.com
-    @mickyballadelli
-
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
     Version History
         1.0 Initial Version (Micky Balladelli)

@@ -29,10 +29,7 @@
     Retrieve the Trust relationship(s) of domain fx.lab with the credential specified
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .OUTPUTS
     System.DirectoryServices.ActiveDirectory.TrustRelationshipInformation

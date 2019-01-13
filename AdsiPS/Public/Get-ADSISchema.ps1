@@ -29,10 +29,7 @@
     Get-ADSISchema -PropertyType Mandatory -ClassName user
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param

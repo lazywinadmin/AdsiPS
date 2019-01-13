@@ -69,10 +69,7 @@ function Get-ADSIGroupMember
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.groupprincipal%28v=vs.110%29.aspx?f=255&MSPPError=-2147217396
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(DefaultParameterSetName = 'All')]
     param ([Parameter(Mandatory = $true)]

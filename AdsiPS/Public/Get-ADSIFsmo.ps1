@@ -30,10 +30,7 @@
     the specified credential.
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .OUTPUTS
     System.Management.Automation.PSCustomObject

@@ -54,10 +54,7 @@ Function Compare-ADSITeamGroups
     Use a different domain distinguished name to perform the comparison
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
     param

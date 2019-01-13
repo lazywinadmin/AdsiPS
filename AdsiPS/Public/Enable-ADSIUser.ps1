@@ -50,10 +50,7 @@ function Enable-ADSIUser
     This will enable the fxtest02 account using the credential specified in the domain LazyWinAdmin.local
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx

@@ -35,10 +35,7 @@
     System.DirectoryServices.ActiveDirectory.ActiveDirectorySubnet
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

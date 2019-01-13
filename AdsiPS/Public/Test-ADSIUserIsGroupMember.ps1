@@ -19,10 +19,7 @@
     This will return $true or $false depending if the user Fxcat is member of TestGroup
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     param (
         $GroupSamAccountName,

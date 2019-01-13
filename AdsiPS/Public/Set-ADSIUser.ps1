@@ -63,8 +63,7 @@
     Changes the Country value of the account micky
 
 .NOTES
-    Micky Balladelli
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
     param (

@@ -33,11 +33,7 @@
     Connects to remote domain controller dc1.ad.local using current credentials retrieves domain info.
 
 .NOTES
-    Micky Balladelli
-    micky@balladelli.com
-    https://balladelli.com
-
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
     param ([Parameter(Mandatory = $true)]

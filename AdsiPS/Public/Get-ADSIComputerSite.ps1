@@ -27,10 +27,7 @@ function Get-ADSIComputerSite
     This will retrieve the Site of the Computers TestServer01 and TestServer02
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
     Thanks to the Reddit folks for their help! :-)
     https://www.reddit.com/r/PowerShell/comments/4cjdk8/get_the_ad_site_name_of_a_computer/

@@ -31,10 +31,7 @@
     Get-ADSIObject -Name DC*
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

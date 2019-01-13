@@ -90,10 +90,7 @@ function Get-ADSIGroup
     This will retrieve the group object with the SamAccountName TestGroup01 in the current domain.
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .OUTPUTS
     System.DirectoryServices.AccountManagement.GroupPrincipal

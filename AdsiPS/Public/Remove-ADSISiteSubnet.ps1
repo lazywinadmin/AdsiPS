@@ -22,10 +22,7 @@
     Remove-ADSISiteSubnet -SubnetName '192.168.8.0/24'
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

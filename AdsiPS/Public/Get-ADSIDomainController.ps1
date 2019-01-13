@@ -23,10 +23,7 @@
     Get-ADSIDomainController -DomainName "FXTEST.local"
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

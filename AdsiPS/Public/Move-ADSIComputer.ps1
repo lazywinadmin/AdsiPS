@@ -35,10 +35,7 @@ function Move-ADSIComputer
     Move-ADSIComputer -identity 'TESTCOMP01' -Destination 'OU=Servers,DC=FX,DC=LAB'
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx

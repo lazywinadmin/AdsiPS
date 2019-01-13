@@ -50,10 +50,7 @@ Function Get-ADSIDefaultDomainAccountLockout
         lockoutThreshold         : 7
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

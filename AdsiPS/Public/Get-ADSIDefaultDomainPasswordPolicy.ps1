@@ -63,10 +63,7 @@ Function Get-ADSIDefaultDomainPasswordPolicy
                         32 DOMAIN_REFUSE_PASSWORD_CHANGE : Reserved. No effect on password policy
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

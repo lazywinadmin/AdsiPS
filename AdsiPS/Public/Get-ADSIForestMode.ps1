@@ -37,10 +37,7 @@
     System.directoryservices.activedirectory.forest.forestmode
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.forest.forestmode(v=vs.110).aspx

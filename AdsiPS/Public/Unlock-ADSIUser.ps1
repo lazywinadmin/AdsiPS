@@ -24,10 +24,7 @@ function Unlock-ADSIUser
     By default it will use the current domain.
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
     param ([Parameter(Mandatory)]

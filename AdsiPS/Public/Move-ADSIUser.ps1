@@ -39,10 +39,7 @@ function Move-ADSIUser
     Move-ADSIUser -Identity 'fxtest01' -Destination "OU=Test,DC=FX,DC=lab" -Credential (Get-Credential)
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx

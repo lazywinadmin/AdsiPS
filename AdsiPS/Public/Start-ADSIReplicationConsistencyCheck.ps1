@@ -19,11 +19,7 @@
     Connects to remote domain controller dc1.ad.local using current credentials and starts a KCC check.
 
 .NOTES
-    Micky Balladelli
-    micky@balladelli.com
-    https://balladelli.com
-
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param ([Parameter(Mandatory = $true)]

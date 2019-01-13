@@ -50,10 +50,7 @@ function Add-ADSIGroupMember
     Adding the Computer account 'ComputerTestAccount1' to the group 'TestADSIGroup'
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (

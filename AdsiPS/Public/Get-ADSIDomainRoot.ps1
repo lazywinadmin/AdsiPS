@@ -29,10 +29,7 @@
     Retrieve the Domain root of ForestTest.lab with the specified credential
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .OUTPUTS
     System.DirectoryServices.ActiveDirectory.Domain

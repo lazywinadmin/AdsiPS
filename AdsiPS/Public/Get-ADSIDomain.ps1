@@ -34,10 +34,7 @@
     Retrieve the domain lazywinadmin.com with the specified credential.
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .OUTPUTS
     'System.DirectoryServices.ActiveDirectory.Domain'

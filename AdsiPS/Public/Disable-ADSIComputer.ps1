@@ -46,10 +46,7 @@ function Disable-ADSIComputer
     This command will disable the account TESTSERVER01 using the alternative credential specified in the domain lazywinadmin.local
 
 .NOTES
-    Francois-Xavier Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx

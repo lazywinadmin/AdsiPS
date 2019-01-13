@@ -38,16 +38,7 @@
         Add New-ADSIDirectoryContext to take care of the Context
         Other minor modifications
 
-    Authors
-    Micky Balladelli
-    balladelli.com
-    micky@balladelli.com
-    @mickyballadelli
-
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

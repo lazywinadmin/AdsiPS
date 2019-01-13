@@ -32,10 +32,7 @@ function Set-ADSIUserExpirationDate
     Set the account expiration date of the account 'testaccount' to 10 days from today using the credential specified
 
 .NOTES
-    Francois-Xavier Cat
-    lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     PARAM (
