@@ -34,10 +34,7 @@ function Test-ADSICredential
     System.Boolean
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [OutputType('System.Boolean')]
     [CmdletBinding()]

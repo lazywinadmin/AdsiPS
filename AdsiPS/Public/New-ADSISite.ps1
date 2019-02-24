@@ -25,10 +25,7 @@
     PS C:\> New-ADSISite -SiteName "MTL01" -Location "Montreal, QC, Canada"
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysite(v=vs.110).aspx

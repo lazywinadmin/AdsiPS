@@ -74,11 +74,9 @@
     This will retrieve all the sites in the forest
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
+.LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.directorycontext(v=vs.110).aspx
 #>
 

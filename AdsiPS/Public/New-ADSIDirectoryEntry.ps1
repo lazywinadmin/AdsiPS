@@ -49,10 +49,7 @@
     http://www.lazywinadmin.com/2013/10/powershell-using-adsi-with-alternate.html
 
 .NOTES
-    Francois-Xavier Cat
-    www.lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (

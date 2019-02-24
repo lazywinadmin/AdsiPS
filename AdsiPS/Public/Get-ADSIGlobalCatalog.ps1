@@ -24,10 +24,7 @@
     Retrieve the Global Catalog in the forest 'lazywinadmin.com'
 
 .NOTES
-    Francois-Xavier Cat
-    www.lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

@@ -23,8 +23,9 @@ function Get-ADSIGroupPolicyObject
     Retrieve all the group policy in the current domain
 
 .NOTES
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
+.LINK
     https://msdn.microsoft.com/en-us/library/cc232507.aspx
 #>
     [CmdletBinding()]

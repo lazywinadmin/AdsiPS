@@ -14,10 +14,7 @@
     Specifies the alternative Forest name to query. Default is the current one.
 
 .NOTES
-    Francois-Xavier Cat
-    www.lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .EXAMPLE
     Get-ADSIForestTrustRelationship

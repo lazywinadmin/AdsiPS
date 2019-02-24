@@ -29,10 +29,7 @@
     PS C:\> New-ADSISiteSubnet -SubnetName "5.5.5.0/24" -SiteName "FX3" -Location "test"
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.activedirectory.activedirectorysubnet(v=vs.110).aspx

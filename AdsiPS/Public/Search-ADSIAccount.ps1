@@ -141,10 +141,7 @@ Function Search-ADSIAccount
     Use a different domain distinguished name to perform the search, in example the search is about disabled user accounts
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]

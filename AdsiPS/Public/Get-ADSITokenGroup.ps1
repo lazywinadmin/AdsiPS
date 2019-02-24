@@ -28,10 +28,7 @@
     Retrieve the list of groups present in the TokenGroups for the user 'testaccount'
 
 .NOTES
-    Francois-Xavier Cat
-    www.lazywinadmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 #>
     [CmdletBinding()]

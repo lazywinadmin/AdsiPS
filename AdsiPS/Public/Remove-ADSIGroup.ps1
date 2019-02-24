@@ -36,10 +36,7 @@
     Remove-ADSIGroup FXTESTGROUP -whatif
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (

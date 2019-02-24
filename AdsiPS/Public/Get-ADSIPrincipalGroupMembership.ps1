@@ -59,10 +59,7 @@ Function Get-ADSIPrincipalGroupMembership
     Use a different domain distinguished name to perform the query
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/ADSIPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
     param

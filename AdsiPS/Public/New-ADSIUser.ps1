@@ -63,13 +63,10 @@
     Test-ADSICredential -AccountName "fxtest04" -AccountPassword (Read-Host -AsSecureString "AccountPassword")
 
 .NOTES
-    Francois-Xavier.Cat
-    LazyWinAdmin.com
-    @lazywinadm
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 
 .LINK
-        https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
+    https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
 
     [CmdletBinding(SupportsShouldProcess = $true)]

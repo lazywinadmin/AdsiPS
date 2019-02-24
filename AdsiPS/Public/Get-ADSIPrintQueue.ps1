@@ -89,10 +89,7 @@
     You will get all the printQueue from TestServer01 on contoso2.com domain
 
 .NOTES
-    Christophe Kumor
-    https://christophekumor.github.io
-
-    github.com/lazywinadmin/AdsiPS
+    https://github.com/lazywinadmin/ADSIPS
 #>
 
     [CmdletBinding()]
