@@ -72,7 +72,7 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
                 #It "Notes - Site" {$Notes[1].trim()| Should Be "Lazywinadmin.com"}
                 #It "Notes - Twitter" {$Notes[2].trim()| Should Be "@lazywinadm"}
                 #It "Notes - Github" {$Notes[3].trim() | Should Be "github.com/lazywinadmin"}
-                It "Notes - Github Project" {$Notes -contains "$GithubRepository$ModuleName" | Should Be $true}
+                It "Notes - Github Project" {$Notes -match "$GithubRepository$ModuleName" | Should Be $true}
 
                 # Get the parameters declared in the Comment Based Help
                 #  minus the RiskMitigationParameters
