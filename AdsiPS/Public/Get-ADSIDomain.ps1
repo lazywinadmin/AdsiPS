@@ -19,7 +19,7 @@
     Retrieve the current domain
 
 .EXAMPLE
-    Get-ADSIForest -DomainName lazywinadmin.com
+    Get-ADSIDomain -DomainName lazywinadmin.com
 
     Retrieve the domain lazywinadmin.com
 
