@@ -10,6 +10,9 @@ function Get-ADSITombstoneLifetime
 .PARAMETER Credential
     Defines alternate credentials to use. Use Get-Credential to create proper credentials.
 
+.PARAMETER DomainName
+    Specifies the DomainName to query
+
 .EXAMPLE
     Get-ADSITombstoneLifetime
 
@@ -60,6 +63,6 @@ function Get-ADSITombstoneLifetime
 
     $nTDSService = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList "LDAP://CN=Directory Service,CN=Windows NT,CN=Services,$configurationNamingContext"
 
-    write-verbose "Domain : $DomainName"
+    Write-Verbose "Domain : $DomainName"
     $nTDSService.tombstoneLifetime
 }
