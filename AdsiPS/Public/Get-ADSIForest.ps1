@@ -64,7 +64,7 @@
                     $Splatting.ForestName = $ForestName
                 }
 
-                $ForestContext = New-ADSIDirectoryContext @splatting
+                $ForestContext = New-ADSIDirectoryContext @splatting -contextType Forest
                 [System.DirectoryServices.ActiveDirectory.Forest]::GetForest($ForestContext)
             }
             else

@@ -69,7 +69,7 @@
             $ContextSplatting.ForestName = $ForestName
         }
 
-        $Context = New-ADSIDirectoryContext @ContextSplatting
+        $Context = New-ADSIDirectoryContext @ContextSplatting -contextType Forest
     }
     process
     {
