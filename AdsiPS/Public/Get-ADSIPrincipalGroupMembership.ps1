@@ -24,7 +24,7 @@ Function Get-ADSIPrincipalGroupMembership
     Type System.DirectoryServices.AccountManagement.AuthenticablePrincipal
 
 .PARAMETER GroupInfos
-    UserInfos is a GroupPrincipal object.
+    GroupInfos is a GroupPrincipal object.
     Type System.DirectoryServices.AccountManagement.Principal
 
 .PARAMETER Credential
@@ -120,17 +120,14 @@ Function Get-ADSIPrincipalGroupMembership
                 } else {
                     
                     $ObjectSplatting  = @{}
-                    $ContextSplatting = @{}
 
                     if ($PSBoundParameters["DomainName"]) {                        
-                        $ContextSplatting.DomainName = $DomainName
                         # Turn Domain Name into DN
                         $ObjectSplatting.DomainDistinguishedName = ($DomainName.Split(".").ForEach({ "DC=$($_)," }) -join '').TrimEnd(',')                        
                     }
 
                     if ($PSBoundParameters["Credential"]) {
                         $ObjectSplatting.Credential  = $Credential
-                        $ContextSplatting.Credential = $Credential
                     }
                                     
                     $FoundObject = $null
