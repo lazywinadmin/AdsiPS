@@ -21,57 +21,66 @@ Function Get-ADSIPrincipalGroupMembership
 
 .PARAMETER UserInfos
     UserInfos is a UserPrincipal object.
+
     Type System.DirectoryServices.AccountManagement.AuthenticablePrincipal
 
 .PARAMETER GroupInfos
     GroupInfos is a GroupPrincipal object.
+
     Type System.DirectoryServices.AccountManagement.Principal
 
 .PARAMETER Credential
     Specifies the alternative credential to use.
+
     By default it will use the current user windows credentials.
 
 .PARAMETER DomainName
     Specifies the alternative Domain where the user should be created
+
     By default it will use the current domain.
 
 .PARAMETER NoResultLimit
     Remove the SizeLimit of 1000
+
     SizeLimit is useless, it can't go over the server limit which is 1000 by default
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1'
+
     Get all AD groups of user User1
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1' -Credential (Get-Credential)
+
     Use a different credential to perform the query
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1' -DomainName "CONTOSO.local"
+
     Use a different domain name to perform the query
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'Group1'
+
     Get all AD groups of group Group1
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'Group1' -Credential (Get-Credential)
+
     Use a different credential to perform the query
 
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'Group1' -DomainName "CONTOSO.local"
+
     Use a different domain name to perform the query
 
-.EXAMPLE *** this is incorrect ***
+.EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
+
     Use a different domain distinguished name to perform the query
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
-
-.NOTES (5/22/2019)
-    [Matthew Oestreich]::Info(https://mattoestrei.ch, https://github.com/oze4, matthewpoestreich@gmail.com)
 #>
     [CmdletBinding()]
     param
