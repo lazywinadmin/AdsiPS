@@ -115,7 +115,7 @@ function Get-ADSIGroup
         $DomainName = [System.DirectoryServices.ActiveDirectory.Domain]::Getcurrentdomain(),
 
         [Parameter(ParameterSetName = 'Filter')]
-        [system.directoryservices.accountmanagement.groupscope]$GroupScope,
+        [System.DirectoryServices.AccountManagement.GroupScope]$GroupScope,
 
         [Parameter(ParameterSetName = 'Filter')]
         [bool]$IsSecurityGroup,
@@ -142,8 +142,6 @@ function Get-ADSIGroup
 
     begin
     {
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
