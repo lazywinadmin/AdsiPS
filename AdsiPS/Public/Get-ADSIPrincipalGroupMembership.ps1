@@ -39,11 +39,6 @@ Function Get-ADSIPrincipalGroupMembership
 
     By default it will use the current domain.
 
-.PARAMETER NoResultLimit
-    Remove the SizeLimit of 1000
-
-    SizeLimit is useless, it can't go over the server limit which is 1000 by default
-
 .EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1'
 
@@ -75,9 +70,24 @@ Function Get-ADSIPrincipalGroupMembership
     Use a different domain name to perform the query
 
 .EXAMPLE
-    Get-ADSIPrincipalGroupMembership -Identity 'User1' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
+    Get-ADSIPrincipalGroupMembership -UserInfos (Get-ADSIUser -Identity "User1")
 
-    Use a different domain distinguished name to perform the query
+    Get all ad groups of User1 using type System.DirectoryServices.AccountManagement.AuthenticablePrincipal
+    
+.EXAMPLE
+    Get-ADSIPrincipalGroupMembership -UserInfos (Get-ADSIUser -Identity "User1" -DomainName "CONTOSO.local")
+
+    Get all ad groups of User1 using type System.DirectoryServices.AccountManagement.AuthenticablePrincipal on a different domain
+
+.EXAMPLE
+    Get-ADSIPrincipalGroupMembership -GroupInfos (Get-ADSIGroup -Identity "Group1")
+
+    Get all ad groups of Group1 using type System.DirectoryServices.AccountManagement.Principal
+    
+.EXAMPLE
+    Get-ADSIPrincipalGroupMembership -GroupInfos (Get-ADSIGroup -Identity "Group1" -DominName "CONTOSO.local")
+
+    Get all ad groups of Group1 using type System.DirectoryServices.AccountManagement.Principal on a different domain
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
@@ -100,10 +110,7 @@ Function Get-ADSIPrincipalGroupMembership
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
         [Parameter(ParameterSetName = "Identity")]
-        [String]$DomainName,
-
-        [Parameter(ParameterSetName = "Identity")]
-        [Switch]$NoResultLimit
+        [String]$DomainName
     )
 
     begin
@@ -174,10 +181,6 @@ Function Get-ADSIPrincipalGroupMembership
     process
     {
 
-        # I didn't understand the point in wasting that IO to get Primary Group, when nothing special was done with it.  
-        # Getting groups using only the code below returns the same groups with or without the "Get Primary Group" code.
-        # In the return of this function, the Primary Group was not returned any different than a regular group.
-
         $ObjectGroups   = @()        
         $Objectmemberof = $UnderlyingProperties.memberOf
 
@@ -195,5 +198,6 @@ Function Get-ADSIPrincipalGroupMembership
         }
         
         $ObjectGroups
+
     }
 }
