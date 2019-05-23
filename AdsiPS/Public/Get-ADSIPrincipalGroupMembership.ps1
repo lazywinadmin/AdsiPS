@@ -21,7 +21,13 @@ Function Get-ADSIPrincipalGroupMembership
 
 .PARAMETER UserInfos
     UserInfos is a UserPrincipal object.
+
     Type System.DirectoryServices.AccountManagement.AuthenticablePrincipal
+
+.PARAMETER GroupInfos
+    GroupInfos is a GroupPrincipal object.
+
+    Type System.DirectoryServices.AccountManagement.Principal
 
 .PARAMETER Credential
     Specifies the alternative credential to use.
@@ -54,6 +60,21 @@ Function Get-ADSIPrincipalGroupMembership
     Use a different domain name to perform the query
 
 .EXAMPLE
+    Get-ADSIPrincipalGroupMembership -Identity 'Group1'
+
+    Get all AD groups of group Group1
+
+.EXAMPLE
+    Get-ADSIPrincipalGroupMembership -Identity 'Group1' -Credential (Get-Credential)
+
+    Use a different credential to perform the query
+
+.EXAMPLE
+    Get-ADSIPrincipalGroupMembership -Identity 'Group1' -DomainName "CONTOSO.local"
+
+    Use a different domain name to perform the query
+
+.EXAMPLE
     Get-ADSIPrincipalGroupMembership -Identity 'User1' -DomainDistinguishedName 'DC=CONTOSO,DC=local'
 
     Use a different domain distinguished name to perform the query
@@ -68,15 +89,10 @@ Function Get-ADSIPrincipalGroupMembership
         [string]$Identity,
 
         [Parameter(Mandatory = $true, ParameterSetName = "UserInfos")]
-        [ValidateScript( { if ($_.GetType().Name -eq 'UserPrincipal')
-                {
-                    $true
-                }
-                else
-                {
-                    throw ('UserInfos must be a UserPrincipal type System.DirectoryServices.AccountManagement.AuthenticablePrincipal')
-                } })]
-        $UserInfos,
+        [System.DirectoryServices.AccountManagement.AuthenticablePrincipal]$UserInfos,
+
+        [Parameter(Mandatory = $true, ParameterSetName = "GroupInfos")]
+        [System.DirectoryServices.AccountManagement.Principal]$GroupInfos,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -92,64 +108,92 @@ Function Get-ADSIPrincipalGroupMembership
 
     begin
     {
-        # Create Context splatting
-        $ContextSplatting = @{}
 
-        if ($PSBoundParameters['Credential'])
+        switch($PSBoundParameters.Keys)
         {
-            $ContextSplatting.Credential = $Credential
-        }
-        if ($PSBoundParameters['DomainName'])
-        {
-            $ContextSplatting.DomainName = $DomainName
-        }
-        if ($PSBoundParameters['NoResultLimit'])
-        {
-            $ContextSplatting.NoResultLimit = $true
+            'UserInfos'  { 
+                $UnderlyingProperties = $UserInfos.GetUnderlyingObject() 
+            }
+
+            'GroupInfos' {
+                $UnderlyingProperties = $GroupInfos.GetUnderlyingObject()
+            }
+            
+            'Identity'   {
+
+                # If the user supplies a GroupPrincipal or UserPrincipal under the 'Identity' parameter
+                if (($Identity.GetType().Name -eq "GroupPrincipal") -or ($Identity.GetType().Name -eq "UserPrincipal")) {
+                                                
+                    $UnderlyingProperties = $Identity.GetUnderlyingObject()                
+
+                } else {
+                    
+                    $ObjectSplatting  = @{}
+
+                    if ($PSBoundParameters["DomainName"]) {                        
+                        # Turn Domain Name into DN
+                        $ObjectSplatting.DomainDistinguishedName = ($DomainName.Split(".").ForEach({ "DC=$($_)," }) -join '').TrimEnd(',')                        
+                    }
+
+                    if ($PSBoundParameters["Credential"]) {
+                        $ObjectSplatting.Credential  = $Credential
+                    }
+                                    
+                    $FoundObject = $null
+                    # Get the ADSIObject for what we were provided
+                    foreach($IdType in [System.DirectoryServices.AccountManagement.IdentityType].GetEnumNames()) {                        
+                        $splat = @{ 
+                            $IdType = $Identity
+                        }                        
+                        
+                        try { 
+                            $FoundObject = Get-ADSIObject @splat @ObjectSplatting
+                        } catch {
+                            # do nothing, only here to suppress errors
+                        } 
+                        
+                        if ($FoundObject -ne $null) { 
+                            $FoundObjectObjectClass = $FoundObject.objectclass.Split(" ")
+                            break; 
+                        }
+                    }
+
+                    if ($FoundObjectObjectClass -contains "person" -or $FoundObjectObjectClass -contains "user") {
+                        $UserInfos = Get-ADSIUser -Identity $FoundObject.samaccountName
+                        $UnderlyingProperties = $UserInfos.GetUnderlyingObject()
+                    }
+
+                    if ($FoundObjectObjectClass -contains "group") {
+                        $GroupInfos = Get-ADSIGroup -Identity $FoundObject.samaccountName
+                        $UnderlyingProperties = $GroupInfos.GetUnderlyingObject()
+                    }
+                }
+            }
         }
     }
     process
     {
-        $Usergroups = $null
 
-        if ($PSBoundParameters['UserInfos'])
+        # I didn't understand the point in wasting that IO to get Primary Group, when nothing special was done with it.  
+        # Getting groups using only the code below returns the same groups with or without the "Get Primary Group" code.
+        # In the return of this function, the Primary Group was not returned any different than a regular group.
+
+        $ObjectGroups   = @()        
+        $Objectmemberof = $UnderlyingProperties.memberOf
+
+        if ($Objectmemberof)
         {
-            $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
-        }
-        else
-        {
-            $UserInfos = Get-ADSIUser -Identity $Identity @ContextSplatting
-            $UserInfosMoreProperties = $UserInfos.GetUnderlyingObject()
-        }
-
-        $Usergroups = @()
-
-        #Get Primary group
-        $SID = New-Object -TypeName System.Security.Principal.SecurityIdentifier -ArgumentList ($($UserInfosMoreProperties.properties.Item('objectSID')), 0)
-        $groupSID = ('{0}-{1}' -f $SID.AccountDomainSid.Value, [string]$UserInfosMoreProperties.properties.Item('primarygroupid'))
-        $group = [adsi]("LDAP://<SID=$groupSID>")
-
-
-        $Usergroups += [pscustomobject]@{
-            'name'        = [string]$group.name
-            'description' = [string]$group.description
-        }
-
-        #Get others groups
-        $Usermemberof = $UserInfosMoreProperties.memberOf
-
-        if ($Usermemberof)
-        {
-            foreach ($item in $Usermemberof)
+            foreach ($item in $Objectmemberof)
             {
-                $ADSIusergroup = [adsi]"LDAP://$item"
+                $ADSIobjectgroup = [adsi]"LDAP://$item"
 
-                $Usergroups += [pscustomobject]@{
-                    'name'        = [string]$ADSIusergroup.Properties.name
-                    'description' = [string]$ADSIusergroup.Properties.description
+                $ObjectGroups += [pscustomobject]@{
+                    'name'        = [string]$ADSIobjectgroup.Properties.name
+                    'description' = [string]$ADSIobjectgroup.Properties.description
                 }
             }
         }
-        $Usergroups
+        
+        $ObjectGroups
     }
 }
