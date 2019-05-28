@@ -1,4 +1,4 @@
-﻿function Set-ADSIUser
+function Set-ADSIUser
 {
 <#
 .SYNOPSIS
@@ -43,6 +43,12 @@
 .PARAMETER UserPrincipalName
     Specify the UserPrincipalName. This parameter sets the UserPrincipalName property of a user.
 
+.PARAMETER HomeDrive
+    Specify the HomeDrive. This parameter sets the HomeDrive property of a user. This must be a drive letter (aka 'U')
+
+.PARAMETER HomeDirectory
+    Specify the HomeDirectory. This parameter sets the HomeDirectory property of a user. This is required if you use HomeDrive.
+
 .PARAMETER TelephoneNumber
     Specify the Telephone number
 
@@ -65,7 +71,7 @@
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
 #>
-    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High')]
+    [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High', DefaultParameterSetName = 'Default')]
     param (
         [Parameter(Mandatory = $true)]
         [String]$Identity,
@@ -99,6 +105,14 @@
 
         [Parameter(Mandatory = $false)]
         [string]$UserPrincipalName,
+
+        [Parameter(Mandatory = $false)]         
+        [Parameter(Mandatory = $true, ParameterSetName = "HomeDriveHomeDirectory")]
+        [string]$HomeDrive,
+
+        [Parameter(Mandatory = $false)] 
+        [Parameter(Mandatory = $true, ParameterSetName = "HomeDriveHomeDirectory")]
+        [string]$HomeDirectory,
 
         [Alias("Domain", "DomainDN")]
         [String]$DomainName = $(([adsisearcher]"").Searchroot.path),
@@ -176,8 +190,8 @@
                         }
                         else
                         {
-                            $Adspath.Put("co", $Country)
-                            $Adspath.SetInfo()
+                            $adspath.Put("co", $Country)
+                            $adspath.SetInfo()
                         }
                     }
                 }
@@ -351,6 +365,42 @@
                         {
                             $Adspath.Put("UserPrincipalName", $UserPrincipalName)
                             $Adspath.SetInfo()
+                        }
+                    }
+                }
+
+                # HomeDrive
+                if ($HomeDrive -ne '')
+                {
+                    if($HomeDrive.Length -gt 1) {
+
+                        $e = New-Object System.Exception "[Set-AdsiUser] HomeDrive must be a single letter!"
+                        throw $e
+
+                    } elseif($HomeDirectory -eq '') {
+
+                        $er = New-Object System.Exception "[Set-AdsiUser] HomeDirectory must be use with HomeDrive! HomeDrive is the drive letter, HomeDirectory is the path."
+                        throw $er      
+                                       
+                    } else {
+                        Write-Verbose -Message "[$($Account)] Setting HomeDrive value to : $HomeDrive and HomeDirectory to : $HomeDirectory"
+
+                        if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, "Set HomeDrive of account $account to $HomeDrive and HomeDirectory to $HomeDirectory"))
+                        {
+                            if ($PSBoundParameters.ContainsKey('WhatIf'))
+                            {
+                                Write-Verbose -Message "WhatIf: Setting HomeDrive of account $account to $HomeDrive and HomeDirectory to $HomeDirectory" -Verbose:$true
+                            }
+                            else
+                            {
+                                try {
+                                    $Adspath.Put("homeDrive", $HomeDrive)
+                                    $adspath.Put("homeDirectory", $HomeDirectory)
+                                    $Adspath.SetInfo()
+                                } catch {
+                                    Write-Error $($_)
+                                }
+                            }
                         }
                     }
                 }
