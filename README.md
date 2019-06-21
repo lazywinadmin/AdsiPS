@@ -1,4 +1,4 @@
-[![Build status](https://ci.appveyor.com/api/projects/status/8ctm6vw79s2ecln3?svg=true)](https://ci.appveyor.com/project/lazywinadmin/adsips)
+[![Build Status](https://dev.azure.com/lazywinadmin/AdsiPS/_apis/build/status/lazywinadmin.AdsiPS?branchName=master)](https://dev.azure.com/lazywinadmin/AdsiPS/_build/latest?definitionId=17&branchName=master)
 
 # AdsiPS
 
