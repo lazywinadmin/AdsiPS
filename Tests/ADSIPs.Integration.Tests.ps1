@@ -5,7 +5,7 @@
     Pester test to verify the content of the manifest and the documentation of each functions.
 #>
 [CmdletBinding()]
-PARAM($modulePath,$moduleName)
+PARAM($modulePath,$moduleName,$srcPath)
 
 # Find the Manifest file
 $ManifestFile = "$modulePath\$ModuleName.psd1"
@@ -19,6 +19,10 @@ $ModuleInformation = Import-Module -Name $ManifestFile -Force -ErrorAction Stop 
 # Get the functions present in the Manifest
 $ExportedFunctions = $ModuleInformation.ExportedFunctions.Values.name
 
+# Public functions
+$publicFiles = @(Get-ChildItem -Path $srcPath\public\*.ps1 -ErrorAction SilentlyContinue)
+
+
 Describe "$ModuleName Module - Testing Manifest File (.psd1)"{
 
     Context 'Module Version'{'Loaded Version vs Get-Command return for the module'}
@@ -31,6 +35,16 @@ Describe "$ModuleName Module - Testing Manifest File (.psd1)"{
         It 'Should contains License'{$ModuleInformation.LicenseURI|Should not BeNullOrEmpty}
         It 'Should contains a Project Link'{$ModuleInformation.ProjectURI|Should not BeNullOrEmpty}
         It 'Should contains a Tags (For the PSGallery)'{$ModuleInformation.Tags.count|Should not BeNullOrEmpty}
+
+        It "Should have equal number of Function Exported and the Public PS1 files found ($($ExportedFunctions.count) and $($publicFiles.count))"{
+            $ExportedFunctions.count -eq $publicFiles.count |Should -Be $true}
+        It "Compare the missing function"{
+            if (-not($ExportedFunctions.count -eq $publicFiles.count)){
+                $Compare = Compare-Object -ReferenceObject $ExportedFunctions -DifferenceObject $publicFiles.basename
+                $Compare.inputobject -join ',' |
+                Should BeNullOrEmpty
+            }
+        }
     }
 }
 
