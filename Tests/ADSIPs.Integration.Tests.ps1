@@ -5,27 +5,19 @@
     Pester test to verify the content of the manifest and the documentation of each functions.
 #>
 [CmdletBinding()]
-PARAM(
-$ModuleName = "ADSIPS",
-$GithubRepository = "github.com/lazywinadmin/"
-)
-
-# Make sure one or multiple versions of the module are note loaded
-Get-Module -Name $ModuleName | remove-module
+PARAM($modulePath,$moduleName)
 
 # Find the Manifest file
-$ManifestFile = "$(Split-path (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition))\$ModuleName\$ModuleName.psd1"
+$ManifestFile = "$modulePath\$ModuleName.psd1"
 
-# Import the module and store the information about the module
-$ModuleInformation = Import-module -Name $ManifestFile -PassThru
+# Unload any module with same name
+Get-Module -Name $ModuleName -All | Remove-Module -Force -ErrorAction Ignore
+
+# Import Module
+$ModuleInformation = Import-Module -Name $ManifestFile -Force -ErrorAction Stop -PassThru
 
 # Get the functions present in the Manifest
 $ExportedFunctions = $ModuleInformation.ExportedFunctions.Values.name
-
-# Get the functions present in the Public folder
-$PS1Functions = Get-ChildItem -path "$(Split-path (Split-Path -Parent -Path $MyInvocation.MyCommand.Definition))\$ModuleName\public\*.ps1"
-
-
 
 Describe "$ModuleName Module - Testing Manifest File (.psd1)"{
 
@@ -39,16 +31,6 @@ Describe "$ModuleName Module - Testing Manifest File (.psd1)"{
         It 'Should contains License'{$ModuleInformation.LicenseURI|Should not BeNullOrEmpty}
         It 'Should contains a Project Link'{$ModuleInformation.ProjectURI|Should not BeNullOrEmpty}
         It 'Should contains a Tags (For the PSGallery)'{$ModuleInformation.Tags.count|Should not BeNullOrEmpty}
-
-        It 'Should have equal number of Function Exported and the PS1 files found'{
-            $ExportedFunctions.count -eq $PS1Functions.count |Should BeGreaterthan 0}
-        It "Compare the missing function"{
-            if (-not($ExportedFunctions.count -eq $PS1Functions.count)){
-                $Compare = Compare-Object -ReferenceObject $ExportedFunctions -DifferenceObject $PS1Functions.basename
-                $Compare.inputobject -join ',' |
-                Should BeNullOrEmpty
-            }
-        }
     }
 }
 

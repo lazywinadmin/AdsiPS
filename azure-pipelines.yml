@@ -1,0 +1,21 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+resources:
+- repo: self
+queue:
+  name: Hosted VS2017
+steps:
+- powershell: |
+    .\build.ps1 -InstallDependencies:$true -verbose -tasks 'setEnvironment','build','test','deploy'
+  displayName: 'PowerShell - Build > test > deploy'
+  env:
+    psgallerykey: $(psgallerykey)
+- task: PublishTestResults@2
+  displayName: 'Publish Test Results **/TEST-*.xml'
+  inputs:
+    testResultsFormat: NUnit

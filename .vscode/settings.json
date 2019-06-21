@@ -8,5 +8,7 @@
     "powershell.codeFormatting.newLineAfterCloseBrace": true,
     "powershell.codeFormatting.newLineAfterOpenBrace": true,
     "powershell.codeFormatting.openBraceOnSameLine": false,
-    "powershell.codeFormatting.whitespaceAfterSeparator": true
+    "powershell.codeFormatting.whitespaceAfterSeparator": true,
+    "files.trimTrailingWhitespace": true,
+    "files.encoding": "utf8"
 }
