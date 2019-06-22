@@ -10,10 +10,10 @@ Change History
 -1.1 | 2019/06/22 | Matt Oestreich (oze4)
     - Added specific error handling/error message in regards to missing dependencies and how to resolve them
     - Specifically, to use the `-InstallDependencies` switch with `build.ps1`
+    - Removed redundant `[string[]]$tasks` parameter.. (param appears to be in use, but there was a duplicate, which was commented out, so I just removed it)
 #>
 [CmdletBinding()]
 Param(
-    #[string[]]$tasks,
     [string]$GalleryRepository,
     [pscredential]$GalleryCredential,
     [string]$GalleryProxy,
