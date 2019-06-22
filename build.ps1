@@ -7,6 +7,9 @@ This script will install dependencies using PSDepend module and start the build 
 Change History
 -1.0 | 2019/06/17 | Francois-Xavier Cat
     Initial version
+-1.1 | 2019/06/22 | Matt Oestreich (oze4)
+    - Added specific error handling/error message in regards to missing dependencies and how to resolve them
+    - Specifically, to use the `-InstallDependencies` switch with `build.ps1`
 #>
 [CmdletBinding()]
 Param(
@@ -90,7 +93,15 @@ try{
 
     # Start build using InvokeBuild module
     Write-Verbose -Message "Start Build"
-    Invoke-Build -Result 'Result' -File $buildTasksFilePath -Task $tasks
+    try {
+        Invoke-Build -Result 'Result' -File $buildTasksFilePath -Task $tasks
+    } catch {
+        #  During testing, this was an issue for me.. 
+        #  Just wanting to clarify a possible solution to make things easier on people that use this module
+        #  June 22, 2019 - Matt Oestreich (oze4)
+        $missingDependenciesError = "[ERROR build.ps1] It is possible you are missing dependencies. Please rerun using 'build.ps1 -InstallDependencies' if you do not have the 'PSDepend' module installed!"
+        throw New-Object System.Exception ($missingDependenciesError)
+    }
 
     # Return error to CI
     if ($Result.Error)
