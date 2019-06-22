@@ -39,6 +39,8 @@ Install-Module -name ADSIPS
 1. Download the repository
 1. Unblock the zip file
 1. Extract the folder to a module path (e.g. $home\Documents\WindowsPowerShell\Modules)
+1. Run `build.ps1` (exists in project root)
+  - **NOTE:** If you get an error after running `build.ps1` - please use **`build.ps1 -InstallDependencies`**
 
 ## Use Cases
 
