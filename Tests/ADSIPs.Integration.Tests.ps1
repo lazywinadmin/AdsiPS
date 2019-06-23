@@ -6,7 +6,7 @@
 #>
 [CmdletBinding()]
 PARAM($modulePath,$moduleName,$srcPath)
-
+begin{
 # Find the Manifest file
 $ManifestFile = "$modulePath\$ModuleName.psd1"
 
@@ -21,8 +21,9 @@ $ExportedFunctions = $ModuleInformation.ExportedFunctions.Values.name
 
 # Public functions
 $publicFiles = @(Get-ChildItem -Path $srcPath\public\*.ps1 -ErrorAction SilentlyContinue)
-
-
+}
+end{Remove-Module -Name $moduleName -ErrorAction SilentlyContinue}
+process{
 Describe "$ModuleName Module - Testing Manifest File (.psd1)"{
 
     Context 'Module Version'{'Loaded Version vs Get-Command return for the module'}
@@ -167,4 +168,5 @@ Describe "$ModuleName Module - HELP" -Tags "Module" {
             #>
         }
     }
+}
 }
