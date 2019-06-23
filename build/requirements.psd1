@@ -1,9 +1,9 @@
 @{
-    #PSDependOptions = @{
+    PSDependOptions = @{
     #    Target = '.\dependencies'
-    #    AddToPath = $true
+        AddToPath = $true
     #    DependencyType = 'PSGalleryNuget'
-    #}
+    }
     Pester = @{
         Name = 'Pester'
         Parameters = @{
