@@ -94,8 +94,7 @@ Function Get-ADSIPrincipalGroupMembership
             CHANGE LOG
             - 0.1 | 2019/06/22 | Matt Oestreich (oze4)
                 - Initial Change Log creation
-                - Fixed issue where primary group was not being pulled in for users
-                - Issue #70: https://github.com/lazywinadmin/AdsiPS/issues/70
+                - Fixed issue 70 where primary group was not being pulled in for users
     #>
     [CmdletBinding()]
     param
