@@ -71,6 +71,12 @@ function Get-ADSIUser
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
+    ----------------
+    CHANGE HISTORY
+    ----------------
+    -0.1 | 2019/06/22 | Matt Oestreich (oze4)
+        - Added Change History section to comments
+        - Resolving issue 72
 
 .LINK
     https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
@@ -80,7 +86,7 @@ function Get-ADSIUser
     [OutputType('System.DirectoryServices.AccountManagement.UserPrincipal')]
     param
     (
-        [Parameter(Mandatory = $true, ParameterSetName = "Identity")]
+        [Parameter(Mandatory = $true, Position = 0, ParameterSetName = "Identity")]
         [string]$Identity,
 
         [Alias("RunAs")]
