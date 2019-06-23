@@ -29,7 +29,9 @@ Write-Verbose -Message "[$ScriptName] Querying system X"
 
 * [ ] Pick one of the issues
 * [ ] Add more Pester test
-* [ ] Integrate with CI/CD (Appveyor) for auto publish to gallery
+* [x] Integrate with CI/CD (Appveyor) for auto publish to gallery
+  - **NOTE:** have since migrated to Azure Pipelines
+* [x] Migrate to Azure Pipelines
 * [ ] Update documentation, possibly add support for [ReadTheDocs](http://docs.readthedocs.io/en/latest/index.html) to help Adoption
 * [ ] Set-ADSIComputer
 * [ ] Set-ADSIGroup (also with -ManagedBy, and -ManagerCanUpdateMembership [example](https://blogs.technet.microsoft.com/blur-lines_-powershell_-author_shirleym/2013/10/07/manager-can-update-membership-list-part-1/))

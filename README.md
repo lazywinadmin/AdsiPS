@@ -26,7 +26,7 @@ Please see our [contributing guide](https://github.com/lazywinadmin/adsips/blob/
 
 ## Installation
 
-### Download from PowerShell Gallery
+### Download from PowerShell Gallery (recommended)
 
 Only from PowerShell version 5
 
@@ -34,11 +34,16 @@ Only from PowerShell version 5
 Install-Module -name ADSIPS
 ```
 
-### Download from GitHub repository
+### Download from GitHub repository 
 
 1. Download the repository
 1. Unblock the zip file
 1. Extract the folder to a module path (e.g. $home\Documents\WindowsPowerShell\Modules)
+1. Run `build.ps1` (exists in project root)
+  - **NOTE:** If you get an error after running `build.ps1` - please use **`build.ps1 -InstallDependencies`**
+1. `build.ps1` creates a folder called `~\buildoutput\AdsiPs` in the directory which `AdsiPs` was saved to
+1. Inside of `\buildoutput\AdsiPs` there is a file called `AdsiPs.psm1`
+1. Run `Import-Module -Path "C:\Path\To\buildoutput\AdsiPs\AdsiPs.psm1"` to import the `AdsiPs` module
 
 ## Use Cases
 
