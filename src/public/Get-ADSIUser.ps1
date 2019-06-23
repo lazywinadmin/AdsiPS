@@ -71,6 +71,10 @@ function Get-ADSIUser
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
+    CHANGE HISTORY
+    -0.1 | 2019/06/22 | Matt Oestreich (oze4)
+        - Added Change History section to comments
+        - Resolving issue 72 by adding 'Position = 0' to the $Identity parameter attributes
 .LINK
     https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
