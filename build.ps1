@@ -25,7 +25,7 @@ Param(
 try{
     #  Added so if user wants to build this locally, they don't have to know to supply the 'tasks' param with a value of @('build')
     #  - 2019/06/22 | Matt Oestreich (oze4)
-    if ($tasks.count -eq 0) { 
+    if (-not $tasks) { 
         $tasks = @("build") 
     }
     ################
