@@ -11,6 +11,8 @@ Change History
     - Added specific error handling/error message in regards to missing dependencies and how to resolve them
     - Specifically, to use the `-InstallDependencies` switch with `build.ps1`
     - Removed redundant `[string[]]$tasks` parameter.. (param appears to be in use, but there was a duplicate, which was commented out, so I just removed it)
+    - Added 'tasks' param check so if user wants to build this locally, they don't have to know to supply the 'tasks' param with a value of @('build')
+        - TODO: rewrite this using switch params
 #>
 [CmdletBinding()]
 Param(
@@ -21,6 +23,11 @@ Param(
     [switch]$InstallDependencies
     )
 try{
+    #  Added so if user wants to build this locally, they don't have to know to supply the 'tasks' param with a value of @('build')
+    #  - 2019/06/22 | Matt Oestreich (oze4)
+    if ($tasks.count -eq 0) { 
+        $tasks = @("build") 
+    }
     ################
     # EDIT THIS PART
     $moduleName = "AdsiPS" # get from source control or module ?
