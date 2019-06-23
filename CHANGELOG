@@ -1,0 +1,40 @@
+# Changelog
+All notable changes to this project will be documented in this file.
+
+## [Unreleased]
+
+## [1.0.0.6] - 2019-06-23
+### Added
+- Add Get-ADSIUserPrimaryGroup (by @oze4)
+  - This was added as part of the resolution for issue #70
+  - By putting this function in it's own ps1 file, it keeps things clean and organized
+  - Provides an additional 'feature' (is not limited to helping fix issue #70 - you can now get a users primary group very easily)
+
+### Changed
+- Update Readme.md (by @oze4)
+  - Numbering was not correct in regards to the last changes made
+  - Cleaned it up
+- Update Build.ps1 (by @oze4)
+  - Default tasks: Build
+  - Add Warning message for Dependencies
+- Update Get-ADSIPrincipalGroupMembership (by @oze4)
+  - Fix indentation
+  - Fix #70 "Get-ADSIPrincipalGroupMembership Problem since Last update"
+    - This was due to Primary User Group not being added to overall Group Membership
+- Update Get-ADSIUser (by @oze4)
+  - Fix #72 "Review ParameterSetName to allow lazy typing"
+
+## [1.0.0.5] - 2019-06-21
+### Changed
+-Update Pester test to receive srcpath and compare source ps1 files and build functions
+-Update Manifest try,catch blocks
+
+## [1.0.0.4] - 2019-06-21
+### Changed
+-Build as been moved to Azure DevOps/Azure Pipelines and now auto-deploy to PowerShell Gallery
+
+## [1.0.0.3] - 2017-11-30
+
+## [1.0.0.2] - 2016-08-20
+
+## [1.0.0.1] - 2016-08-17
