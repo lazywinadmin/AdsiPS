@@ -5,29 +5,30 @@ Used to start the build of a PowerShell Module
 This script will install dependencies using PSDepend module and start the build tasks using InvokeBuild module
 .NOTES
 Change History
--1.0 | 2019/06/17 | Francois-Xavier Cat
-    Initial version
+-1.0 | 2019/06/17 | Francois-Xavier Cat (lazywinadmin)
+    - Initial version
 -1.1 | 2019/06/22 | Matt Oestreich (oze4)
     - Added specific error handling/error message in regards to missing dependencies and how to resolve them
     - Specifically, to use the `-InstallDependencies` switch with `build.ps1`
     - Removed redundant `[string[]]$tasks` parameter.. (param appears to be in use, but there was a duplicate, which was commented out, so I just removed it)
     - Added 'tasks' param check so if user wants to build this locally, they don't have to know to supply the 'tasks' param with a value of @('build')
         - TODO: rewrite this using switch params
+-1.2 | 2019/06/22 | Francois-Xavier Cat (lazywinadmin)
+    - Make build default value of -tasks
+    - Move -tasks as first param
+    - Remove Error handling around Invoke-Build, this can cause misleading error if it's unrelated to module dependencies
+        For example I got an error "Missing dependencies" because it failed on a Pester Test
+    - Added Warning message in the global CATCH related to dependencies
 #>
 [CmdletBinding()]
 Param(
+    [string[]]$tasks= @('build'),
     [string]$GalleryRepository,
     [pscredential]$GalleryCredential,
     [string]$GalleryProxy,
-    [string[]]$tasks, # @('build','test','deploy')
     [switch]$InstallDependencies
     )
 try{
-    #  Added so if user wants to build this locally, they don't have to know to supply the 'tasks' param with a value of @('build')
-    #  - 2019/06/22 | Matt Oestreich (oze4)
-    if (-not $tasks) { 
-        $tasks = @("build") 
-    }
     ################
     # EDIT THIS PART
     $moduleName = "AdsiPS" # get from source control or module ?
@@ -99,16 +100,9 @@ try{
     }
 
     # Start build using InvokeBuild module
-    Write-Verbose -Message "Start Build"
-    try {
-        Invoke-Build -Result 'Result' -File $buildTasksFilePath -Task $tasks
-    } catch {
-        #  During testing, this was an issue for me.. 
-        #  Just wanting to clarify a possible solution to make things easier on people that use this module
-        #  June 22, 2019 - Matt Oestreich (oze4)
-        $missingDependenciesError = "[ERROR build.ps1] It is possible you are missing dependencies. Please rerun using 'build.ps1 -InstallDependencies' if you do not have the 'PSDepend' module installed!"
-        throw New-Object System.Exception ($missingDependenciesError)
-    }
+    Write-Verbose -Message "Start Build (using InvokeBuild module)"
+    Invoke-Build -Result 'Result' -File $buildTasksFilePath -Task $tasks
+
 
     # Return error to CI
     if ($Result.Error)
@@ -118,5 +112,6 @@ try{
     }
     exit 0
 }catch{
+    Write-Warning -Message "It is possible you are missing dependencies. Please rerun using 'build.ps1 -InstallDependencies' if you do not have the 'PSDepend' module installed!"
     throw $_
 }
