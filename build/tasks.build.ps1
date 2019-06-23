@@ -22,7 +22,7 @@ task -Name build {
     # Create build output directory if does not exist yet
     if(-not (Test-Path -path $modulePath))
     {
-        New-Item -Path $modulePath -ItemType Directory
+        [void](New-Item -Path $modulePath -ItemType Directory)
     }
 
     # Build PSM1 file with all the functions
@@ -40,7 +40,7 @@ task -Name build {
 
     # Copy the Manifest to the build (psd1)
     Copy-Item -Path "$srcPath\source.psd1" -Destination $modulePath
-    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1" -PassThru
+    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1"
 
     # Find next module version (BuildHelpers module)
     Write-Verbose -Message "Find next module version (BuildHelpers module)"
@@ -70,7 +70,6 @@ task -Name clean {
     dir env:bh*|remove-item
     dir env:modulename|remove-item
     dir env:modulepath|remove-item
-    dir env:srcPath|remove-item
 }
 
 task -Name deploy {
