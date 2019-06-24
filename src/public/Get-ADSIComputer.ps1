@@ -55,7 +55,7 @@ function Get-ADSIComputer
 .LINK
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
-    [CmdletBinding(DefaultParameterSetName = "All")]
+    [CmdletBinding()]
     param ([Parameter(Mandatory = $true, ParameterSetName = "Identity")]
         [string]$Identity,
 

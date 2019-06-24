@@ -75,7 +75,7 @@ function Get-ADSIUser
     https://msdn.microsoft.com/en-us/library/System.DirectoryServices.AccountManagement.UserPrincipal(v=vs.110).aspx
 #>
 
-    [CmdletBinding(DefaultParameterSetName = "All")]
+    [CmdletBinding()]
     [OutputType('System.DirectoryServices.AccountManagement.UserPrincipal')]
     param
     (
@@ -92,8 +92,6 @@ function Get-ADSIUser
         [Parameter(Mandatory = $true, ParameterSetName = "LDAPFilter")]
         [string]$LDAPFilter,
 
-        [Parameter(ParameterSetName = "LDAPFilter")]
-        [Parameter(ParameterSetName = "All")]
         [Switch]$NoResultLimit
 
     )
