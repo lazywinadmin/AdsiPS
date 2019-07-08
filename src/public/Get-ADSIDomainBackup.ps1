@@ -58,12 +58,12 @@ function Get-ADSIDomainBackup {
     process {
         try {
 
-            $ContextObjectType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
+
 
             if ($PSBoundParameters['Credential']){
                 $ContextObject = new-object System.DirectoryServices.ActiveDirectory.DirectoryContext($ContextObjectType, $DomainName, $Credential.UserName, $Credential.GetNetworkCredential().password)
             } else {
-
+                $ContextObjectType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
             }
 
 
