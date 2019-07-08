@@ -43,7 +43,7 @@ function Get-ADSIDomainBackup {
 
 #>
     [cmdletbinding()]
-    [OutputType('System.DirectoryServices.ActiveDirectory.Domain')]
+    [OutputType('pscustomobject[]')]
     param (
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
