@@ -79,4 +79,3 @@ Interesting projects using different approaches to reach out to Active Directory
 * [Test-ActiveDirectory by markwragg](https://github.com/markwragg/Test-ActiveDirectory/blob/master/ADAudit/ActiveDirectory.tests.ps1)
 * [AdEnumerator(LDAP) by @chango77747](https://github.com/chango77747/AdEnumerator/blob/master/ADEnumerator.psm1)
 * [Grant-ADPermission by @edemilliere](https://github.com/edemilliere/ADSI/blob/master/Grant-ADPermission.ps1)
-
