@@ -59,6 +59,7 @@ Install-Module -name ADSIPS
 ## Authors
 
 * Thanks to our Contributors!!
+  * @LazyWinAdmin
   * @MickyBalladelli
   * @christophekumor
   * @omiossec
