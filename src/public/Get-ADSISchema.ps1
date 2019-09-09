@@ -103,7 +103,7 @@
 
         else
         {
-            if($PropertyType)
+            if($PropertyType -and $ClassName)
             {
                 switch ($PropertyType)
                 {
@@ -116,7 +116,7 @@
                         ($schema.FindClass("$ClassName")).OptionalProperties
                     }
                 }#switch
-            }else{
+            }elseif(-not $propertyType -and $ClassName){
                 $schema.FindClass("$ClassName")
             }
         }#else
