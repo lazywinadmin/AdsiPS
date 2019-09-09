@@ -71,12 +71,13 @@ Install-Module -name ADSIPS
 ## Resources
 
 Interesting projects using different approaches to reach out to Active Directory in PowerShell/c#
-* [PSAD by @zloeber](https://github.com/zloeber/PSAD)
+
 * [ADAudit by @darkoperator](https://github.com/darkoperator/ADAudit/tree/dev)
-* [ADSI on powershell.com by TobiasPSP](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx) by Tobias Weltner
+* [ADSI on powershell.com by @TobiasPSP](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx) by Tobias Weltner
 * [ADRecon from @sense-of-security](https://github.com/sense-of-security/ADRecon)
 * [PowerView from @PowerShellMafia team](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
 * [Invoke-Kerberoast from @EmpireProject team](https://github.com/EmpireProject/Empire/blob/master/data/module_source/credentials/Invoke-Kerberoast.ps1)
-* [Test-ActiveDirectory by markwragg](https://github.com/markwragg/Test-ActiveDirectory/blob/master/ADAudit/ActiveDirectory.tests.ps1)
+* [PSAD by @zloeber](https://github.com/zloeber/PSAD)
+* [Test-ActiveDirectory by @markwragg](https://github.com/markwragg/Test-ActiveDirectory/blob/master/ADAudit/ActiveDirectory.tests.ps1)
 * [AdEnumerator(LDAP) by @chango77747](https://github.com/chango77747/AdEnumerator/blob/master/ADEnumerator.psm1)
 * [Grant-ADPermission by @edemilliere](https://github.com/edemilliere/ADSI/blob/master/Grant-ADPermission.ps1)
