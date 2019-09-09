@@ -100,7 +100,7 @@
         if ($PSBoundParameters['AllClasses'])
         {
             Write-Verbose -Message "[$FunctionName] Retrieving all classes..."
-            $schema.FindAllClasses
+            $schema.FindAllClasses()
         }elseif ($PSBoundParameters['FindClassName'])
         {
             Write-Verbose -Message "[$FunctionName] Looking up for class pattern '$FindClassName'"
