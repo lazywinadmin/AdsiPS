@@ -35,7 +35,7 @@
     param
     (
         [Parameter(ParameterSetName = 'Default',
-            Mandatory = $true)]
+            Mandatory = $false)]
         [ValidateSet("mandatory", "optional")]
         [String]$PropertyType,
 
@@ -103,18 +103,22 @@
 
         else
         {
-
-            switch ($PropertyType)
+            if($PropertyType)
             {
-                "mandatory"
+                switch ($PropertyType)
                 {
-                    ($schema.FindClass("$ClassName")).MandatoryProperties
-                }
-                "optional"
-                {
-                    ($schema.FindClass("$ClassName")).OptionalProperties
-                }
-            }#switch
+                    "mandatory"
+                    {
+                        ($schema.FindClass("$ClassName")).MandatoryProperties
+                    }
+                    "optional"
+                    {
+                        ($schema.FindClass("$ClassName")).OptionalProperties
+                    }
+                }#switch
+            }else{
+                $schema.FindClass("$ClassName")
+            }
         }#else
 
     }#process
