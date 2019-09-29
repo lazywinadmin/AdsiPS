@@ -35,7 +35,7 @@
     param
     (
         [Parameter(ParameterSetName = 'Default',
-            Mandatory = $true)]
+            Mandatory = $false)]
         [ValidateSet("mandatory", "optional")]
         [String]$PropertyType,
 
@@ -63,24 +63,29 @@
     {
         try
         {
+            $FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
             if ($PSBoundParameters['Credential'] -or $PSBoundParameters['ForestName'])
             {
-                Write-Verbose -Message '[PROCESS] Credential or ForestName specified'
+                Write-Verbose -Message "[$FunctionName] Credential or ForestName specified"
                 $Splatting = @{ }
                 if ($PSBoundParameters['Credential'])
                 {
+                    Write-Verbose -Message "[$FunctionName] Set Credential"
                     $Splatting.Credential = $Credential
                 }
                 if ($PSBoundParameters['ForestName'])
                 {
+                    Write-Verbose -Message "[$FunctionName] Set ForestName"
                     $Splatting.ForestName = $ForestName
                 }
 
                 $SchemaContext = New-ADSIDirectoryContext @splatting -contextType Forest
+                Write-Verbose -Message "[$FunctionName] Get Schema for forest '$forestName'"
                 $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetSchema($SchemaContext)
             }
             else
             {
+                Write-Verbose -Message "[$FunctionName] Get Current Schema"
                 $schema = [DirectoryServices.ActiveDirectory.ActiveDirectorySchema]::GetCurrentSchema()
             }
         }
@@ -94,28 +99,30 @@
     {
         if ($PSBoundParameters['AllClasses'])
         {
-            $schema.FindAllClasses().Name
-        }
-        if ($PSBoundParameters['FindClassName'])
+            Write-Verbose -Message "[$FunctionName] Retrieving all classes..."
+            $schema.FindAllClasses()
+        }elseif ($PSBoundParameters['FindClassName'])
         {
-            $schema.FindAllClasses() | Where-Object -FilterScript { $_.name -match $FindClassName } | Select-Object -Property Name
-        }
-
-        else
+            Write-Verbose -Message "[$FunctionName] Looking up for class pattern '$FindClassName'"
+            $schema.FindAllClasses() | Where-Object -FilterScript { $_.name -match $FindClassName }
+        }elseif ($PropertyType -and $ClassName)
         {
-
             switch ($PropertyType)
             {
                 "mandatory"
                 {
+                    Write-Verbose -Message "[$FunctionName] Retrieving MandatoryProperties for class '$ClassName'"
                     ($schema.FindClass("$ClassName")).MandatoryProperties
                 }
                 "optional"
                 {
+                    Write-Verbose -Message "[$FunctionName] Retrieving OptionalProperties for class '$ClassName'"
                     ($schema.FindClass("$ClassName")).OptionalProperties
                 }
             }#switch
-        }#else
-
+        }elseif (-not $propertyType -and $ClassName){
+            Write-Verbose -Message "[$FunctionName] Retrieving class '$ClassName'"
+            $schema.FindClass("$ClassName")
+        }
     }#process
 }
