@@ -37,7 +37,7 @@ try{
     $companyName = 'lazywinadmin.com' # fetch from module ?
     $projectUri = "https://github.com/lazywinadmin/$moduleName" # get from module of from source control, env var
     $licenseUri = "https://github.com/lazywinadmin/$moduleName/blob/master/LICENSE.md"
-    $tags = @('ADSI', 'ActiveDirectory','LDAP','AD')
+    $tags = @('ADSI', 'ActiveDirectory','LDAP','AD','PSEdition_Desktop')
     ################
 
     #$rootpath = Split-Path -path $PSScriptRoot -parent
