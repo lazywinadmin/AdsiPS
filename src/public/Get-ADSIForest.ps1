@@ -78,4 +78,8 @@
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
+    }
 }

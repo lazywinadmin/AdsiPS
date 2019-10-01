@@ -79,6 +79,7 @@ Function Get-ADSIDefaultDomainPasswordPolicy
 
     begin
     {
+        Write-Verbose -Message '[PROCESS] Credential and DomainName specified'
         $DirectoryEntryParams = @{}
 
         if ($PSBoundParameters['Credential'])
@@ -93,7 +94,7 @@ Function Get-ADSIDefaultDomainPasswordPolicy
     process
     {
         $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
-
+        Write-Verbose -Message "Try with this Parameter $($DirectoryEntryParams.DomainName) "
         $Properties = @{
             "minPwdAge"        = ($DirectoryEntry.ConvertLargeIntegerToInt64($DirectoryEntry.'minPwdAge'[0]) / -864000000000) -as [int]
             "maxPwdAge"        = ($DirectoryEntry.ConvertLargeIntegerToInt64($DirectoryEntry.'maxPwdAge'[0]) / -864000000000) -as [int]
@@ -133,5 +134,9 @@ Function Get-ADSIDefaultDomainPasswordPolicy
         }
 
         New-Object -TypeName psobject -Property $Properties
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }

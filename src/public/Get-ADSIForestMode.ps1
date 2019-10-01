@@ -69,12 +69,15 @@
                     $Splatting.ForestName = $ForestName
                 }
 
-                (Get-ADSIForest @splatting).ForestMode
-
+                $ForestMode =(Get-ADSIForest @splatting).ForestMode
+                Write-Verbose -Message "The forest Mode is $ForestMode"
+                return $ForestMode
             }
             else
             {
-                (Get-ADSIForest).ForestMode
+                $ForestMode =(Get-ADSIForest).ForestMode
+                Write-Verbose -Message "The forest Mode is $ForestMode"
+                return $ForestMode
             }
 
         }
@@ -82,5 +85,9 @@
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }

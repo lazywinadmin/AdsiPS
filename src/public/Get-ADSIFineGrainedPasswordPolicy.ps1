@@ -104,6 +104,7 @@ function Get-ADSIFineGrainedPasswordPolicy
 
             foreach ($Object in $($Search.FindAll()))
             {
+                Write-Verbose -Message "[PROCESS] with the PSO $Object"
                 # Define the properties
                 #  The properties need to be lowercase!
                 $Properties = @{

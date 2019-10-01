@@ -86,8 +86,12 @@ function Enable-ADSIComputer
             if ($pscmdlet.ShouldProcess("$Identity", "enable Account"))
             {
                 $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
+                Write-Verbose -Message "Found the Computer Account $Account"
                 $Account.enabled = $true
+                Write-Verbose -Message "The Computer Account $Account is Enabled"
                 $Account.Save()
+                Write-Verbose -Message "Done"
+
             }
         }
         catch

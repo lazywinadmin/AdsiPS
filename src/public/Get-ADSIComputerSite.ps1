@@ -76,11 +76,12 @@ public static class NetApi32 {
         {
             try
             {
+                Write-Verbose -Message "Try for the computer $Computer"
                 $Properties = @{
                     ComputerName = $Computer
                     SiteName     = [NetApi32]::DsGetSiteName($Computer)
                 }
-
+                Write-Verbose -Message "Create PSObject with $Properties"
                 New-Object -TypeName PSObject -property $Properties
             }
             catch

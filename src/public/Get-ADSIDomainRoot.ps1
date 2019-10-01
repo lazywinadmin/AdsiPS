@@ -50,5 +50,8 @@
         $ForestName = [System.DirectoryServices.ActiveDirectory.Forest]::Getcurrentforest()
     )
 
-    (Get-ADSIForest @PSBoundParameters).RootDomain
+
+     $RootDomain = (Get-ADSIForest @PSBoundParameters).RootDomain
+     Write-Verbose -Message "The Root domain is $RootDomain"
+     Return $RootDomain
 }

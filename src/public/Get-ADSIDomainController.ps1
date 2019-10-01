@@ -43,7 +43,8 @@
 
 
         if ($PSBoundParameters['Credential'])
-        {
+        {        Write-Verbose -Message '[PROCESS] Credential or DomainName specified'
+
             $Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain
             if ($PSBoundParameters['DomainName'])
             {
@@ -62,5 +63,9 @@
     process
     {
         [System.DirectoryServices.ActiveDirectory.DomainController]::FindAll($Context)
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }

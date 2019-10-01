@@ -90,13 +90,20 @@ function Enable-ADSIUser
             if ($pscmdlet.ShouldProcess("$Identity", "Enable Account"))
             {
                 $Account = Get-ADSIUser -Identity $Identity @ContextSplatting
+                Write-Verbose -Message "Found the User account $Account"
                 $Account.Enabled = $true
+                Write-Verbose -Message "The User account $Account is Enabled"
                 $Account.Save()
+                Write-Verbose -Message "Done"
             }
         }
         catch
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }

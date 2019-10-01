@@ -71,11 +71,12 @@ function Get-ADSIDomainBackup {
             $DomainControlerObject = [System.DirectoryServices.ActiveDirectory.DomainController]::findOne($ContextObject)
 
             $ActiveDirectoryPartitions = $DomainControlerObject.Partitions
-
+            Write-Verbose -Message "Found Active Directory Partitions $ActiveDirectoryPartitions"
             $ArrayListBackupInfo = [System.Collections.ArrayList]::new()
 
             foreach ($partition in $ActiveDirectoryPartitions) {
 
+                Write-Verbose -Message "[PROCESS] for the Partition $partition"
                 $ActiveDirectoryPartitionMetaData = $domainController.GetReplicationMetadata($partition)
                 $DsaSignatureAtribute = $ActiveDirectoryPartitionMetaData.item("dsaSignature")
                 $LastBackupDate = $DsaSignatureAtribute.LastOriginatingChangeTime.DateTime
@@ -94,6 +95,10 @@ function Get-ADSIDomainBackup {
         catch {
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 
 }

@@ -57,12 +57,15 @@
                     $Splatting.ForestName = $ForestName
                 }
 
-                (Get-ADSIForest @splatting).Domains
-
+                $Domains = (Get-ADSIForest @splatting).Domains
+                Write-Verbose -Message "Found the Domain $Domains"
+                return $Domains
             }
             else
             {
-                (Get-ADSIForest).Domains
+                $Domains = (Get-ADSIForest).Domains
+                Write-Verbose -Message "Found the Domain $Domains"
+                return $Domains
             }
 
         }
@@ -70,5 +73,9 @@
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }

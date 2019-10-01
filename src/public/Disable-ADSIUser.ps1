@@ -89,8 +89,12 @@ function Disable-ADSIUser
             if ($pscmdlet.ShouldProcess("$Identity", "Disable Account"))
             {
                 $Account = Get-ADSIUser -Identity $Identity @ContextSplatting
+                Write-Verbose -Message "Found the User account $Account"
                 $Account.Enabled = $false
+                Write-Verbose -Message "Found the User account $Account"
                 $Account.Save()
+                Write-Verbose -Message "Done"
+
             }
         }
         catch

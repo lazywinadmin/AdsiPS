@@ -86,8 +86,11 @@ function Disable-ADSIComputer
             if ($pscmdlet.ShouldProcess("$Identity", "Disable Account"))
             {
                 $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
+                Write-Verbose -Message "Found the Computer Account $Account"
                 $Account.enabled = $false
+                Write-Verbose -Message "The Computer Account $Account is Disabled"
                 $Account.Save()
+                Write-Verbose -Message "Done"
             }
         }
         catch

@@ -43,7 +43,7 @@
     {
         try
         {
-            Write-Verbose -Message '[Get-ADSIGlobalCatalog][PROCESS] Credential or FirstName specified'
+            Write-Verbose -Message "[$FunctionName][PROCESS] Credential or FirstName specified"
             (Get-ADSIForest @PSBoundParameters).GlobalCatalogs
         }
         catch
@@ -51,4 +51,9 @@
             $pscmdlet.ThrowTerminatingError($_)
         }
     }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
+    }
+
 }

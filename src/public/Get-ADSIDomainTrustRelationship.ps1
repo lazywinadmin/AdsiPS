@@ -67,12 +67,20 @@
                     $Splatting.DomainName = $DomainName
                 }
 
-                (Get-ADSIDomain @splatting).GetAllTrustRelationships()
+                $AllTrustRelation= (Get-ADSIDomain @splatting).GetAllTrustRelationships()
+
+                Write-Verbose -Message "The Root domain is $(Get-ADSIDomain @splatting).GetAllTrustRelationships()"
+
+                return = $AllTrustRelation
 
             }
             else
             {
-                (Get-ADSIDomain).GetAllTrustRelationships()
+                $AllTrustRelation = (Get-ADSIDomain).GetAllTrustRelationships()
+
+                Write-Verbose -Message "The Root domain is $(Get-ADSIDomain @splatting).GetAllTrustRelationships()"
+
+                return = $AllTrustRelation
             }
 
         }
@@ -80,5 +88,9 @@
         {
             $pscmdlet.ThrowTerminatingError($_)
         }
+    }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
     }
 }
