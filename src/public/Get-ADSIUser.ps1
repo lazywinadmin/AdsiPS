@@ -177,4 +177,8 @@ function Get-ADSIUser
             $Searcher.FindAll() # Return UserPrincipale
         }
     }
+    end
+    {
+        Write-Verbose -Message "[$FunctionName] Done"
+    }
 }
