@@ -22,13 +22,15 @@ function Test-ADSICredential
     By default it will use the current domain.
 
 .EXAMPLE
-    Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
+    PS C:\> $Password = read-host -AsSecureString -Prompt "AccountPassword"
+    PS C:\> Test-ADSICredential -AccountName 'Xavier' -AccountPassword $Password
 
 .EXAMPLE
-    PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -AccountPassword (read-host -AsSecureString -Prompt "AccountPassword") -Passthru
+    PS C:\> $Password = read-host -AsSecureString -Prompt "AccountPassword"
+    PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -AccountPassword $Password -Passthru
 
     # You can test the credential using the following function
-    Test-ADSICredential -AccountName "fxtest04" -Password "Password1"
+    PS C:\> Test-ADSICredential -AccountName "fxtest04" -AccountPassword $Password
 
 .OUTPUTS
     System.Boolean
