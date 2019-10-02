@@ -22,7 +22,7 @@ function Test-ADSICredential
     By default it will use the current domain.
 
 .EXAMPLE
-    Test-ADCredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
+    Test-ADSICredential -AccountName 'Xavier' -Password 'Wine and Cheese!'
 
 .EXAMPLE
     PS C:\> New-ADSIUser -SamAccountName "fxtest04" -Enabled -AccountPassword (read-host -AsSecureString -Prompt "AccountPassword") -Passthru
