@@ -67,6 +67,7 @@ Install-Module -name ADSIPS
   * @andrewtchilds
   * @NicolasBn
   * @gerane
+  * @GaffaOverflow
 
 ## Resources
 
