@@ -130,7 +130,9 @@ function Remove-ADSIGroupMember
             if ($pscmdlet.ShouldProcess("$Identity", "Remove Account member $member"))
             {
                 $group = (Get-ADSIGroup -Identity $Identity @ContextSplatting)
-                [void]$group.members.remove($Member) #Void because this method returns $True/$false
+                if($group.members.remove($Member) -eq $false){
+                    Write-Output "$Member is not a member of $Identity"
+                } #False = Not Part of the Group / True = removed GroupMembership
                 ($group.Save())
             }
         }
