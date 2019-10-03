@@ -1,6 +1,6 @@
 function Remove-ADSIGroupMember
 {
-    <#
+<#
 .SYNOPSIS
     Function to Remove a group member
 
@@ -54,7 +54,10 @@ function Remove-ADSIGroupMember
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
-        [parameter(Mandatory = $true, ValueFromPipelineByPropertyName = $true, ValueFromPipeline = $true)]
+        [parameter(
+            Mandatory = $true,
+            ValueFromPipelineByPropertyName = $true,
+            ValueFromPipeline = $true)]
         $Identity,
 
         [Alias("RunAs")]
@@ -62,15 +65,17 @@ function Remove-ADSIGroupMember
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-        [String]$DomainName,
+        [System.String]$DomainName,
 
-        $Member
+        [System.String]$Member
     )
 
     begin
     {
+        $FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
+        Write-Verbose -Message "[$FunctionName] Building context parameters"
         # Create Context splatting
         $ContextSplatting = @{
             Contexttype = "Domain"
@@ -78,13 +83,16 @@ function Remove-ADSIGroupMember
 
         if ($PSBoundParameters['Credential'])
         {
+            Write-Verbose -Message "[$FunctionName] Append Credential to context parameters for username '$($credential.UserName)'"
             $ContextSplatting.Credential = $Credential
         }
         if ($PSBoundParameters['DomainName'])
         {
+            Write-Verbose -Message "[$FunctionName] Append DomainName to context parameters '$DomainName'"
             $ContextSplatting.DomainName = $DomainName
         }
 
+        Write-Verbose -Message "[$FunctionName] Creating context object"
         $Context = New-ADSIPrincipalContext @ContextSplatting
     }
     process
@@ -93,11 +101,14 @@ function Remove-ADSIGroupMember
         {
             # Resolving member
             # Directory Entry object
+            Write-Verbose -Message "[$FunctionName] Building DirectoryEntry parameters"
             $DirectoryEntryParams = $ContextSplatting
             $DirectoryEntryParams.remove('ContextType')
+            Write-Verbose -Message "[$FunctionName] Creating DirectoryEntry object"
             $DirectoryEntry = New-ADSIDirectoryEntry @DirectoryEntryParams
 
             # Principal Searcher
+            Write-Verbose -Message "[$FunctionName] Creating DirectorySearcher object"
             $DirectorySearcher = new-object -TypeName System.DirectoryServices.DirectorySearcher
             $DirectorySearcher.SearchRoot = $DirectoryEntry
 
@@ -105,6 +116,7 @@ function Remove-ADSIGroupMember
             $DirectorySearcher.Filter = "(anr=$member)"
 
             # Retrieve a single object
+            Write-Verbose -Message "[$FunctionName] Querying Directory Entry"
             $Account = $DirectorySearcher.FindOne().GetDirectoryEntry()
 
             if ($Account)
@@ -129,11 +141,17 @@ function Remove-ADSIGroupMember
 
             if ($pscmdlet.ShouldProcess("$Identity", "Remove Account member $member"))
             {
+                Write-Verbose -Message "[$FunctionName] Retrieving Group '$Identity'"
                 $group = (Get-ADSIGroup -Identity $Identity @ContextSplatting)
+
+                Write-Verbose -Message "[$FunctionName] Removing member '$member'"
                 if($group.members.remove($Member) -eq $false){
-                    Write-Output "$Member is not a member of $Identity"
-                } #False = Not Part of the Group / True = removed GroupMembership
-                ($group.Save())
+                    Write-Verbose -Message "[$FunctionName] Account '$Member' is not a member of Group '$Identity'"
+                    #False = Not Part of the Group / True = removed GroupMembership
+                }else{
+                    Write-Verbose -Message "[$FunctionName] Saving changes"
+                    $group.Save()
+                }
             }
         }
         catch
