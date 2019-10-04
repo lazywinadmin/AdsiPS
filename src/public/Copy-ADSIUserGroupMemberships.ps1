@@ -57,6 +57,10 @@ function Copy-ADSIUserGroupMemberships{
 	    [String]$DomainName
 	)
 	
+	begin{
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	}
+	
 	process{
 	    #GetSourceUserGroups
 	    if($DomainName){
@@ -87,14 +91,14 @@ function Copy-ADSIUserGroupMemberships{
 	    #Get only new Groups
 	    $MissingGroups = Compare-Object -ReferenceObject $SourceUserGroups.Sid -DifferenceObject $DestinationUserGroups.Sid | Where-Object {$_.SideIndicator -eq "<="}
 	    if($MissingGroups -eq $null){
-	        Write-Verbose "Nothing to do"
+	        Write-Verbose "[$FunctionName] Nothing to do"
 	    } else {
-	        Write-Verbose "Missing Groups: $($MissingGroups.InputObject.Value)"
+	        Write-Verbose "[$FunctionName] Missing Groups: $($MissingGroups.InputObject.Value)"
 	    }
 	
 	    #Add DestinationUser to Missing Groups
 	    foreach($Group in $MissingGroups.InputObject.Value){
-	        Write-Verbose -Message "Adding $DestinationIdentity to $($Group)"
+	        Write-Verbose -Message "[$FunctionName] Adding $DestinationIdentity to $($Group)"
 	        if($DomainName){
 	            if($Credential -ne [System.Management.Automation.PSCredential]::Empty){
 	                Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity -DomainName $DomainName -Credential $Credential
