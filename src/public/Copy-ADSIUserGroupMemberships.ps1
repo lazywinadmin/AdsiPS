@@ -44,17 +44,22 @@ function Copy-ADSIUserGroupMemberships{
 #>
 	[CmdletBinding(SupportsShouldProcess = $true)]
 	param(
-	    [Parameter(Mandatory = $true, Position = 0, ParameterSetName = "Identity")]
-	    [string]$SourceIdentity,
-	    [Parameter(Mandatory = $true, Position = 1, ParameterSetName = "Identity")]
-	    [string]$DestinationIdentity,
+	    [Parameter(Mandatory = $true,
+	    	Position = 0,
+	    	ParameterSetName = "Identity")]
+	    [System.string]$SourceIdentity,
+	    
+	    [Parameter(Mandatory = $true,
+	    	Position = 1,
+	    	ParameterSetName = "Identity")]
+	    [System.string]$DestinationIdentity,
 	
 	    [Alias("RunAs")]
 	    [System.Management.Automation.PSCredential]
 	    [System.Management.Automation.Credential()]
 	    $Credential = [System.Management.Automation.PSCredential]::Empty,
 	
-	    [String]$DomainName
+	    [System.String]$DomainName
 	)
 	
 	begin{
