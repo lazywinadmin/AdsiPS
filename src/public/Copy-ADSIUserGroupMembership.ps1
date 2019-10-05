@@ -1,4 +1,4 @@
-function Copy-ADSIUserGroupMemberships{
+function Copy-ADSIUserGroupMembership{
 <#
 .SYNOPSIS
     Function to Copy the Group Memberships of a User to another in Active Directory
@@ -35,7 +35,7 @@ function Copy-ADSIUserGroupMemberships{
     By default it will use the current user windows credentials.
 
 .EXAMPLE
-    Copy-ADSIUserGroupMemberships -SourceIdentity User1 -DestinationIdentity User2 -DomainName "my.domain"
+    Copy-ADSIUserGroupMembership -SourceIdentity User1 -DestinationIdentity User2 -DomainName "my.domain"
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
