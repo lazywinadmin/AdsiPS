@@ -30,6 +30,9 @@ function Copy-ADSIUserGroupMembership{
     Those properties come from the following enumeration:
     System.DirectoryServices.AccountManagement.IdentityType
 
+.PARAMETER DomainName
+    Specifies the Domain Name where the function should look
+
 .PARAMETER Credential
     Specifies the alternative credential to use.
     By default it will use the current user windows credentials.
