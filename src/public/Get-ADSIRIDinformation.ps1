@@ -93,14 +93,14 @@ function Get-ADSIRIDinformation
 
             $RemaningRID = $SIDtotal - $currentRIDPoolCount
 
-            $RIDMagangerInfo =   [pscustomobject]@{
+            return [pscustomobject]@{
                 RIDLastPropagation  = $RidProperties.dscorepropagationdata
                 RIDRoleOwner        = $RidProperties.fsmoroleowner
                 RIDIssued           = $RIDPoolCount
                 RIDRemaining        = $RemaningRID
             }
 
-            return $RIDMagangerInfo
+
         }
         catch {
             $pscmdlet.ThrowTerminatingError($_)
