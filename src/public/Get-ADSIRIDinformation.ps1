@@ -54,12 +54,21 @@ function Get-ADSIRIDinformation
             $FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
 
 
-            if ($PSBoundParameters['Credential']){
-                Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Context with Credential"
-                $ContextObjectType = new-object System.DirectoryServices.ActiveDirectory.DirectoryContext($ContextObjectType, $DomainName, $Credential.UserName, $Credential.GetNetworkCredential().password)
-            } else {
-                Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Context"
-                $ContextObjectType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
+            if ($PSBoundParameters['Credential'])
+            {
+                $ContextObjectType = New-ADSIDirectoryContext -Credential $Credential -contextType Domain
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $ContextObjectType = New-ADSIDirectoryContext -Credential $Credential -contextType Domain -DomainName $DomainName
+                }
+            }
+            else
+            {
+                $ContextObjectType = New-ADSIDirectoryContext -contextType Domain
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $ContextObjectType = New-ADSIDirectoryContext -contextType Domain -DomainName $DomainName
+                }
             }
 
             Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Domain Object"
