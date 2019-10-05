@@ -66,35 +66,24 @@ function Copy-ADSIUserGroupMembership{
 	)
 	
 	begin{
-        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	  $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+	
+	  # Create Context splatting
+	  $ContextSplatting = @{ }
+	  if ($PSBoundParameters['Credential']){
+	 	$ContextSplatting.Credential = $Credential
+	  }
+	  if ($PSBoundParameters['DomainName']){
+		$ContextSplatting.DomainName = $DomainName
+	  }
 	}
 	
 	process{
 	    #GetSourceUserGroups
-	    if($DomainName){
-	        if($Credential -ne [System.Management.Automation.PSCredential]::Empty){
-	            $SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity -DomainName $DomainName -Credential $Credential).GetGroups()
-	        } else {
-	            $SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity -DomainName $DomainName).GetGroups()
-	        }
-	    } elseif ($Credential -ne [System.Management.Automation.PSCredential]::Empty) {
-	        $SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity -Credential $Credential).GetGroups()
-	    } else {
-	        $SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity).GetGroups()
-	    }
+	    $SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity @ContextSplatting).GetGroups()
 	
 	    #GetDestinationUserGroups
-	    if($DomainName){
-	        if($Credential -ne [System.Management.Automation.PSCredential]::Empty){
-	            $DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity -DomainName $DomainName -Credential $Credential).GetGroups()
-	        } else {
-	            $DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity -DomainName $DomainName).GetGroups()
-	        }
-	    } elseif ($Credential -ne [System.Management.Automation.PSCredential]::Empty) {
-	        $DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity -Credential $Credential).GetGroups()
-	    } else {
-	        $DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity).GetGroups()
-	    }
+	    $DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity @ContextSplatting).GetGroups()
 	
 	    #Get only new Groups
 	    $MissingGroups = Compare-Object -ReferenceObject $SourceUserGroups.Sid -DifferenceObject $DestinationUserGroups.Sid | Where-Object {$_.SideIndicator -eq "<="}
