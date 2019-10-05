@@ -71,9 +71,11 @@ function Copy-ADSIUserGroupMembership{
 	  # Create Context splatting
 	  $ContextSplatting = @{ }
 	  if ($PSBoundParameters['Credential']){
+	  	Write-Verbose "[$FunctionName] Found Credential Parameter"
 	 	$ContextSplatting.Credential = $Credential
 	  }
 	  if ($PSBoundParameters['DomainName']){
+	  	Write-Verbose "[$FunctionName] Found DomainName Parameter"
 		$ContextSplatting.DomainName = $DomainName
 	  }
 	}
@@ -96,17 +98,7 @@ function Copy-ADSIUserGroupMembership{
 	    #Add DestinationUser to Missing Groups
 	    foreach($Group in $MissingGroups.InputObject.Value){
 	        Write-Verbose -Message "[$FunctionName] Adding $DestinationIdentity to $($Group)"
-	        if($DomainName){
-	            if($Credential -ne [System.Management.Automation.PSCredential]::Empty){
-	                Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity -DomainName $DomainName -Credential $Credential
-	            } else {
-	                Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity -DomainName $DomainName
-	            }
-	        } elseif ($Credential -ne [System.Management.Automation.PSCredential]::Empty) {
-	            Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity -Credential $Credential
-	        } else {
-	            Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity
-	        }
+	        Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
 	    }
 	}
 }
