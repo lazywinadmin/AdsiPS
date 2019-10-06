@@ -97,12 +97,9 @@ function Copy-ADSIUserGroupMembership{
 
 		#Add DestinationUser to Missing Groups
 		foreach($Group in $MissingGroups.InputObject){
-			If($WhatIfPreference){
-				Write-Output "WhaitIf: Adding $DestinationIdentity to Group $Group"
-			} else {
-				Write-Verbose -Message "[$FunctionName] Adding $DestinationIdentity to Group $Group"
-				Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
-			}
+				If($PSCmdlet.ShouldProcess($Group, "Adding $DestinationIdentity to group")){
+					Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
+				}
 		}
 	}
 }
