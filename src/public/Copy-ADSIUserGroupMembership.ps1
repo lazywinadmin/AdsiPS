@@ -88,17 +88,21 @@ function Copy-ADSIUserGroupMembership{
 		$DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity @ContextSplatting).GetGroups()
 
 		#Get only new Groups
-		$MissingGroups = Compare-Object -ReferenceObject $SourceUserGroups.Sid -DifferenceObject $DestinationUserGroups.Sid | Where-Object {$_.SideIndicator -eq "<="}
+		$MissingGroups = Compare-Object -ReferenceObject $SourceUserGroups.SamAccountName -DifferenceObject $DestinationUserGroups.SamAccountName | Where-Object {$_.SideIndicator -eq "<="}
 		if($MissingGroups -eq $null){
 			Write-Verbose "[$FunctionName] Nothing to do"
 		} else {
-			Write-Verbose "[$FunctionName] Missing Groups: $($MissingGroups.InputObject.Value)"
+			Write-Verbose "[$FunctionName] Missing Groups: $($MissingGroups.InputObject)"
 		}
 
 		#Add DestinationUser to Missing Groups
-		foreach($Group in $MissingGroups.InputObject.Value){
-			Write-Verbose -Message "[$FunctionName] Adding $DestinationIdentity to $($Group)"
-			Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
+		foreach($Group in $MissingGroups.InputObject){
+			If($WhatIfPreference){
+				Write-Output "WhaitIf: Adding $DestinationIdentity to Group $Group"
+			} else {
+				Write-Verbose -Message "[$FunctionName] Adding $DestinationIdentity to Group $Group"
+				Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
+			}
 		}
 	}
 }
