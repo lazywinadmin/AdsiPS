@@ -1,4 +1,4 @@
-function Get-ADSIRIDinformation
+function Get-ADSIRIDsPool
 {
 <#
     .SYNOPSIS
@@ -21,16 +21,21 @@ function Get-ADSIRIDinformation
         Specifies the DomainName to query
 
     .EXAMPLE
-        Get-ADSIRidinformation
+        Get-ADSIRIDsPool
         Retrieve RID information for the current domain
+        return :
+            RIDLastPropagation : {1/1/1601 12:00:00 AM}
+            RIDRoleOwner       : {CN=NTDS Settings,CN=reqlab01,CN=Servers,CN=Default-First-Site-Name,CN=Sites,CN=Configuration,DC=adsips,DC=local}
+            RIDIssued          : 2100
+            RIDRemaining       : 1073741823
     .EXAMPLE
-        Get-ADSIRidinformation -DomainName mytest.local
+        Get-ADSIRIDsPool -DomainName mytest.local
         Retrieve RID information for the domain mytest.local
     .EXAMPLE
-        Get-ADSIRidinformation -Credential (Get-Credential superAdmin) -Verbose
+        Get-ADSIRIDsPool -Credential (Get-Credential superAdmin) -Verbose
         Retrieve RID information for the current domain with the specified credential.
     .EXAMPLE
-        Get-ADSIRidinformation -DomainName mytest.local -Credential (Get-Credential superAdmin) -Verbose
+        Get-ADSIRIDsPool -DomainName mytest.local -Credential (Get-Credential superAdmin) -Verbose
         Retrieve RID information for the domain mytest.local with the specified credential.
     .NOTES
         https://github.com/lazywinadmin/ADSIPS
@@ -54,12 +59,21 @@ function Get-ADSIRIDinformation
             $FunctionName = (Get-Variable -Name MyInvocation -ValueOnly -Scope 0).MyCommand
 
 
-            if ($PSBoundParameters['Credential']){
-                Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Context with Credential"
-                $ContextObjectType = new-object System.DirectoryServices.ActiveDirectory.DirectoryContext($ContextObjectType, $DomainName, $Credential.UserName, $Credential.GetNetworkCredential().password)
-            } else {
-                Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Context"
-                $ContextObjectType = [System.DirectoryServices.ActiveDirectory.DirectoryContextType]::Domain
+            if ($PSBoundParameters['Credential'])
+            {
+                $ContextObjectType = New-ADSIDirectoryContext -Credential $Credential -contextType Domain
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $ContextObjectType = New-ADSIDirectoryContext -Credential $Credential -contextType Domain -DomainName $DomainName
+                }
+            }
+            else
+            {
+                $ContextObjectType = New-ADSIDirectoryContext -contextType Domain
+                if ($PSBoundParameters['DomainName'])
+                {
+                    $ContextObjectType = New-ADSIDirectoryContext -contextType Domain -DomainName $DomainName
+                }
             }
 
             Write-Verbose -Message "[$FunctionName] Create ActiveDirectory Domain Object"
@@ -84,14 +98,14 @@ function Get-ADSIRIDinformation
 
             $RemaningRID = $SIDtotal - $currentRIDPoolCount
 
-            $RIDMagangerInfo =   [pscustomobject]@{
+            return [pscustomobject]@{
                 RIDLastPropagation  = $RidProperties.dscorepropagationdata
                 RIDRoleOwner        = $RidProperties.fsmoroleowner
                 RIDIssued           = $RIDPoolCount
                 RIDRemaining        = $RemaningRID
             }
 
-            return $RIDMagangerInfo
+
         }
         catch {
             $pscmdlet.ThrowTerminatingError($_)
