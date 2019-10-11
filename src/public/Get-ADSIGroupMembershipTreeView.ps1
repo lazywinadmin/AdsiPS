@@ -90,7 +90,6 @@ function Get-ADSIGroupMembershipTreeView{
 			Write-Verbose "Groups found: $($Groups.Name)"
 			Write-Output $(Get-ADSIUser -Identity $Identity).Name
             foreach($Group in $Groups){
-				Write-Verbose "Ground: $($Group.Name)"
 				$Spacecount = 1
 				Get-RecursiveGroups -Group $Group
             }
