@@ -1,13 +1,13 @@
-function Copy-ADSIUserGroupMembership{
+function Copy-ADSIGroupMembership{
 <#
 .SYNOPSIS
-	Function to Copy the Group Memberships of a User to another in Active Directory
+	Function to Copy the Group Memberships of a User or Computer to another in Active Directory
 
 .DESCRIPTION
-	Function to Copy the Group Memberships of a User to another in Active Directory
+	Function to Copy the Group Memberships of a User or Computer to another in Active Directory
 
 .PARAMETER SourceIdentity
-	Specifies the Identity of the Source User
+	Specifies the Identity of the Source User or Computer
 	You can provide one of the following properties
 	DistinguishedName
 	Guid
@@ -19,7 +19,7 @@ function Copy-ADSIUserGroupMembership{
 	System.DirectoryServices.AccountManagement.IdentityType
 
 .PARAMETER DestinationIdentity
-	Specifies the Identity of the Destination User
+	Specifies the Identity of the Destination User or Computer
 	You can provide one of the following properties
 	DistinguishedName
 	Guid
@@ -38,7 +38,10 @@ function Copy-ADSIUserGroupMembership{
 	By default it will use the current user windows credentials.
 
 .EXAMPLE
-	Copy-ADSIUserGroupMembership -SourceIdentity User1 -DestinationIdentity User2 -DomainName "my.domain"
+	Copy-ADSIGroupMembership -SourceIdentity User1 -DestinationIdentity User2 -DomainName "my.domain"
+
+.EXAMPLE
+	Copy-ADSIGroupMembership -SourceIdentity User1 -DestinationIdentity Computer2 -DomainName "my.domain"
 
 .NOTES
 	https://github.com/lazywinadmin/ADSIPS
@@ -66,6 +69,16 @@ function Copy-ADSIUserGroupMembership{
 	)
 	
 	begin{
+		#Get SourceIdentity Type
+		If(Get-ADSIComputer -Identity $SourceIdentity){$SourceType = "Computer"}
+		If(Get-ADSIUser -Identity $SourceIdentity){$SourceType = "User"}
+		If($null -eq $SourceType){Write-Error "SourceIdentity not found"; Exit}
+
+		#Get DestinationIdentity Type
+		If(Get-ADSIComputer -Identity $DestinationIdentity){$DestinationType = "Computer"}
+		If(Get-ADSIUser -Identity $DestinationIdentity){$DestinationType = "User"}
+		If($null -eq $DestinationType){Write-Error "DestinationIdentity not found"; Exit}
+
 		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 	
 		# Create Context splatting
@@ -81,21 +94,32 @@ function Copy-ADSIUserGroupMembership{
 	}
 
 	process{
-		#GetSourceUserGroups
-		$SourceUserGroups = (Get-ADSIUser -Identity $SourceIdentity @ContextSplatting).GetGroups()
-
-		#GetDestinationUserGroups
-		$DestinationUserGroups = (Get-ADSIUser -Identity $DestinationIdentity @ContextSplatting).GetGroups()
+		#GetSourceGroups
+		If($SourceType -eq "User"){
+			$SourceGroups = (Get-ADSIUser -Identity $SourceIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] SourceType: User"
+		} elseif ($SourceType -eq "Computer") {
+			$SourceGroups = (Get-ADSIComputer -Identity $SourceIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] SourceType: Computer"
+		}
+		#GetDestinationGroups
+		If($DestinationType -eq "User"){
+			$DestinationGroups = (Get-ADSIUser -Identity $DestinationIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] DestinationType: User"
+		} elseif ($DestinationType -eq "Computer") {
+			$DestinationGroups = (Get-ADSIComputer -Identity $DestinationIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] DestinationType: Computer"
+		}
 
 		#Get only new Groups
-		$MissingGroups = Compare-Object -ReferenceObject $SourceUserGroups.SamAccountName -DifferenceObject $DestinationUserGroups.SamAccountName | Where-Object {$_.SideIndicator -eq "<="}
+		$MissingGroups = Compare-Object -ReferenceObject $SourceGroups.SamAccountName -DifferenceObject $DestinationGroups.SamAccountName | Where-Object {$_.SideIndicator -eq "<="}
 		if($MissingGroups -eq $null){
 			Write-Verbose "[$FunctionName] Nothing to do"
 		} else {
 			Write-Verbose "[$FunctionName] Missing Groups: $($MissingGroups.InputObject)"
 		}
 
-		#Add DestinationUser to Missing Groups
+		#Add Destination to Missing Groups
 		foreach($Group in $MissingGroups.InputObject){
 				If($PSCmdlet.ShouldProcess($Group, "Adding $DestinationIdentity to group")){
 					Add-ADSIGroupMember -Identity $Group -Member $DestinationIdentity @ContextSplatting
