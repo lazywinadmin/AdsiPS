@@ -15,6 +15,7 @@
 	SamAccountName
     UserPrincipalName
     Guid
+    Sid
 
 .PARAMETER Credential
     Specify the Credential to use
@@ -104,11 +105,11 @@
             {
                 if ($PSBoundParameters['DeletedOnly'])
                 {
-                    $Search.filter = "(&(isDeleted=True)(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)))"
+                    $Search.filter = "(&(isDeleted=True)(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)(objectSid=$Identity)))"
                 }
                 else
                 {
-                    $Search.filter = "(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID))"
+                    $Search.filter = "(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)(objectSid=$Identity))"
                 }
             }
 
