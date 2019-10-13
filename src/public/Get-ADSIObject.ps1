@@ -1,5 +1,5 @@
-﻿#function Get-ADSIObject
-#{
+﻿function Get-ADSIObject
+{
     <#
 .SYNOPSIS
     This function will query any kind of object in Active Directory
@@ -13,7 +13,8 @@
 	DistinguishedName
 	Name
 	SamAccountName
-	UserPrincipalName
+    UserPrincipalName
+    Guid
 
 .PARAMETER Credential
     Specify the Credential to use
@@ -59,11 +60,11 @@
         [Parameter(ParameterSetName = "Identity", Mandatory = $true)]
         [Parameter(ParameterSetName = "Deleted")]
         [Alias("SamAccountName", "DistinguishedName")]
-        [String]$Identity,
+        [System.String]$Identity,
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
-        [String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+        [System.String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -91,15 +92,23 @@
             $Search.SizeLimit = $SizeLimit
             $Search.SearchRoot = $DomainDistinguishedName
 
+            #Convert Identity Input String to HEX
+            $IdentityGUID = ""
+            Try{
+                ([System.Guid]$Identity).ToByteArray() | %{ $IdentityGUID += $("\{0:x2}" -f $_) }
+            } Catch {
+                $IdentityGUID="null"
+            }
+
             if ($PSBoundParameters['Identity'])
             {
                 if ($PSBoundParameters['DeletedOnly'])
                 {
-                    $Search.filter = "(&(isDeleted=True)(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)))"
+                    $Search.filter = "(&(isDeleted=True)(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)))"
                 }
                 else
                 {
-                    $Search.filter = "(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity))"
+                    $Search.filter = "(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID))"
                 }
             }
 
@@ -166,4 +175,4 @@
     {
         Write-Verbose -Message "[END] Function Get-ADSIObject End."
     }
-#}
+}
