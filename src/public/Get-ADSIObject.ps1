@@ -8,11 +8,11 @@
     This function will query any kind of object in Active Directory
 
 .PARAMETER Identity
-	Specifies the Identity of the Object
-	You can provide one of the following properties
-	DistinguishedName
-	Name
-	SamAccountName
+    Specifies the Identity of the Object
+    You can provide one of the following properties
+    DistinguishedName
+    Name
+    SamAccountName
     UserPrincipalName
     Guid
     Sid
