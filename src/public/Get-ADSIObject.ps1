@@ -7,13 +7,15 @@
 .DESCRIPTION
     This function will query any kind of object in Active Directory
 
-.PARAMETER  SamAccountName
-    Specify the SamAccountName of the object.
-    This parameter also search in Name and DisplayName properties
-    Name and Displayname are alias.
-
-.PARAMETER  DistinguishedName
-    Specify the DistinguishedName of the object your are looking for
+.PARAMETER Identity
+    Specifies the Identity of the Object
+    You can provide one of the following properties
+    DistinguishedName
+    Name
+    SamAccountName
+    UserPrincipalName
+    Guid
+    Sid
 
 .PARAMETER Credential
     Specify the Credential to use
@@ -31,24 +33,24 @@
     Return only deleted objects
 
 .EXAMPLE
-    Get-ADSIObject -SamAccountName Fxcat
+    Get-ADSIObject -Identity Fxcat
 
-    Get informations on objects with a SamAccountName equal to Fxcat
-
-.EXAMPLE
-    Get-ADSIObject -SamAccountName Fx*
-
-    Get informations on objects with a SamAccountName starting with Fx*
+    Get informations on objects with a Identity equal to Fxcat
 
 .EXAMPLE
-    Get-ADSIObject -SamAccountName Fx* -IncludeDeletedObjects
+    Get-ADSIObject -Identity Fx*
 
-    Get informations on objects deleted or not with a SamAccountName starting with Fx*
+    Get informations on objects with a Identity starting with Fx*
 
 .EXAMPLE
-    Get-ADSIObject -SamAccountName Fx* -IncludeDeletedObjects -DeletedOnly
+    Get-ADSIObject -Identity Fx* -IncludeDeletedObjects
 
-    Get informations on deleted objects with a SamAccountName starting with Fx*
+    Get informations on objects deleted or not with a Identity starting with Fx*
+
+.EXAMPLE
+    Get-ADSIObject -Identity Fx* -IncludeDeletedObjects -DeletedOnly
+
+    Get informations on deleted objects with a Identity starting with Fx*
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
@@ -56,18 +58,14 @@
 
     [CmdletBinding()]
     param (
-        [Parameter(ParameterSetName = "SamAccountName")]
+        [Parameter(ParameterSetName = "Identity", Mandatory = $true)]
         [Parameter(ParameterSetName = "Deleted")]
-        [Alias("Name", "DisplayName")]
-        [String]$SamAccountName,
-
-        [Parameter(ParameterSetName = "DistinguishedName")]
-        [Parameter(ParameterSetName = "Deleted")]
-        [String]$DistinguishedName,
+        [Alias("SamAccountName", "DistinguishedName")]
+        [System.String]$Identity,
 
         [Parameter(ValueFromPipelineByPropertyName = $true)]
         [Alias("Domain", "DomainDN", "SearchRoot", "SearchBase")]
-        [String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
+        [System.String]$DomainDistinguishedName = $(([adsisearcher]"").Searchroot.path),
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -95,32 +93,24 @@
             $Search.SizeLimit = $SizeLimit
             $Search.SearchRoot = $DomainDistinguishedName
 
-            if ($PSBoundParameters['SamAccountName'])
-            {
-
-                if ($PSBoundParameters['DeletedOnly'])
-                {
-                    $Search.filter = "(&(isDeleted=True)(|(name=$SamAccountName)(samaccountname=$SamAccountName)(displayname=$samaccountname)))"
-                }
-                else
-                {
-                    $Search.filter = "(|(name=$SamAccountName)(samaccountname=$SamAccountName)(displayname=$samaccountname))"
-                }
-
+            #Convert Identity Input String to HEX
+            $IdentityGUID = ""
+            Try{
+                ([System.Guid]$Identity).ToByteArray() | %{ $IdentityGUID += $("\{0:x2}" -f $_) }
+            } Catch {
+                $IdentityGUID="null"
             }
 
-            if ($PSBoundParameters['DistinguishedName'])
+            if ($PSBoundParameters['Identity'])
             {
-
                 if ($PSBoundParameters['DeletedOnly'])
                 {
-                    $Search.filter = "(&(isDeleted=True)(distinguishedname=$DistinguishedName))"
+                    $Search.filter = "(&(isDeleted=True)(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)(objectSid=$Identity)))"
                 }
                 else
                 {
-                    $Search.filter = "(&(distinguishedname=$DistinguishedName))"
+                    $Search.filter = "(|(DistinguishedName=$Identity)(Name=$Identity)(SamAccountName=$Identity)(UserPrincipalName=$Identity)(objectGUID=$IdentityGUID)(objectSid=$Identity))"
                 }
-
             }
 
             if ($PSBoundParameters['DomainDistinguishedName'])
@@ -169,6 +159,7 @@
                     "whenchanged"       = $Object.properties.whenchanged -as [string]
                     "deleted"           = $Object.properties.isDeleted -as [string]
                     "recycled"          = $Object.properties.isRecycled -as [string]
+                    "userPrincipalName" = $Object.properties.userprincipalname -as [string]
                 }
 
                 # Output the info
