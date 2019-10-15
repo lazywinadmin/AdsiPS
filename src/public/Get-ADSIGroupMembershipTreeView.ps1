@@ -45,11 +45,6 @@ function Get-ADSIGroupMembershipTreeView{
 	)
 	
 	begin{
-	    #Get Identity Type
-	    If(Get-ADSIComputer -Identity $Identity){$Type = "Computer"}
-	    If(Get-ADSIUser -Identity $Identity){$Type = "User"}
-	    If($null -eq $Type){Write-Error "Identity not found"; Exit}
-
 	    $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 	
 	    # Create Context splatting
@@ -61,7 +56,16 @@ function Get-ADSIGroupMembershipTreeView{
 	    if ($PSBoundParameters['DomainName']){
 	        Write-Verbose "[$FunctionName] Found DomainName Parameter"
 	        $ContextSplatting.DomainName = $DomainName
-	    }
+		}
+		
+		#Get Identity Type
+		$Object = Get-ADSIObject -Identity $Identity @ContextSplatting
+
+		switch -Wildcard ($Object.objectclass){
+			"*group" {$IdentityType = "Group"}
+			"*computer" {$IdentityType = "Computer"}
+			"*user" {$IdentityType = "User"}
+		}
 	}
 	
 	process{
@@ -78,12 +82,15 @@ function Get-ADSIGroupMembershipTreeView{
 		}
 
 	    #GetGroups
-	    If($Type -eq "User"){
+	    If($IdentityType -eq "User"){
 	        $Groups = (Get-ADSIUser -Identity $Identity @ContextSplatting).GetGroups()
 	        Write-Verbose "[$FunctionName] Type: User"
-	    } elseif ($Type -eq "Computer") {
+	    } elseif ($IdentityType -eq "Computer") {
 	        $Groups = (Get-ADSIComputer -Identity $Identity @ContextSplatting).GetGroups()
 	        Write-Verbose "[$FunctionName] Type: Computer"
+	    } elseif ($IdentityType -eq "Group") {
+	        $Groups = (Get-ADSIGroup -Identity $Identity @ContextSplatting).GetGroups()
+	        Write-Verbose "[$FunctionName] Type: Group"
 	    }
         
         if($Groups){
