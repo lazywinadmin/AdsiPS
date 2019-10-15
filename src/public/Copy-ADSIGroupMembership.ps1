@@ -69,15 +69,6 @@ function Copy-ADSIGroupMembership{
 	)
 	
 	begin{
-		#Get SourceIdentity Type
-		If(Get-ADSIComputer -Identity $SourceIdentity){$SourceType = "Computer"}
-		If(Get-ADSIUser -Identity $SourceIdentity){$SourceType = "User"}
-		If($null -eq $SourceType){Write-Error "SourceIdentity not found"; Exit}
-
-		#Get DestinationIdentity Type
-		If(Get-ADSIComputer -Identity $DestinationIdentity){$DestinationType = "Computer"}
-		If(Get-ADSIUser -Identity $DestinationIdentity){$DestinationType = "User"}
-		If($null -eq $DestinationType){Write-Error "DestinationIdentity not found"; Exit}
 
 		$FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 	
@@ -91,6 +82,22 @@ function Copy-ADSIGroupMembership{
 			Write-Verbose "[$FunctionName] Found DomainName Parameter"
 			$ContextSplatting.DomainName = $DomainName
 		}
+
+		#Get SourceIdentity Type
+		$SourceObject = Get-ADSIObject -Identity $SourceIdentity @ContextSplatting
+		$DestinationObject = Get-ADSIObject -Identity $DestinationIdentity @ContextSplatting
+
+		switch -Wildcard ($SourceObject.objectclass){
+			"*group" {$SourceType = "Group"}
+			"*computer" {$SourceType = "Computer"}
+			"*user" {$SourceType = "User"}
+		}
+
+		switch -Wildcard ($DestinationObject.objectclass){
+			"*group" {$DestinationType = "Group"}
+			"*computer" {$DestinationType = "Computer"}
+			"*user" {$DestinationType = "User"}
+		}
 	}
 
 	process{
@@ -101,7 +108,11 @@ function Copy-ADSIGroupMembership{
 		} elseif ($SourceType -eq "Computer") {
 			$SourceGroups = (Get-ADSIComputer -Identity $SourceIdentity @ContextSplatting).GetGroups()
 			Write-Verbose "[$FunctionName] SourceType: Computer"
+		} elseif ($SourceType -eq "Group") {
+			$SourceGroups = (Get-ADSIGroup -Identity $SourceIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] SourceType: Group"
 		}
+
 		#GetDestinationGroups
 		If($DestinationType -eq "User"){
 			$DestinationGroups = (Get-ADSIUser -Identity $DestinationIdentity @ContextSplatting).GetGroups()
@@ -109,6 +120,9 @@ function Copy-ADSIGroupMembership{
 		} elseif ($DestinationType -eq "Computer") {
 			$DestinationGroups = (Get-ADSIComputer -Identity $DestinationIdentity @ContextSplatting).GetGroups()
 			Write-Verbose "[$FunctionName] DestinationType: Computer"
+		} elseif ($DestinationType -eq "Group") {
+			$DestinationGroups = (Get-ADSIGroup -Identity $DestinationIdentity @ContextSplatting).GetGroups()
+			Write-Verbose "[$FunctionName] DestinationType: Group"
 		}
 
 		#Get only new Groups
