@@ -1,15 +1,10 @@
-[![Build Status](https://dev.azure.com/lazywinadmin/AdsiPS/_apis/build/status/lazywinadmin.AdsiPS?branchName=master)](https://dev.azure.com/lazywinadmin/AdsiPS/_build/latest?definitionId=17&branchName=master)
-
 # AdsiPS
 
-PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
+[![Build Status](https://dev.azure.com/lazywinadmin/AdsiPS/_apis/build/status/lazywinadmin.AdsiPS?branchName=master)](https://dev.azure.com/lazywinadmin/AdsiPS/_build/latest?definitionId=17&branchName=master)
 
-The initial motivation for this module was to improve my knowledge on how to interact with Active Directory without the Microsoft Active Directory module or the Quest Active Directory Snapin.
-The other elements that I wanted to work on were being able to use alternative Credentials and to specify a different Domain.
+AdsiPS is a PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
 
-Obviously I'm still learning and there is ton of space for improvements... Would love contributors, suggestions, feedback or any other help.
-
-## Table of contents
+This module currently only works on Windows Operating Systems.
 
 - [Contributing](#contributing)
 - [Installation](#installation)
@@ -24,9 +19,9 @@ Obviously I'm still learning and there is ton of space for improvements... Would
 Contributions are welcome via pull requests and issues.
 Please see our [contributing guide](https://github.com/lazywinadmin/adsips/blob/master/CONTRIBUTING.md) for more details
 
-## Installation
+## Getting Started
 
-### Download from PowerShell Gallery (recommended)
+### Download from PowerShell Gallery
 
 Only from PowerShell version 5
 
@@ -45,11 +40,11 @@ Install-Module -name ADSIPS
 1. Inside of `\buildoutput\AdsiPs` there is a file called `AdsiPs.psm1`
 1. Run `Import-Module -Path "C:\Path\To\buildoutput\AdsiPs\AdsiPs.psm1"` to import the `AdsiPs` module
 
-## Use Cases
+## Use cases
 
 1. Learning Active Directory: We can't see the code behind the Microsoft ActiveDirectory Module and Quest ActiveDirectory Snapin. This module is a great way to explore and learn on how Active Directory is working,
 1. Delegation: Active Directory queries need to be performed by a tool (GUI for example) and you don't want it to load AD module. Additionally you don't know who will use the tool and if they have/can/know how to install the module,
-1. Performance:  ADSI is way faster,
+1. Performance:  ADSI is faster,
 1. Restricted environment: Sometime ActiveDirectory Module is not available/ or can't install it on a machine.
 
 ## More Information
