@@ -121,8 +121,17 @@ function Get-ADSIUser
         if ($Identity)
         {
             Write-Verbose -Message "Identity"
-            [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
-
+            try {
+                [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
+            } catch {
+                if ($_.Exception.Message.ToString().EndsWith('"Multiple principals contain a matching Identity."')) {     
+                    $errorMessage = "[Get-ADSIUser] On line $($_.InvocationInfo.ScriptLineNumber) - We found multiple entries for Identity: '$($Identity)'. Please specify a samAccountName, or something more specific."              
+                    $MultipleEntriesFoundException = [System.Exception]::new($errorMessage)
+                    throw $MultipleEntriesFoundException
+                } else {
+                    $PSCmdlet.ThrowTerminatingError($_)
+                }
+            }
         }
         elseif ($PSBoundParameters['LDAPFilter'])
         {

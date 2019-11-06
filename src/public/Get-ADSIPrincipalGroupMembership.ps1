@@ -95,7 +95,9 @@ Function Get-ADSIPrincipalGroupMembership
             - 0.1 | 2019/06/22 | Matt Oestreich (oze4)
                 - Initial Change Log creation
                 - Fixed issue 70 where primary group was not being pulled in for users
-    #>
+            - 0.2 | 2019/11/04 | Matt Oestreich (oze4)
+                - Fixed issue 98
+    #>    
     [CmdletBinding()]
     param
     (
@@ -151,7 +153,7 @@ Function Get-ADSIPrincipalGroupMembership
                     $splat = @{ 
                         $IdType = $Identity
                     }
-                        
+                  
                     try { 
                         if ($ObjectSplatting) { $FoundObject = Get-ADSIObject @splat @ObjectSplatting } 
                         else { $FoundObject = Get-ADSIObject @splat }
@@ -164,16 +166,27 @@ Function Get-ADSIPrincipalGroupMembership
                         break; 
                     }
                 }
-
-                if (($FoundObjectObjectClass -contains "person") -or ($FoundObjectObjectClass -contains "user")) {
-                    $UserInfos = Get-ADSIUser -Identity $FoundObject.samaccountName
-                    $UnderlyingProperties = $UserInfos.GetUnderlyingObject()
-                    $ObjectGroups += Get-ADSIUserPrimaryGroup -Identity $UserInfos -ReturnNameAndDescriptionOnly
-                }
-
-                if ($FoundObjectObjectClass -contains "group") {
-                    $GroupInfos = Get-ADSIGroup -Identity $FoundObject.samaccountName
-                    $UnderlyingProperties = $GroupInfos.GetUnderlyingObject()
+                
+                try {
+                    if (
+                        ($FoundObjectObjectClass -contains "person") -or 
+                        ($FoundObjectObjectClass -contains "user") -and 
+                        ($FoundObjectObjectClass -notcontains "computer") -and
+                        ($FoundObjectObjectClass -notcontains "group")
+                    ) {
+                        $UserInfos = Get-ADSIUser -Identity $FoundObject.samaccountName
+                        $UnderlyingProperties = $UserInfos.GetUnderlyingObject()
+                        $ObjectGroups += Get-ADSIUserPrimaryGroup -Identity $UserInfos -ReturnNameAndDescriptionOnly
+                    } elseif ($FoundObjectObjectClass -contains "group") {
+                        $GroupInfos = Get-ADSIGroup -Identity $FoundObject.samaccountName
+                        $UnderlyingProperties = $GroupInfos.GetUnderlyingObject()
+                    } elseif ($FoundObjectObjectClass -contains "computer") {
+                        $UserInfos = Get-ADSIComputer -Identity $FoundObject.samaccountName 
+                        $UnderlyingProperties = $UserInfos.GetUnderlyingObject() 
+                        $ObjectGroups += Get-ADSIUserPrimaryGroup -Identity $UserInfos -ReturnNameAndDescriptionOnly 
+                    }
+                } catch {
+                    $PSCmdlet.ThrowTerminatingError($_)                                       
                 }
                 
             }
