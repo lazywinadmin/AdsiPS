@@ -2,9 +2,9 @@
 
 [![Build Status](https://dev.azure.com/lazywinadmin/AdsiPS/_apis/build/status/lazywinadmin.AdsiPS?branchName=master)](https://dev.azure.com/lazywinadmin/AdsiPS/_build/latest?definitionId=17&branchName=master)
 
-AdsiPS is a PowerShell module to interact with Active Directory using ADSI and the System.DirectoryServices namespace (.NET Framework)
+AdsiPS is a PowerShell module to interact with Active Directory using the .NET Framework (ADSI, System.DirectoryServices namespace,...)
 
-This module currently only works on Windows Operating Systems.
+Note: This module currently only works on Windows Operating Systems.
 
 - [Contributing](#contributing)
 - [Installation](#installation)
