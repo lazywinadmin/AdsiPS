@@ -19,3 +19,4 @@ steps:
   displayName: 'Publish Test Results **/TEST-*.xml'
   inputs:
     testResultsFormat: NUnit
+    testResultsFiles: '**/test-*.xml'
