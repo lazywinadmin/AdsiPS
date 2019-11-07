@@ -101,3 +101,23 @@ task -Name test {
         throw "Failed [$($results.FailedCount)] Pester tests."
     }
 }
+
+task -name analyze {
+    $PSScriptAnalyzerParams = @{
+        IncludeDefaultRules = $true
+        Path                = "$modulePath" # $ModuleName.psd1"
+        Settings            = "$buildPath\build.scriptanalyzersettings.psd1"
+        Severity            = 'Warning','Error'
+        Recurse             = $true
+        CustomRulePath      = (Get-Module -Name ScriptAnalyzerRulesLWA -ListAvailable).Path
+    }
+
+    "Analyzing $ManifestPath..."
+    $results = Invoke-ScriptAnalyzer @PSScriptAnalyzerParams
+    if ($results)
+    {
+        'One or more PSScriptAnalyzer errors/warnings were found.'
+        'Please investigate or add the required SuppressMessage attribute.'
+        $results | Format-Table -AutoSize
+    }
+}
