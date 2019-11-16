@@ -1,4 +1,4 @@
-function Unlock-ADSIUser
+function Unlock-ADSIComputer
 {
 <#
 .SYNOPSIS
