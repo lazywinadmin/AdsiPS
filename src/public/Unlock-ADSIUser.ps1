@@ -35,7 +35,8 @@ function Unlock-ADSIUser
         [System.Management.Automation.Credential()]
         $Credential = [System.Management.Automation.PSCredential]::Empty,
 
-        [String]$DomainName)
+        [String]$DomainName
+    )
     begin
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
