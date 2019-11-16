@@ -57,7 +57,7 @@
             # Building the basic search object with some parameters
             $Search = New-Object -TypeName System.DirectoryServices.DirectorySearcher -ErrorAction 'Stop'
             $Search.SizeLimit = $SizeLimit
-            $Search.SearchRoot = $DomainDN
+            $Search.SearchRoot = $DomainDistinguishedName
             #$Search.Filter = "(&(anr=$SamAccountName))"
             $Search.Filter = "(&((objectclass=user)(samaccountname=$SamAccountName)))"
 
@@ -103,7 +103,6 @@
                     New-Object -TypeName PSObject -Property $Properties
                 }
             }
-
         }
 
         catch
