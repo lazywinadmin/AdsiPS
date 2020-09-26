@@ -1,4 +1,4 @@
-function Get-ADSIGroupMembershipTreeView{
+#function Get-ADSIGroupMembershipTreeView{
 <#
 .SYNOPSIS
     Function to get all Group Memberships of a User or Computer including all Groups inherited by another group in a Tree View in Active Directory
@@ -74,9 +74,14 @@ function Get-ADSIGroupMembershipTreeView{
             Write-Output "$("  "*$Spacecount)-$($Group.Name)"
             $MemberOf = $Group.GetGroups()
             If($null -ne $MemberOf){
-                foreach($MemberOfGroup in $MemberOf){
-                    $Spacecount ++
-                    Get-RecursiveGroups -Group $MemberOfGroup
+                if($Group -notin $UsedParentGroups){
+                    $UsedParentGroups.Add($Group)
+                    foreach($MemberOfGroup in $MemberOf){
+                        $Spacecount ++
+                        Get-RecursiveGroups -Group $MemberOfGroup
+                    }
+                } else {
+                    Write-Warning "[$FunctionName] Stopped processing because a endless loop was detected"
                 }
             }
         }
@@ -98,10 +103,11 @@ function Get-ADSIGroupMembershipTreeView{
             Write-Output $(Get-ADSIUser -Identity $Identity).Name
             foreach($Group in $Groups){
                 $Spacecount = 1
+                $UsedParentGroups = New-Object Collections.Generic.List[System.DirectoryServices.AccountManagement.GroupPrincipal]
                 Get-RecursiveGroups -Group $Group
             }
         } else {
             Write-Verbose "No Groups found"
         }
     }
-}
+#}
