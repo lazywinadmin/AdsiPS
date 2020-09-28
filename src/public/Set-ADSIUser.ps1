@@ -58,6 +58,9 @@ function Set-ADSIUser
 .PARAMETER Credential
     Specify alternative Credential
 
+.PARAMETER AccountExpirationDate
+    Specifies the Account expiration Date.
+
 .EXAMPLE
     Set-ADSIUSer -Identity micky -UserPrincipalName micky@contoso.com -confirm:$false -SamAccountName mickyballadelli
 
@@ -67,6 +70,11 @@ function Set-ADSIUser
     Set-ADSIUSer -identity micky -Country France
 
     Changes the Country value of the account micky
+
+.EXAMPLE
+    Set-ADSIUSer -identity micky -AccountExpirationDate '2222-08-12 12:42:00'
+
+    Changes the AccountExpiration Date of the account micky
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
@@ -106,11 +114,14 @@ function Set-ADSIUser
         [Parameter(Mandatory = $false)]
         [string]$UserPrincipalName,
 
-        [Parameter(Mandatory = $false)]         
+        [Parameter(Mandatory = $false)]
+        [DateTime]$AccountExpirationDate,
+
+        [Parameter(Mandatory = $false)]
         [Parameter(Mandatory = $true, ParameterSetName = "HomeDriveHomeDirectory")]
         [string]$HomeDrive,
 
-        [Parameter(Mandatory = $false)] 
+        [Parameter(Mandatory = $false)]
         [Parameter(Mandatory = $true, ParameterSetName = "HomeDriveHomeDirectory")]
         [string]$HomeDirectory,
 
@@ -373,15 +384,15 @@ function Set-ADSIUser
                 if ($HomeDrive -ne '')
                 {
                     if($HomeDrive.Length -gt 1) {
-         
+
                         $e = New-Object System.Exception "[Set-AdsiUser] HomeDrive must be a single letter!"
                         throw $e
 
                     } elseif($HomeDirectory -eq '') {
 
                         $er = New-Object System.Exception "[Set-AdsiUser] HomeDirectory must be use with HomeDrive! HomeDrive is the drive letter, HomeDirectory is the path."
-                        throw $er      
-                                       
+                        throw $er
+
                     } else {
                         Write-Verbose -Message "[$($Account)] Setting HomeDrive value to : $HomeDrive and HomeDirectory to : $HomeDirectory"
 
@@ -401,6 +412,26 @@ function Set-ADSIUser
                                     throw $_
                                 }
                             }
+                        }
+                    }
+                }
+
+                # AccountExpirationDate
+                if ($AccountExpirationDate -ne $null)
+                {
+                    Write-Verbose -Message "[$($Account)] Setting AccountExpiration Date to : $AccountExpirationDate"
+
+                    if ($PSCmdlet.ShouldProcess($env:COMPUTERNAME, "Set AccountExpirationDate of account $account to $AccountExpirationDate"))
+                    {
+                        if ($PSBoundParameters.ContainsKey('WhatIf'))
+                        {
+                            Write-Verbose -Message "WhatIf: Setting AccountExpirationDate of account $account to $AccountExpirationDate" -Verbose:$true
+                        }
+                        else
+                        {
+                            $ADSIUser = Get-ADSIUser -Identity $Account
+                            $ADSIUser.AccountExpirationDate = $AccountExpirationDate
+                            $ADSIUser.Save()
                         }
                     }
                 }
