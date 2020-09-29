@@ -1,4 +1,4 @@
-function Set-ADSComputer
+function Set-ADSIComputer
 {
 <#
 .SYNOPSIS
