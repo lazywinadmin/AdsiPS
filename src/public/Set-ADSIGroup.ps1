@@ -2,10 +2,10 @@
 #{
 <#
 .SYNOPSIS
-    This function modifies an group identified by its  name, sam group name or distinguished name.
+    This function modifies an group identified by its  name, sam account name or distinguished name.
 
 .DESCRIPTION
-    This function modifies an group identified by its  name, sam group name or distinguished name.
+    This function modifies an group identified by its  name, sam account name or distinguished name.
 
 .PARAMETER Identity
     Specify the Identity of the group to modify.
