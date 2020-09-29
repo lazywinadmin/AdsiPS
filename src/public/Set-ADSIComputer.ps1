@@ -2,16 +2,16 @@ function Set-ADSIComputer
 {
 <#
 .SYNOPSIS
-    This function modifies an computer identified by its  name, sam Computer name or distinguished name.
+    This function modifies an computer identified by its  name, sam account name or distinguished name.
 
 .DESCRIPTION
-    This function modifies an computer identified by its  name, sam Computer name or distinguished name.
+    This function modifies an computer identified by its  name, sam account name or distinguished name.
 
 .PARAMETER Identity
     Specify the Identity of the Computers to modify.
 
     The Identity can either be (in order of resolution attempt):
-        A SAM Computer name
+        A SAM account name
         A name
         A distinguished name
 
@@ -33,12 +33,12 @@ function Set-ADSIComputer
 .EXAMPLE
     Set-ADSIComputer -identity TestComputer -Description "Computer Description"
 
-    Changes the Country value of the Computer micky
+    Changes the Country value of the Computer TestComputer
 
 .EXAMPLE
     Set-ADSIComputer -identity TestComputer -AccountExpirationDate '2222-08-12 12:42:00'
 
-    Changes the ComputerExpiration Date of the Computer micky
+    Changes the ComputerExpiration Date of the Computer TestComputer
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
