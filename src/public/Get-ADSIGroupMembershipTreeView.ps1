@@ -1,4 +1,4 @@
-#function Get-ADSIGroupMembershipTreeView{
+function Get-ADSIGroupMembershipTreeView{
 <#
 .SYNOPSIS
     Function to get all Group Memberships of a User or Computer including all Groups inherited by another group in a Tree View in Active Directory
@@ -110,4 +110,4 @@
             Write-Verbose "No Groups found"
         }
     }
-#}
+}
