@@ -1,5 +1,5 @@
-#function Set-ADSIGroup
-#{
+function Set-ADSIGroup
+{
 <#
 .SYNOPSIS
     This function modifies an group identified by its  name, sam account name or distinguished name.
@@ -140,4 +140,4 @@
     {
         Write-Verbose -Message "[END] Function Set-ADSIgroup End."
     }
-#}
+}
