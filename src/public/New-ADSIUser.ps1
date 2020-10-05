@@ -42,6 +42,9 @@
 .PARAMETER PasswordNotRequired
     Specifies if the Password is Not Required
 
+.PARAMETER AccountExpirationDate
+    Specifies the Account expiration Date.
+
 .PARAMETER Credential
     Specifies the alternative credential to use.
     By default it will use the current user windows credentials.
@@ -61,6 +64,10 @@
 
     # You can test the credential using the following function
     Test-ADSICredential -AccountName "fxtest04" -AccountPassword (Read-Host -AsSecureString "AccountPassword")
+
+.EXAMPLE
+    PS C:\> New-ADSIUser -SamAccountName "TestUser" -Enabled -PasswordNotRequired -AccountExpirationDate '2222-08-12 12:00:00'
+
 
 .NOTES
     https://github.com/lazywinadmin/ADSIPS
@@ -94,6 +101,8 @@
         [Switch]$UserCannotChangePassword = $false,
 
         [Switch]$PasswordNotRequired = $false,
+
+        [DateTime]$AccountExpirationDate,
 
         [System.Management.Automation.PSCredential]
         [System.Management.Automation.Credential()]
@@ -186,6 +195,10 @@
                 if ($PSBoundParameters['AccountPassword'])
                 {
                     $User.SetPassword((New-Object -TypeName PSCredential -ArgumentList "user", $AccountPassword).GetNetworkCredential().Password)
+                }
+                if ($PSBoundParameters['AccountExpirationDate'])
+                {
+                    $User.AccountExpirationDate = $AccountExpirationDate
                 }
 
                 Write-Verbose -message "Create the Account in Active Directory"
