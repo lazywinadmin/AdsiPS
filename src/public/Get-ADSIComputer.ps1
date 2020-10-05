@@ -75,10 +75,12 @@ function Get-ADSIComputer
 
         if ($PSBoundParameters['Credential'])
         {
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
         if ($PSBoundParameters['DomainName'])
         {
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 

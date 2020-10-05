@@ -62,10 +62,12 @@
                 $Splatting = @{ }
                 if ($PSBoundParameters['Credential'])
                 {
+                    Write-Verbose "[$FunctionName] Found Credential Parameter"
                     $Splatting.Credential = $Credential
                 }
                 if ($PSBoundParameters['DomainName'])
                 {
+                    Write-Verbose "[$FunctionName] Found Credential Parameter"
                     $Splatting.DomainName = $DomainName
                 }
 
