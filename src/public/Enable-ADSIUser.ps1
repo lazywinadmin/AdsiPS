@@ -94,7 +94,7 @@ function Enable-ADSIUser
                 $Account = Get-ADSIUser -Identity $Identity @ContextSplatting
                 $Account.Enabled = $true
                 $Account.Save()
-                Write-Verbose "[$FunctionName] The user $Identity was enable"
+                Write-Verbose "[$FunctionName] The user $Identity was enabled"
 
             }
         }
