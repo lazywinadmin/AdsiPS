@@ -90,7 +90,7 @@ function Disable-ADSIComputer
                 $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
                 $Account.enabled = $false
                 $Account.Save()
-                Write-Verbose "[$FunctionName] The Account $Identity was disable"
+                Write-Verbose "[$FunctionName] The Computer $Identity was disabled"
 
             }
         }
