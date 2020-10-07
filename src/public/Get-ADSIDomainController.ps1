@@ -47,7 +47,8 @@
             Write-Verbose "[$FunctionName] Found Credential Parameter"
             $Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain
             if ($PSBoundParameters['DomainName'])
-            {   Write-Verbose "[$FunctionName] Found DomainName Parameter"
+            {   
+                Write-Verbose "[$FunctionName] Found DomainName Parameter"
                 $Context = New-ADSIDirectoryContext -Credential $Credential -contextType Domain -DomainName $DomainName
             }
         }
