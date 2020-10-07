@@ -71,10 +71,12 @@ function Enable-ADSIComputer
         $ContextSplatting = @{ }
         if ($PSBoundParameters['Credential'])
         {
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
         if ($PSBoundParameters['DomainName'])
         {
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 
@@ -88,6 +90,8 @@ function Enable-ADSIComputer
                 $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
                 $Account.enabled = $true
                 $Account.Save()
+                Write-Verbose "[$FunctionName] The Computer $Identity was enabled"
+
             }
         }
         catch

@@ -88,10 +88,12 @@ Function Compare-ADSITeamGroups
         $ContextSplatting = @{ }
         if ($PSBoundParameters['Credential'])
         {
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
         if ($PSBoundParameters['DomainName'])
         {
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
     }
@@ -101,6 +103,7 @@ Function Compare-ADSITeamGroups
 
         if ($PSBoundParameters['BaseGroupIdentity'])
         {
+            Write-Verbose "[$FunctionName] Found BaseGroupIdentity Parameter"
             $TeamUsersIdentity = @((Get-ADSIGroupMember -Identity ('{0}' -f $BaseGroupIdentity) -Recurse).SamAccountName)
         }
 
@@ -111,6 +114,7 @@ Function Compare-ADSITeamGroups
         foreach ($User in $TeamUsersIdentity)
         {
             # Get all groups of a user
+            Write-Verbose "[$FunctionName] Trying to find All Groups of a user"
             $Usergroups = $null
             $UserInfos = Get-ADSIUser -Identity $user @ContextSplatting
 
