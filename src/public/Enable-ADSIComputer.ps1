@@ -90,7 +90,7 @@ function Enable-ADSIComputer
                 $Account = Get-ADSIComputer -Identity $Identity @ContextSplatting
                 $Account.enabled = $true
                 $Account.Save()
-                Write-Verbose "[$FunctionName] The Account $Identity was enable"
+                Write-Verbose "[$FunctionName] The Computer $Identity was enabled"
 
             }
         }
