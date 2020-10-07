@@ -93,7 +93,7 @@ function Disable-ADSIUser
                 $Account = Get-ADSIUser -Identity $Identity @ContextSplatting
                 $Account.Enabled = $false
                 $Account.Save()
-                Write-Verbose "[$FunctionName] The Account $Identity was disable"
+                Write-Verbose "[$FunctionName] The User $Identity was disabled"
 
             }
         }
