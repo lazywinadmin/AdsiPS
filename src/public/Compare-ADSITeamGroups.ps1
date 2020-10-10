@@ -84,6 +84,7 @@ Function Compare-ADSITeamGroups
 
     begin
     {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
         # Create Context splatting
         $ContextSplatting = @{ }
         if ($PSBoundParameters['Credential'])
