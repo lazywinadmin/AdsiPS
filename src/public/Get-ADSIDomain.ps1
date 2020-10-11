@@ -54,6 +54,7 @@
     )
     process
     {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
         try
         {
             if ($PSBoundParameters['Credential'] -or $PSBoundParameters['DomainName'])

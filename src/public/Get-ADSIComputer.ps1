@@ -68,6 +68,7 @@ function Get-ADSIComputer
     )
     begin
     {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         # Create Context splatting
