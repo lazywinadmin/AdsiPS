@@ -52,7 +52,8 @@ function Copy-ADSIGroupMembership{
     param(
         [Parameter(Mandatory = $true,
             Position = 0,
-            ParameterSetName = "Identity")]
+            ParameterSetName = "Identity",
+            ValueFromPipeline = $true)]
         [System.string]$SourceIdentity,
 
         [Parameter(Mandatory = $true,
@@ -82,9 +83,16 @@ function Copy-ADSIGroupMembership{
             Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
+    }
+
+    process{
 
         #Get SourceIdentity Type
-        $SourceObject = Get-ADSIObject -Identity $SourceIdentity @ContextSplatting
+        if($SourceIdentity.GetType().FullName -eq 'System.String'){
+            $SourceObject = Get-ADSIObject -Identity $SourceIdentity @ContextSplatting
+        } else {
+            $SourceObject = Get-ADSIObject -Identity $SourceIdentity.DistinguishedName @ContextSplatting
+        }
         $DestinationObject = Get-ADSIObject -Identity $DestinationIdentity @ContextSplatting
 
         switch -Wildcard ($SourceObject.objectclass){
@@ -98,9 +106,7 @@ function Copy-ADSIGroupMembership{
             "*computer" {$DestinationType = "Computer"}
             "*user" {$DestinationType = "User"}
         }
-    }
 
-    process{
         #GetSourceGroups
         If($SourceType -eq "User"){
             $SourceGroups = (Get-ADSIUser -Identity $SourceIdentity @ContextSplatting).GetGroups()
