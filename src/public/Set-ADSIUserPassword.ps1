@@ -38,7 +38,7 @@
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
-        [parameter(Mandatory = $true)]
+        [parameter(Mandatory = $true, ValueFromPipeline = $true)]
         $Identity,
 
         [parameter(Mandatory = $true)]
