@@ -41,8 +41,8 @@ function Move-ADSIComputer
     https://msdn.microsoft.com/en-us/library/system.directoryservices.accountmanagement.computerprincipal(v=vs.110).aspx
 #>
     [CmdletBinding()]
-    param ([Parameter(Mandatory = $true)]
-        [string]$Identity,
+    param ([Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Identity,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -76,7 +76,11 @@ function Move-ADSIComputer
     {
         try
         {
-            $Computer = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
+            if($Identity.GetType().FullName -eq 'System.String'){
+                $Computer = [System.DirectoryServices.AccountManagement.ComputerPrincipal]::FindByIdentity($Context, $Identity)
+            } else {
+                $Computer = $Identity
+            }
 
             # Retrieve DirectoryEntry
             #$Computer.GetUnderlyingObject()

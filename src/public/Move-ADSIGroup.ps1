@@ -46,8 +46,8 @@ function Move-ADSIGroup
     [OutputType('System.DirectoryServices.AccountManagement.GroupPrincipal')]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [string]$Identity,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Identity,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -82,7 +82,11 @@ function Move-ADSIGroup
     {
         try
         {
-            $Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
+            if($Identity.GetType().FullName -eq 'System.String'){
+                $Group = [System.DirectoryServices.AccountManagement.GroupPrincipal]::FindByIdentity($Context, $Identity)
+            } else {
+                $Group = $Identity
+            }
 
             # Create DirectoryEntry object
             $NewDirectoryEntry = New-Object -TypeName System.DirectoryServices.DirectoryEntry -ArgumentList "LDAP://$Destination"

@@ -26,8 +26,8 @@ function Reset-ADSIUserPasswordAge
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [string]$Identity,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Identity,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
