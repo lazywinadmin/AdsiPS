@@ -49,6 +49,11 @@
             Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
+
+        if ($PSBoundParameters['ForestName']){
+            Write-Verbose "[$FunctionName] Found ForestName Parameter"
+            $ContextSplatting.ForestName = $ForestName
+        }
     }
     process
     {
