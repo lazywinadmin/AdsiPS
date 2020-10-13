@@ -27,8 +27,8 @@ function Unlock-ADSIUser
     https://github.com/lazywinadmin/ADSIPS
 #>
     [CmdletBinding()]
-    param ([Parameter(Mandatory)]
-        [string]$Identity,
+    param ([Parameter(Mandatory, ValueFromPipeline = $true)]
+        $Identity,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]

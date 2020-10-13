@@ -45,8 +45,8 @@ function Set-ADSIComputer
 #>
     [CmdletBinding(SupportsShouldProcess = $true, ConfirmImpact = 'High', DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(Mandatory = $true)]
-        [String]$Identity,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Identity,
 
         [Parameter(Mandatory = $false)]
         [string]$Description,
