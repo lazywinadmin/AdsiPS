@@ -26,8 +26,8 @@
 #>
     [CmdletBinding(SupportsShouldProcess = $true)]
     param (
-        [parameter(Mandatory = $true)]
-        [String]$SiteName,
+        [parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $SiteName,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -41,26 +41,34 @@
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
-        # Create Context splatting
-        $ContextSplatting = @{}
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
-        if ($PSBoundParameters['Credential'])
-        {
+        # Create Context splatting
+        $ContextSplatting = @{ }
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
-        }
-        if ($PSBoundParameters['ForestName'])
-        {
-            $ContextSplatting.ForestName = $ForestName
         }
     }
     process
     {
         try
         {
+            if($SiteName.GetType().FullName -eq 'System.String') {
+                $ADSISite = Get-ADSISite -Name $SiteName @ContextSplatting
+                if($ADSISite -eq $null){
+                    Write-Error "[$FunctionName] Could not find Site"
+                } else {
+                    Write-Verbose "[$FunctionName] Found Site"
+                }
+            } else {
+                $ADSISite = $SiteName
+            }
+
             if ($PSCmdlet.ShouldProcess($SiteName, "Delete"))
             {
                 # Delete Site
-                (Get-ADSISite -Name $SiteName @ContextSplatting).Delete()
+                $ADSISite.Delete()
             }
         }
         catch

@@ -54,17 +54,19 @@
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
         # Create Context splatting
         $ContextSplatting = @{
             Contexttype = "Domain"
         }
 
-        if ($PSBoundParameters['Credential'])
-        {
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['DomainName'])
-        {
+        if ($PSBoundParameters['DomainName']){
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 
@@ -73,6 +75,7 @@
     {
         try
         {
+            Write-Verbose "[$FunctionName] Recursive Parameter found"
             if ($pscmdlet.ShouldProcess("$Identity", "Delete Account"))
             {
                 (Get-ADSIGroup -Identity $Identity @ContextSplatting).delete()
