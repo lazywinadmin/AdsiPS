@@ -41,14 +41,16 @@ function Unlock-ADSIComputer
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
         # Create Context splatting
         $ContextSplatting = @{ }
-        if ($PSBoundParameters['Credential'])
-        {
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['DomainName'])
-        {
+        if ($PSBoundParameters['DomainName']){
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
     }

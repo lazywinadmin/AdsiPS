@@ -59,15 +59,16 @@ function Set-ADSIGroup
 
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
-        # Create Context splatting
-        $ContextSplatting = @{}
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
-        if ($PSBoundParameters['Credential'])
-        {
+        # Create Context splatting
+        $ContextSplatting = @{ }
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['DomainName'])
-        {
+        if ($PSBoundParameters['DomainName']){
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 
@@ -81,6 +82,7 @@ function Set-ADSIGroup
 
             if ($group.Count -eq 1)
             {
+                Write-Verbose "[$FunctionName] Group $Identity Found"
                 $groupName = $group.Name
 
                 #Description
@@ -123,11 +125,11 @@ function Set-ADSIGroup
             }
             elseif ($group.Count -gt 1)
             {
-                Write-Warning -Message "[Set-ADSIgroup] Identity $identity is not unique"
+                Write-Warning -Message "[$FunctionName] Identity $identity is not unique"
             }
             elseif ($group.Count -eq 0)
             {
-                Write-Warning -Message "[Set-ADSIgroup] group $identity not found"
+                Write-Warning -Message "[$FunctionName] group $identity not found"
             }
 
         }#try
@@ -138,6 +140,6 @@ function Set-ADSIGroup
     }#process
     end
     {
-        Write-Verbose -Message "[END] Function Set-ADSIgroup End."
+        Write-Verbose -Message "[END] Function $FunctionName End."
     }
 }

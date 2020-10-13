@@ -28,8 +28,8 @@
     [CmdletBinding(SupportsShouldProcess = $true)]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [String]$SubnetName,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $SubnetName,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -43,15 +43,17 @@
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
         # Create Context splatting
         $ContextSplatting = @{ }
-
-        if ($PSBoundParameters['Credential'])
-        {
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['ForestName'])
-        {
+
+        if ($PSBoundParameters['ForestName']){
+            Write-Verbose "[$FunctionName] Found ForestName Parameter"
             $ContextSplatting.ForestName = $ForestName
         }
     }
@@ -59,9 +61,19 @@
     {
         try
         {
+            if($SubnetName.GetType().FullName -eq 'System.String') {
+                $ADSISiteSubnet = Get-ADSISiteSubnet -SubnetName $SubnetName @ContextSplatting
+                if($ADSISiteSubnet -eq $null){
+                    Write-Error "[$FunctionName] Could not find Site"
+                } else {
+                    Write-Verbose "[$FunctionName] Found Site"
+                }
+            } else {
+                $ADSISiteSubnet = $SubnetName
+            }
             if ($PSCmdlet.ShouldProcess($SubnetName, "Remove Subnet"))
             {
-                (Get-ADSISiteSubnet -SubnetName $SubnetName @ContextSplatting).Delete()
+                $ADSISiteSubnet.Delete()
             }
         }
         catch

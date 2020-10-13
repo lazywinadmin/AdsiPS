@@ -137,15 +137,17 @@ function Set-ADSIUser
     {
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+
         # Create Context splatting
         $ContextSplatting = @{ ContextType = "Domain" }
 
-        if ($PSBoundParameters['Credential'])
-        {
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['DomainName'])
-        {
+        if ($PSBoundParameters['DomainName']){
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 
@@ -185,6 +187,7 @@ function Set-ADSIUser
 
             if ($user.Count -eq 1)
             {
+                Write-Verbose "[$FunctionName] User $Identity Found"
                 $Account = $user.Properties.samaccountname -as [string]
                 $adspath = $($user.Properties.adspath -as [string]) -as [ADSI]
 
@@ -439,11 +442,11 @@ function Set-ADSIUser
             }
             elseif ($user.Count -gt 1)
             {
-                Write-Warning -Message "[Set-ADSIUser] Identity $identity is not unique"
+                Write-Warning -Message "[$FunctionName] Identity $identity is not unique"
             }
             elseif ($Search.FindAll().Count -eq 0)
             {
-                Write-Warning -Message "[Set-ADSIUser] Account $identity not found"
+                Write-Warning -Message "[$FunctionName] Account $identity not found"
             }
 
         }#try
@@ -454,6 +457,6 @@ function Set-ADSIUser
     }#process
     end
     {
-        Write-Verbose -Message "[END] Function Set-ADSIUser End."
+        Write-Verbose -Message "[END] Function $FunctionName End."
     }
 }
