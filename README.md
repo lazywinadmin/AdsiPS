@@ -4,32 +4,19 @@
 
 AdsiPS is a PowerShell module to interact with Active Directory using the .NET Framework (ADSI, System.DirectoryServices namespace,...)
 
-Note: This module currently only works on Windows Operating Systems.
+**Note: This module currently only works on Windows Operating Systems.**
 
-- [Contributing](#contributing)
-- [Installation](#installation)
-- [Download from PowerShell Gallery](#Download-from-PowerShell-Gallery)
-- [Download from GitHub repository](#Download-from-GitHub-repository)
-- [Use Cases](#use-cases)
-- [More Information](#more-information)
-- [Notes](#notes)
+## Usage
 
-## Contributing
+### Option A: Download from PowerShell Gallery
 
-Contributions are welcome via pull requests and issues.
-Please see our [contributing guide](https://github.com/lazywinadmin/adsips/blob/master/CONTRIBUTING.md) for more details
-
-## Getting Started
-
-### Download from PowerShell Gallery
-
-Only from PowerShell version 5
+Only from PowerShell version 5 (on Windows OS only)
 
 ``` powershell
 Install-Module -name ADSIPS
 ```
 
-### Download from GitHub repository
+### Option B: Manual download from GitHub
 
 1. Download the repository
 1. Unblock the zip file
@@ -40,42 +27,36 @@ Install-Module -name ADSIPS
 1. Inside of `\buildoutput\AdsiPs` there is a file called `AdsiPs.psm1`
 1. Run `Import-Module -Path "C:\Path\To\buildoutput\AdsiPs\AdsiPs.psm1"` to import the `AdsiPs` module
 
-## Use cases
+## Documentation
 
-1. Learning Active Directory: We can't see the code behind the Microsoft ActiveDirectory Module and Quest ActiveDirectory Snapin. This module is a great way to explore and learn on how Active Directory is working,
-1. Delegation: Active Directory queries need to be performed by a tool (GUI for example) and you don't want it to load AD module. Additionally you don't know who will use the tool and if they have/can/know how to install the module,
-1. Performance:  ADSI is faster,
-1. Restricted environment: Sometime ActiveDirectory Module is not available/ or can't install it on a machine.
+- [Functions](docs/doc_functions.md)
+- [Contributing & TODO](https://github.com/lazywinadmin/adsips/blob/master/CONTRIBUTING.md)
+- [Use cases](#docs/doc_usecases.md)
 
-## More Information
+## Thanks to all our Contributors!
 
-* MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
-
-## Authors
-
-* Thanks to our Contributors!!
-  * @LazyWinAdmin
-  * @MickyBalladelli
-  * @christophekumor
-  * @omiossec
-  * @oze4
-  * @andrewtchilds
-  * @NicolasBn
-  * @gerane
-  * @GaffaOverflow
-  * @Skoetting
+* @LazyWinAdmin
+* @MickyBalladelli
+* @christophekumor
+* @omiossec
+* @oze4
+* @andrewtchilds
+* @NicolasBn
+* @gerane
+* @GaffaOverflow
+* @Skoetting
 
 ## Resources
 
-Interesting projects using different approaches to reach out to Active Directory in PowerShell/c#
-
-* [ADAudit by @darkoperator](https://github.com/darkoperator/ADAudit/tree/dev)
-* [ADSI on powershell.com by @TobiasPSP](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx) by Tobias Weltner
-* [ADRecon from @sense-of-security](https://github.com/sense-of-security/ADRecon)
-* [PowerView from @PowerShellMafia team](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
-* [Invoke-Kerberoast from @EmpireProject team](https://github.com/EmpireProject/Empire/blob/master/data/module_source/credentials/Invoke-Kerberoast.ps1)
-* [PSAD by @zloeber](https://github.com/zloeber/PSAD)
-* [Test-ActiveDirectory by @markwragg](https://github.com/markwragg/Test-ActiveDirectory/blob/master/ADAudit/ActiveDirectory.tests.ps1)
-* [AdEnumerator(LDAP) by @chango77747](https://github.com/chango77747/AdEnumerator/blob/master/ADEnumerator.psm1)
-* [Grant-ADPermission by @edemilliere](https://github.com/edemilliere/ADSI/blob/master/Grant-ADPermission.ps1)
-* [ADSec by @FriedrichWeinmann](https://github.com/PSSecTools/ADSec)
+* MSDN is a great resource if you want to find more information on the NET classes to use. See [System.DirectoryServices](https://msdn.microsoft.com/en-us/library/system.directoryservices(v=vs.110).aspx)
+* Interesting projects using different approaches to reach out to Active Directory in PowerShell/c#
+  * [ADAudit by @darkoperator](https://github.com/darkoperator/ADAudit/tree/dev)
+  * [ADSI on powershell.com by @TobiasPSP](http://powershell.com/cs/blogs/ebookv2/archive/2012/03/25/chapter-19-user-management.aspx) by Tobias Weltner
+  * [ADRecon from @sense-of-security](https://github.com/sense-of-security/ADRecon)
+  * [PowerView from @PowerShellMafia team](https://github.com/PowerShellMafia/PowerSploit/blob/master/Recon/PowerView.ps1)
+  * [Invoke-Kerberoast from @EmpireProject team](https://github.com/EmpireProject/Empire/blob/master/data/module_source/credentials/Invoke-Kerberoast.ps1)
+  * [PSAD by @zloeber](https://github.com/zloeber/PSAD)
+  * [Test-ActiveDirectory by @markwragg](https://github.com/markwragg/Test-ActiveDirectory/blob/master/ADAudit/ActiveDirectory.tests.ps1)
+  * [AdEnumerator(LDAP) by @chango77747](https://github.com/chango77747/AdEnumerator/blob/master/ADEnumerator.psm1)
+  * [Grant-ADPermission by @edemilliere](https://github.com/edemilliere/ADSI/blob/master/Grant-ADPermission.ps1)
+  * [ADSec by @FriedrichWeinmann](https://github.com/PSSecTools/ADSec)
