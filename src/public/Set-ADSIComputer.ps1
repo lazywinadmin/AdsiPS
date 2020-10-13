@@ -70,15 +70,16 @@ function Set-ADSIComputer
 
         Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
-        # Create Context splatting
-        $ContextSplatting = @{}
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
 
-        if ($PSBoundParameters['Credential'])
-        {
+        # Create Context splatting
+        $ContextSplatting = @{ }
+        if ($PSBoundParameters['Credential']){
+            Write-Verbose "[$FunctionName] Found Credential Parameter"
             $ContextSplatting.Credential = $Credential
         }
-        if ($PSBoundParameters['DomainName'])
-        {
+        if ($PSBoundParameters['DomainName']){
+            Write-Verbose "[$FunctionName] Found DomainName Parameter"
             $ContextSplatting.DomainName = $DomainName
         }
 
@@ -92,6 +93,7 @@ function Set-ADSIComputer
 
             if ($computer.Count -eq 1)
             {
+                Write-Verbose "[$FunctionName] Computer $Identity Found"
                 $ComputerName = $computer.Name
 
                 # AccountExpirationDate
@@ -153,11 +155,11 @@ function Set-ADSIComputer
             }
             elseif ($computer.Count -gt 1)
             {
-                Write-Warning -Message "[Set-ADSIComputer] Identity $identity is not unique"
+                Write-Warning -Message "[$FunctionName] Identity $identity is not unique"
             }
             elseif ($computer.Count -eq 0)
             {
-                Write-Warning -Message "[Set-ADSIComputer] Computer $identity not found"
+                Write-Warning -Message "[$FunctionName] Computer $identity not found"
             }
 
         }#try
@@ -168,6 +170,6 @@ function Set-ADSIComputer
     }#process
     end
     {
-        Write-Verbose -Message "[END] Function Set-ADSIComputer End."
+        Write-Verbose -Message "[END] Function $FunctionName End."
     }
 }
