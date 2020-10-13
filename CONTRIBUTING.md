@@ -2,6 +2,25 @@
 
 Contributions are welcome via pull requests and issues. Before submitting a pull request, please make sure all tests pass.
 
+## Environment Setup
+
+```powershell
+# First time execution
+## Install requirements and Run the build task
+./build.ps1 -InstallDependencies -verbose`
+
+# Re-Running the build task
+./build.ps1 -verbose -task build
+
+# Running the test task
+## As of 2020/09 this only works with up to Pester 4.10.0
+./build.ps1 -verbose -task test
+
+# Running the script analyzer task
+./build.ps1 -verbose -task analyze
+```
+
+
 ## Guidelines
 
 * Don't use Write-Host
