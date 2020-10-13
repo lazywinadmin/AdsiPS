@@ -49,8 +49,8 @@ function Move-ADSIUser
     [OutputType('System.DirectoryServices.AccountManagement.UserPrincipal')]
     param
     (
-        [Parameter(Mandatory = $true)]
-        [string]$Identity,
+        [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+        $Identity,
 
         [Alias("RunAs")]
         [System.Management.Automation.PSCredential]
@@ -84,7 +84,11 @@ function Move-ADSIUser
     {
         if ($Identity)
         {
-            $user = [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
+            if($Identity.GetType().FullName -eq 'System.String'){
+                $user = [System.DirectoryServices.AccountManagement.UserPrincipal]::FindByIdentity($Context, $Identity)
+            } else {
+                $user = $Identity
+            }
 
             # Retrieve DirectoryEntry
             #$User.GetUnderlyingObject()
