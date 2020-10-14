@@ -10,7 +10,7 @@ AdsiPS is a PowerShell module to interact with Active Directory using the .NET F
 
 ### Option A: Download from PowerShell Gallery
 
-Only from PowerShell version 5 (on Windows OS only)
+Only from PowerShell v5.1 (on Windows OS only)
 
 ``` powershell
 Install-Module -name ADSIPS
