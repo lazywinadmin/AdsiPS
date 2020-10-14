@@ -31,7 +31,7 @@ Install-Module -name ADSIPS
 
 - [Functions](docs/doc_functions.md)
 - [Contributing & TODO](https://github.com/lazywinadmin/adsips/blob/master/CONTRIBUTING.md)
-- [Use cases](#docs/doc_usecases.md)
+- [Use cases](docs/doc_usecases.md)
 
 ## Thanks to all our Contributors!
 
