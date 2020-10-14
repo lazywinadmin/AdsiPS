@@ -4,12 +4,13 @@
         AddToPath = $true
     #    DependencyType = 'PSGalleryNuget'
     }
-    Pester = @{
+    Pester = '4.10.1'
+    <#@{
         Name = 'Pester'
         Parameters = @{
             SkipPublisherCheck = $true
         }
-    }
+    }#>
     PSScriptAnalyzer = 'Latest'
     ScriptAnalyzerRulesLWA = 'Latest'
     BuildHelpers = 'Latest'

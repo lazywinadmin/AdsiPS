@@ -40,7 +40,7 @@ task -Name build {
 
     # Copy the Manifest to the build (psd1)
     Copy-Item -Path "$srcPath\source.psd1" -Destination $modulePath
-    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1"
+    Rename-Item -Path "$modulePath\source.psd1" -NewName "$moduleName.psd1" -Force
 
     # Find next module version (BuildHelpers module)
     Write-Verbose -Message "Find next module version (BuildHelpers module)"
@@ -63,7 +63,7 @@ task -Name build {
     Import-Module -Name $modulePath -RequiredVersion $moduleVersion
 }
 
-task -Name clean {
+task -Name clean -before build {
     # Output folder
     Remove-Item -confirm:$false -Recurse -path $buildOutputPath -ErrorAction SilentlyContinue
     #Remove-Item -confirm:$false -Recurse -path $dependenciesPath -ErrorAction SilentlyContinue
