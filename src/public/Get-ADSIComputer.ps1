@@ -81,11 +81,11 @@ function Get-ADSIComputer
     )
     begin
     {
+        $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
+        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+
         switch ($PsCmdlet.ParameterSetName) {
             'Identity' {
-                $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-                Add-Type -AssemblyName System.DirectoryServices.AccountManagement
-
                 # Create Context splatting
                 $ContextSplatting = @{ ContextType = "Domain" }
 
@@ -104,8 +104,6 @@ function Get-ADSIComputer
             }
             
             'LDAPFilter' {
-                $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-                
                 # Create Context splatting
                 $ContextSplatting = @{}
 
