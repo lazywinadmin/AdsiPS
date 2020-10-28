@@ -82,27 +82,8 @@ function Get-ADSIComputer
     begin
     {
         $FunctionName = (Get-Variable -Name MyInvocation -Scope 0 -ValueOnly).Mycommand
-        Add-Type -AssemblyName System.DirectoryServices.AccountManagement
 
         switch ($PsCmdlet.ParameterSetName) {
-            'Identity' {
-                # Create Context splatting
-                $ContextSplatting = @{ ContextType = "Domain" }
-
-                if ($PSBoundParameters['Credential'])
-                {
-                    Write-Verbose "[$FunctionName] Found Credential Parameter"
-                    $ContextSplatting.Credential = $Credential
-                }
-                if ($PSBoundParameters['DomainName'])
-                {
-                    Write-Verbose "[$FunctionName] Found DomainName Parameter"
-                    $ContextSplatting.DomainName = $DomainName
-                }
-
-                $Context = New-ADSIPrincipalContext @ContextSplatting
-            }
-            
             'LDAPFilter' {
                 # Create Context splatting
                 $ContextSplatting = @{}
@@ -119,6 +100,25 @@ function Get-ADSIComputer
                 }
 
                 $SearchRoot = New-ADSIDirectoryEntry @ContextSplatting
+            }
+            default {
+                Add-Type -AssemblyName System.DirectoryServices.AccountManagement
+
+                # Create Context splatting
+                $ContextSplatting = @{ ContextType = "Domain" }
+
+                if ($PSBoundParameters['Credential'])
+                {
+                    Write-Verbose "[$FunctionName] Found Credential Parameter"
+                    $ContextSplatting.Credential = $Credential
+                }
+                if ($PSBoundParameters['DomainName'])
+                {
+                    Write-Verbose "[$FunctionName] Found DomainName Parameter"
+                    $ContextSplatting.DomainName = $DomainName
+                }
+
+                $Context = New-ADSIPrincipalContext @ContextSplatting
             }
         }
     }
